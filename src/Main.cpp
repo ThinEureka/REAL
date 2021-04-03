@@ -48,7 +48,7 @@ REAL R1,R2,R;
 
 void Test1()
 {
-	ofstream out(L"¼Ó·¨²âÊÔ1.txt");
+	ofstream out(L"â•ÐœÐ¸Ðµâ–“Ð â•©Ð½1.txt");
 	NPV( REAL(1) >> 4);
 	REAL::DisWidth(100);
 	do

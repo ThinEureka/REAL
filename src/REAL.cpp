@@ -53,7 +53,7 @@ namespace zju04nycs
 				R.m_nFeet = nFeet;
 				R.m_nHead = nHead;
 
-				//·Ç¹«¹²Î»
+				//éå…¬å…±ä½
 				memcpy( static_cast<void *>( R.p(nHigh) ), 
 					static_cast<const void *>( pHead->cp(nHigh) ),
 					(nHead - nHigh )*sizeof(REAL::typeUnit) );
@@ -63,8 +63,8 @@ namespace zju04nycs
 					(nLow - nFeet )*sizeof(REAL::typeUnit) );
 				memset( static_cast<void *>( R.p(nLow)),0,(pLow->Feet() - nLow)*sizeof(REAL::typeUnit));
 
-				//¹«¹²Î»£¬Çø±ğÓÚÉÏÃæµÄnFeetÓënHigh£¬ÔÚ´íÎ»£¨pLow->Feet() >£½ pHigh->Head()£©
-				//µÄÇé¿öÏÂ£¬ÏÂÃæµÄ´úÂë¾Í²»Ö´ĞĞ¡£
+				//å…¬å…±ä½ï¼ŒåŒºåˆ«äºä¸Šé¢çš„nFeetä¸nHighï¼Œåœ¨é”™ä½ï¼ˆpLow->Feet() >ï¼ pHigh->Head()ï¼‰
+				//çš„æƒ…å†µä¸‹ï¼Œä¸‹é¢çš„ä»£ç å°±ä¸æ‰§è¡Œã€‚
 				REAL::typeLink L = 0,L1,L2;
 				for( int i = pLow->Feet(); i < pHigh->Head(); ++i)
 				{
@@ -74,7 +74,7 @@ namespace zju04nycs
 					R.e(i) = static_cast<REAL::typeUnit>(L);
 				}
 
-				//¸ß·Ç¹«Î»½øÎ»
+				//é«˜éå…¬ä½è¿›ä½
 				for( int i = pHigh->Head(); i < nHead; ++i)
 				{
 					if( L>>REAL::sc_nUnitBit)
@@ -89,7 +89,7 @@ namespace zju04nycs
 					}
 				}
 
-				//×î¸ß½øÎ»
+				//æœ€é«˜è¿›ä½
 				if( L>>REAL::sc_nUnitBit)
 				{
 					R.SetHead();
@@ -113,7 +113,7 @@ namespace zju04nycs
 				R.m_nFeet = nFeet;
 				R.m_nHead = nHead;
 
-				//Á½ÖµÏà¼õ£¬¸´ÖÆ±£³Ö²»±äµÄÎ»
+				//ä¸¤å€¼ç›¸å‡ï¼Œå¤åˆ¶ä¿æŒä¸å˜çš„ä½
 				memcpy( static_cast<void *>( R.p(nHigh) ), 
 					static_cast<const void *>( pR1->cp(nHigh) ),
 					(nHead - nHigh )*sizeof(REAL::typeUnit) );
@@ -123,7 +123,7 @@ namespace zju04nycs
 				memset( static_cast<void *>( R.p(nLow)),0,(pLow->Feet() - nLow)*sizeof(REAL::typeUnit));
 
 
-				//pR2£¨¾ø¶ÔÖµĞ¡Õß£©µÄÃ¿Ò»Î»¶¼Òª²ÎÓëÔËËã
+				//pR2ï¼ˆç»å¯¹å€¼å°è€…ï¼‰çš„æ¯ä¸€ä½éƒ½è¦å‚ä¸è¿ç®—
 				REAL::typeLink L,L1,L2;
 				L = 1;
 				L <<= REAL::sc_nUnitBit;
@@ -137,7 +137,7 @@ namespace zju04nycs
 					R.e(i) = static_cast<REAL::typeUnit>(L);
 				}
 
-				//¸ß·Ç¹«¹²Î»
+				//é«˜éå…¬å…±ä½
 				for( int i = nHigh; i < pR1->Head(); ++i)
 				{
 					if( !(L >> REAL::sc_nUnitBit) )
@@ -152,7 +152,7 @@ namespace zju04nycs
 					}
 				}
 
-				//¾ø¶ÔÖµÒÑÅĞ£¬¹»¼õ£¬ÔÙÎŞ½èÎ»
+				//ç»å¯¹å€¼å·²åˆ¤ï¼Œå¤Ÿå‡ï¼Œå†æ— å€Ÿä½
 
 			}
 			return R.Fit();
@@ -234,7 +234,7 @@ namespace zju04nycs
 		}
 		return R;
 	}
-	//ÒÔÏÂ´úÂëÁô×÷±È½Ï²é¿´
+	//ä»¥ä¸‹ä»£ç ç•™ä½œæ¯”è¾ƒæŸ¥çœ‹
 	/*
 
 	REAL& Reverse(const REAL &C,REAL &Rn,int nPrec,int &nRealPrec)
@@ -276,7 +276,7 @@ namespace zju04nycs
 	Plus( U2,NCRn,U2_p_NCRn);
 	// R(n+1) = Rn*( 2 - CRn) = Rn*( 2 + (-CRn) )
 	Multiply( Rn,U2_p_NCRn,Rn_p_1);
-	//Îª¼õÉÙÄÚ´æ²Ù×÷£¬ÓÃRn_p_1¼´(R(n+1)À´½Ø¶ÏÊÇºÏÊÊµÄ
+	//ä¸ºå‡å°‘å†…å­˜æ“ä½œï¼Œç”¨Rn_p_1å³(R(n+1)æ¥æˆªæ–­æ˜¯åˆé€‚çš„
 	Rn_p_1.TruncateFeet( nFeet);
 	Rn = Rn_p_1;
 
@@ -290,7 +290,7 @@ namespace zju04nycs
 	const_cast< REAL & >(C).Minus();
 	Rn.Minus();
 	}
-	//Head() Óë Feet() ÒÑ¾­ Fit
+	//Head() ä¸ Feet() å·²ç» Fit
 	return R;
 
 	}
@@ -307,7 +307,7 @@ namespace zju04nycs
 			const_cast< REAL & >(C).Minus();
 			bMinus = true;
 		}
-		//C!=0£¬ËùÒÔC.Lead()¼ÆËãÕı³££¬Îª×î¸ßµÄ·ÇÁãbit+1¡£
+		//C!=0ï¼Œæ‰€ä»¥C.Lead()è®¡ç®—æ­£å¸¸ï¼Œä¸ºæœ€é«˜çš„éé›¶bit+1ã€‚
 		int nK = std::min( nPrec, -C.Lead()-1);
 		nRealPrec = nK;
 		int nFeet = REAL::PosToBlock(nK - 1);
@@ -523,7 +523,7 @@ namespace zju04nycs
 				if(REAL::IsDigit(s.at(i),cBase))
 				{
 					++nFirstIntEnd;
-					//×´Ì¬²»±ä
+					//çŠ¶æ€ä¸å˜
 				}
 				else if(s.at(i) == '.')
 				{
@@ -570,7 +570,7 @@ namespace zju04nycs
 				if( REAL::IsDigit(s.at(i),cBase))
 				{
 					++nSecondIntEnd;
-					//×´Ì¬²»±ä
+					//çŠ¶æ€ä¸å˜
 				}
 				else if(s.at(i) == 'e')
 				{
@@ -618,7 +618,7 @@ namespace zju04nycs
 				if( REAL::IsDigit(s.at(i),cBase))
 				{
 					++nThirdIntEnd;
-					//×´Ì¬²»±ä
+					//çŠ¶æ€ä¸å˜
 				}
 				else
 				{
@@ -653,13 +653,13 @@ namespace zju04nycs
 		StringToI(s,nSecondIntBegin,nSecondIntEnd,nExp-(nSecondIntEnd-nSecondIntBegin),Right,cBase);
 		StringToI(s,nFirstIntBegin,nFirstIntEnd,nExp,Left,cBase);
 
-		//Õâ¸öº¯ÊıÖ®ºóÒª¿çÔ¾Á½¸öº¯Êı£¬ËùÒÔ²»ÄÜÊ¹ÓÃPLUS±äÁ¿
+		//è¿™ä¸ªå‡½æ•°ä¹‹åè¦è·¨è·ƒä¸¤ä¸ªå‡½æ•°ï¼Œæ‰€ä»¥ä¸èƒ½ä½¿ç”¨PLUSå˜é‡
 		Plus(Left,Right,S1);
 
 		StringToF(s,nFirstIntBegin,nFirstIntEnd,nExp+(nFirstIntEnd-nFirstIntBegin),nPrec-1,Right,cBase);
 		StringToF(s,nSecondIntBegin,nSecondIntEnd,nExp,nPrec-1,Left,cBase);
 
-		//´Ë´¦¿ÉÒÔÊ¹ÓÃPLUS±äÁ¿
+		//æ­¤å¤„å¯ä»¥ä½¿ç”¨PLUSå˜é‡
 		Plus(S1,Plus(Left,Right,REAL::PLUS),R);
 		if( !R.IsZero())
 		{
@@ -746,7 +746,7 @@ namespace zju04nycs
 						R.e(nBlock) = 0;
 					}
 				}
-				//ÒÑ¿³Í·È¥Î²£¬ÎŞĞèfit
+				//å·²ç å¤´å»å°¾ï¼Œæ— éœ€fit
 				//		R.Fit();
 				R <<= nExp;
 
@@ -778,7 +778,7 @@ namespace zju04nycs
 						R.e(nBlock) = 0;
 					}
 				}
-				//ÒÑ¿³Í·È¥Î²£¬ÎŞĞèfit
+				//å·²ç å¤´å»å°¾ï¼Œæ— éœ€fit
 				//		R.Fit();
 			}
 			R <<= 4*nExp;
@@ -830,21 +830,21 @@ namespace zju04nycs
 			{
 				static REAL V1,Vk;
 				const REAL One = 1;
-				//ÓÃV1×÷Îª0.1µÄ½üËÆÖµ
+				//ç”¨V1ä½œä¸º0.1çš„è¿‘ä¼¼å€¼
 				// 0 < 0.1 - V1 < e1 = e
 				// 0< VnV1 - V(n+1) < e
-				// ´Ó¶ø 0.1^(n+1) - V(n+1) = 0.1^(n+1) - VnV1 + VnV1 - V(n+1)
+				// ä»è€Œ 0.1^(n+1) - V(n+1) = 0.1^(n+1) - VnV1 + VnV1 - V(n+1)
 				// < e + 0.1^(n+1)  - (0.1^n-e(n))(0.1 - e1)
 				// = e + 0.1^n*e1 + 0.1e(n) - e1e(n)
 				// < e + 0.1^n*e1 + 0.1e(n)
-				//´Ó¶øe2 < 1.2e,e3 < 1.13e£¬ÓÃÊıÑ§¹éÄÉ·¨µÃe(n) < 1.2e
-				//´Ó¶ø×ÜÎó²î D < (nEnd - nBegin)*9 * 1.2e
-				//ÒªÊ¹  D < 2^nPrec£¬ÄÇÃ´ Ö»Òª (nEnd - nBegin)*9 * 1.2e < 2^nPrec
-				//ÄÇÃ´Ö»Òª e < 2^t £¬ÆäÖĞ t = nPrec - 4 - [(nEnd-nBegin)µÄ×î¸ß·ÇÁãbit+1]
-				//¼´ t = nPrec - 4 - (nEnd-nBegin).Lead()
-				// nEnd - nBegin != 0£¬ËùÒÔLead¼ÆËãÕı³£
-				//ÔÙÀûÓÃËã³öµÄ¾«¶ÈÎ»t£¬´úÈëº¯ÊıTenthExp¼ÆËã³öV1ÓëVk£¬kÊÇ·ÇÁãµÄ×î¸ßÎ»
-				//ÔÚÕâÀï¾ÍÊÇnExp - 1£¬µ±nExp = 0Ê±£¬¾ÍÊÇÕı³£µÄ-1Î»¡£
+				//ä»è€Œe2 < 1.2e,e3 < 1.13eï¼Œç”¨æ•°å­¦å½’çº³æ³•å¾—e(n) < 1.2e
+				//ä»è€Œæ€»è¯¯å·® D < (nEnd - nBegin)*9 * 1.2e
+				//è¦ä½¿  D < 2^nPrecï¼Œé‚£ä¹ˆ åªè¦ (nEnd - nBegin)*9 * 1.2e < 2^nPrec
+				//é‚£ä¹ˆåªè¦ e < 2^t ï¼Œå…¶ä¸­ t = nPrec - 4 - [(nEnd-nBegin)çš„æœ€é«˜éé›¶bit+1]
+				//å³ t = nPrec - 4 - (nEnd-nBegin).Lead()
+				// nEnd - nBegin != 0ï¼Œæ‰€ä»¥Leadè®¡ç®—æ­£å¸¸
+				//å†åˆ©ç”¨ç®—å‡ºçš„ç²¾åº¦ä½tï¼Œä»£å…¥å‡½æ•°TenthExpè®¡ç®—å‡ºV1ä¸Vkï¼Œkæ˜¯éé›¶çš„æœ€é«˜ä½
+				//åœ¨è¿™é‡Œå°±æ˜¯nExp - 1ï¼Œå½“nExp = 0æ—¶ï¼Œå°±æ˜¯æ­£å¸¸çš„-1ä½ã€‚
 				int t = nPrec - 4 - REAL(nEnd-nBegin).Lead();
 				REAL::Tenth(V1,t);
 				Vk = V1;
@@ -886,7 +886,7 @@ namespace zju04nycs
 					}
 				}
 			}
-			//ÒÑ¿³Í·È¥Î²£¬ÎŞĞèfit
+			//å·²ç å¤´å»å°¾ï¼Œæ— éœ€fit
 			//		R.Fit();
 			R <<= nExp;
 			return;
@@ -918,7 +918,7 @@ namespace zju04nycs
 					}
 				}
 			}
-			//ÒÑ¿³Í·È¥Î²£¬ÎŞĞèfit
+			//å·²ç å¤´å»å°¾ï¼Œæ— éœ€fit
 			//		R.Fit();
 			R <<= 4*nExp;
 			return;
@@ -1108,7 +1108,7 @@ namespace zju04nycs
 				{
 					nDepth = 0;
 				}	
-				//ÌŞµôÁã
+				//å‰”æ‰é›¶
 				s.erase(s.find_last_not_of("0") + 1);
 			}break;
 		case 'b':case 'B':

@@ -1,197 +1,54 @@
-//INT.h
 
-/*
 #pragma once
+
 #ifndef INT_H
 #define INT_H
 
+#include <vector>
 
-#include "REAL.h"
+namespace zju04nycs {
+	class INT {
+	public:
+		typedef unsigned __int64 typeLink;
+		typedef unsigned __int32 typeUnit;
 
-class INT:public REAL
-{
-public:
-	INT()
-	{};
+		static const typeLink s_lowerBitMask	= 0x00000000FFFFFFFF;
+		static const typeLink s_higherBitMask	= 0xFFFFFFFF00000000;
+		static const typeLink s_borrowValue		= 0x0000000100000000;
+		static const typeLink s_numBitsOfUnit = 32;
 
-	INT(typeSignUnit suNum):REAL(suNum)
-	{};
+	public:
+		INT();
+		INT(const INT& v);
+		INT(INT&& v) noexcept;
 
-	INT(typeUnit uNum):REAL(uNum)
-	{};
-	INT(const REAL &R)
-	{
-		m_nSign = R.Sign();
-		m_nFeet = std::max( R.Feet(),0);
-		m_nHead = std::max( R.Head(),1);
-		Construct(m_nFeet,m_nHead);
-		if( m_nHead == 1)
-		{
-			e(0) = R.ce(0);
-		}
-		else
-		{
-			memcpy( static_cast<void *>( p(Feet()) ), 
-				static_cast<const void *>( R.cp(Feet()) ),
-				(Size() )*sizeof(typeUnit) );
-		}
-	};
-public:
-	friend INT & Plus( const INT &N1,const INT &N2,INT &N)
-	{
-		REAL::Plus(static_cast<const REAL &>( N1),static_cast<const REAL &>(N2),static_cast<REAL &>(N));
-		return N;
-	};
-	friend INT & Subtract( const INT &N1,const INT &N2,INT &N)
-	{
-		REAL::Subtract(static_cast<const REAL &>( N1),static_cast<const REAL &>(N2),static_cast<REAL &>(N));
-		return N;
-	};
-	friend INT & Multiply( const INT &N1,const INT &N2,INT &N)
-	{
-		REAL::Multiply(static_cast<const REAL &>( N1),static_cast<const REAL &>(N2),static_cast<REAL &>(N));
-		return N;
-	};
-	friend INT & Divide( const INT &N1,const INT &N2,INT &N,INT &M)
-	{
-		int nRealPrec;
-		Divide(static_cast<const REAL &>( N1),static_cast<const REAL &>(N2),static_cast<REAL &>(N),
-			   0,nRealPrec);
-		N.TruncateFeet(0);
-		M = N1 - N2*N;
-		return N;
-	};
-	friend INT operator + ( const INT &N1,const INT &N2)
-	{
-		INT N;
-		Plus(N1,N2,N);
-		return N;
-	};
-	friend INT operator - ( const INT &N1,const INT &N2)
-	{
-		INT N;
-		Subtract(N1,N2,N);
-		return N;
-	};
-	friend INT operator * ( const INT &N1,const INT &N2)
-	{
-		INT N;
-		Multiply(N1,N2,N);
-		return N;
-	};
-	friend INT operator / ( const INT &N1,const INT &N2)
-	{
-		INT N;
-		INT M;
-		Divide(N1,N2,N,M);
-		return N;
-	};
-	friend INT operator % ( const INT &N1,const INT &N2)
-	{
-		INT M;
-		INT N;
-		Divide(N1,N2,N,M);
-		return M;
-	};
-public:
-	INT& operator +=( const INT &N1)
-	{
-		INT N2 = *this;
-		return Plus(N1,N2,*this);
-	};
-	INT& operator -=( const INT &N1)
-	{
-		INT N2 = *this;
-		return Subtract(N2,N1,*this);
-	};
-	INT& operator *=( const INT &N1)
-	{
-		INT N2 = *this;
-		return Multiply(N1,N2,*this);
-	};
-	INT& operator /=( const INT &N1)
-	{
-		INT N2 = *this;
-		INT M;
-		return Divide(N2,N1,*this,M);
-	};
-	INT& operator %=( const INT &N1)
-	{
-		INT N2 = *this;
-		INT N;
-		Divide(N2,N1,N,*this);
-		return *this;
-	};
-public:
-	INT&  operator <<=(int nBit)
-	{
-		REAL::operator <<=(nBit);
-		return *this;
-	};
-	INT&  operator >>=(int nBit)
-	{
-		REAL::operator >>=(nBit);
-		TruncateFeet(0);
-		return *this;
+	private:
+		INT(int sign, std::vector<typeUnit>&& bits): _sign(sign), _bits(std::move(bits))
+		{};
 
-	};
-	friend INT operator <<(const INT &N1,int nBit)const
-	{
-		INT N = N1;
-		N <<= nBit;
-		return N;
-	};
-	friend INT operator >>(const INT &N1,int nBit)const
-	{
-		INT N = N1;
-		N >>= nBit;
-		return N;
-	};
-public:
-	INT operator +()const
-	{
-		return *this;
-	};
-	INT operator -()const
-	{
-		INT N;
-		N = *this;
-		N.Minus();
-		return N;
-	};
-	INT& operator ++()const
-	{
-		INT N = *this;
-		return Plus(N,1,*this);
-	};
-	INT& operator --()const
-	{
-		INT N = *this;
-		return Plus(N,-1,*this);
-	};
-	INT operator ++(int)const
-	{
-		INT N = *this;
-		Plus(N,1,*this);
-		return N;
-	};
-	INT operator --(int)const
-	{
-		INT N = *this;
-		Plus(N,-1,*this);
-		return N;
-	};
-	operator bool()const
-	{
-		return !IsZero();
-	};
+		INT& operator = (const INT& v);
+		INT& operator = (INT&& v)noexcept;
+
+	public:
+		friend bool operator == (const INT& v1, const INT& v2);
+		friend bool operator != (const INT& v1, const INT& v2);
+		friend INT&& operator +(const INT& v1, const INT& v2);
+		friend INT&& operator -(const INT& v1, const INT& v2);
+		friend INT&& operator *(const INT& v1, const INT& v2);
+		friend INT&& operator /(const INT& v1, const INT& v2);
+		friend INT&& operator %(const INT& v1, const INT& v2);
+
+		friend INT&& divide(const INT& v1, const INT& v2, INT* pR);
+		friend int compare(const INT& v1, const INT& v2);
+
+		INT& negate() { _sign = -_sign; };
 
 
-
-
-};
-
+	private:
+			int _sign{ 1 };
+			std::vector<typeUnit> _bits;
+	};
+	
+}
 
 #endif
-
-*/

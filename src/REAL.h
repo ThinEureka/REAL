@@ -294,7 +294,7 @@ namespace zju04nycs
 				Zero();
 				return *this;
 			}
-			//ÈçÔËĞĞÖÁ´Ë£¬ÔòÖµ²»ÎªÁã£¬¶ø±ØÓĞÏÂÏŞ£¬ÎŞĞèÅĞ¶Ï½çÏŞ
+			//å¦‚è¿è¡Œè‡³æ­¤ï¼Œåˆ™å€¼ä¸ä¸ºé›¶ï¼Œè€Œå¿…æœ‰ä¸‹é™ï¼Œæ— éœ€åˆ¤æ–­ç•Œé™
 			int nH = Head();
 			while( !ce(nH-1))
 			{
@@ -932,7 +932,7 @@ namespace zju04nycs
 		void AddLink(typeLink L, int nPos)
 		{
 
-			//Ö»º¯ÊıÖ»ÔÚ³Ë·¨ÖĞÊ¹ÓÃ£¬¹ÊÒÑÈ·¶¨·¶Î§£¬Î»ÊıÄÜÂú×ãĞèÇó¡£
+			//åªå‡½æ•°åªåœ¨ä¹˜æ³•ä¸­ä½¿ç”¨ï¼Œæ•…å·²ç¡®å®šèŒƒå›´ï¼Œä½æ•°èƒ½æ»¡è¶³éœ€æ±‚ã€‚
 			typeLink LSum = 0;
 			typeLink L1 = ce(nPos);
 			typeLink L2 = static_cast<typeLink>( static_cast<typeUnit>(L) );
@@ -957,8 +957,8 @@ namespace zju04nycs
 					break;
 				}
 			}
-			//ÒÑÈ·¶¨·¶Î§£¬²»»á½øÎ»
-			//ÔİÊ±²»µ÷ÕûHeadÓëFeet
+			//å·²ç¡®å®šèŒƒå›´ï¼Œä¸ä¼šè¿›ä½
+			//æš‚æ—¶ä¸è°ƒæ•´Headä¸Feet
 
 		};
 
