@@ -12,6 +12,57 @@ std::vector<INT::typeChunk>&& chunksSubtract(const std::vector<INT::typeChunk> c
 
 int bitsCompare(const INT& v1, int leadBit1, const INT& v2, int leadBit2, int numberBits);
 
+bool isDigit(char c, int base, int& digitValue);
+
+void INT::setValueWithString(const std::string& str, int base) {
+	assert(base >= 2 && base <= 35);
+
+	if (str.size() == 0) {
+		clear();
+	}
+	else {
+		_sign = 1;
+		size_t index = 0;
+		enum state {
+			init,
+			set_digit
+		};
+
+		state s = state::init;
+		int digitValue;
+		while (index < str.size()) {
+			char c = str[index++];
+			switch (s)
+			{
+			case init:
+				if (c == '-') {
+					_sign = -1;
+					s = set_digit;
+				}
+				else if (c == '+') {
+					_sign = 1;
+					s = set_digit;
+				}
+				else if (c == ' ' || c == '\t' || c == '\n') {
+					continue;
+				}
+				break;
+			case set_digit:
+				if (!isDigit(c, base, digitValue)) {
+					return;
+				}
+				else {
+					*this *= INT(base);
+					*this += INT(digitValue);
+				}
+				break;
+			default:
+				break;
+			}
+		}
+	}
+}
+
 int INT::bit(size_t pos) const {
 	if (pos >= _chunks.size() * INT::s_numBitsOfChunk) {
 		return 0;
@@ -258,7 +309,7 @@ const INT&& zju04nycs::operator * (const INT& v1, const INT& v2) {
 				carry = product >> INT::s_numBitsOfChunk;
 			}
 		}
-		INT v = INT(v1._sign * v2._sign, std::move(chunks));
+		INT v = INT(v1._sign == v2._sign ? 1 : -1, std::move(chunks));
 		return std::move(v);
 	}
 }
@@ -270,6 +321,7 @@ const INT&& zju04nycs::divide (const INT& v1, const INT& v2,  INT& r) {
 		INT zero;
 		return std::move(zero);
 	}
+
 	int comResult = chunksCompare(v1._chunks, v2._chunks);
 	if (comResult == 0) {
 		INT v = 1;
@@ -506,3 +558,28 @@ int bitsCompare(const INT& v1, int leadBit1, const INT& v2, int leadBit2, int nu
 		++bitOffset;
 	}
 }
+
+ bool isDigit(char c, int base, int& digitValue) {
+	 digitValue = 0;
+	 if (c >= '0' && c <= '9') {
+		 digitValue = c - '0';
+		 if (digitValue < base) {
+			 return true;
+		 }
+	 }
+	 else if (c >= 'a' && c <= 'z') {
+		 digitValue = c - 'a';
+		 if (digitValue < base) {
+			 return true;
+		 }
+	 }
+	 else if (c >= 'A' && c <= 'Z') {
+		 digitValue = c - 'A';
+		 if (digitValue < base) {
+			 return true;
+		 }
+	 }
+
+	 return false;
+}
+
