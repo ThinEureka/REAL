@@ -13,6 +13,7 @@ std::vector<INT::typeChunk>&& chunksSubtract(const std::vector<INT::typeChunk> c
 int bitsCompare(const INT& v1, int leadBit1, const INT& v2, int leadBit2, int numberBits);
 
 bool isDigit(char c, int base, int& digitValue);
+char chunkToDigit(INT::typeChunk chunk, int base);
 
 void INT::setValueWithString(const std::string& str, int base) {
 	assert(base >= 2 && base <= 35);
@@ -60,6 +61,42 @@ void INT::setValueWithString(const std::string& str, int base) {
 				break;
 			}
 		}
+	}
+}
+
+const std::string&& INT::toString(int base = 10) const {
+	assert(base >= 2 && base <= 35);
+	std::string str;
+	if (_sign < 0) {
+		str += '-';
+	}
+
+	if (_chunks.size() == 0) {
+		str += '0';
+		return std::move(str);
+	}
+
+	if (_chunks[0] < base) {
+		str += chunkToDigit(_chunks[0], base);
+		return std::move(str);
+	}
+
+	INT r;
+	INT n = *this;
+	INT d = base;
+
+	while (n >= d) {
+		n = divide(n, d, r);
+		if (r._chunks.size() == 0) {
+			str += '0';
+		}
+		else {
+			str += chunkToDigit(r._chunks[0], base);
+		}
+	}
+
+	if (n._chunks.size() > 0) {
+		str += chunkToDigit(n._chunks[0], base);
 	}
 }
 
@@ -568,18 +605,31 @@ int bitsCompare(const INT& v1, int leadBit1, const INT& v2, int leadBit2, int nu
 		 }
 	 }
 	 else if (c >= 'a' && c <= 'z') {
-		 digitValue = c - 'a';
+		 digitValue = 10 + c - 'a';
 		 if (digitValue < base) {
 			 return true;
 		 }
 	 }
 	 else if (c >= 'A' && c <= 'Z') {
-		 digitValue = c - 'A';
+		 digitValue = 10 + c - 'A';
 		 if (digitValue < base) {
 			 return true;
 		 }
 	 }
 
 	 return false;
+}
+
+char chunkToDigit(INT::typeChunk chunk, int base) {
+	if (chunk >= 0 && chunk < base) {
+		if (chunk >= 0 && chunk < 10) {
+			return '0' + chunk;
+		}
+		else
+		{
+			return chunk - 10 + 'A';
+		}
+	}
+	return '#';
 }
 

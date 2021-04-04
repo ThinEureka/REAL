@@ -32,7 +32,6 @@ namespace zju04nycs {
 			if (v != 0) {
 				_sign = v > 0 ? 1 : -1;
 				INT::typeLink x = std::abs(v);
-
 				INT::typeChunk chunk = x;
 				_chunks.push_back(chunk);
 				INT::typeChunk chunkHigher = x >> INT::s_numBitsOfChunk;
