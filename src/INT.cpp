@@ -64,6 +64,100 @@ void INT::setValueWithString(const std::string& str, int base) {
 	}
 }
 
+INT::typeChunkSigned INT::toChunkSigned(bool& isTruncated) const {
+	if (_chunks.size() == 0) {
+		isTruncated = false;
+		return 0;
+	}
+
+	auto tailChunk = _chunks[0];
+	INT::typeChunk signMask = 1 << (INT::s_numBitsOfChunk - 1);
+	INT::typeChunk valueMask = ~signMask;
+	INT::typeChunkSigned  result = tailChunk & valueMask;
+
+	if (_chunks.size() == 1) {
+		if (_sign > 0) {
+			isTruncated = (signMask & tailChunk);
+			return  result;
+		}
+		else
+		{
+			if (!(signMask & tailChunk)) {
+				isTruncated = false;
+				return -result;
+			}
+			else {
+				isTruncated = result > 0;
+				if (isTruncated) {
+					return -result;
+				}
+				else {
+					INT::typeChunk limitValue = 1 << (s_numBitsOfChunk - 1);
+					return static_cast<INT::typeChunkSigned>(limitValue);
+				}
+			}
+		}
+	}
+	else {
+		isTruncated = true;
+		return _sign ? result : -result;
+	}
+
+	return result;
+}
+
+INT::typeLinkSigned INT::toLinkSigned(bool& isTruncated) const {
+	if (_chunks.size() == 0) {
+		isTruncated = false;
+		return 0;
+	}
+
+	if (_chunks.size() == 1) {
+		isTruncated = false;
+		INT::typeLinkSigned result = _chunks[0];
+		return _sign > 0 ? result : -result;
+	}
+
+	INT::typeLink lowChunk = _chunks[0];
+	INT::typeChunk highChunk = _chunks[1];
+	INT::typeChunk signMask = 1 << (INT::s_numBitsOfChunk - 1);
+	INT::typeChunk valueMask = ~signMask;
+	INT::typeLinkSigned highChunkMask = highChunk & valueMask;
+
+	INT::typeLinkSigned result = highChunkMask << INT::s_numBitsOfChunk;
+	result += lowChunk;
+
+	if (_chunks.size() == 2) {
+		if (_sign) {
+			isTruncated = highChunk & signMask;
+			return result;
+		} 
+		else {
+			if (!(signMask & highChunk)) {
+				isTruncated = false;
+				return -result;
+			}
+			else {
+				isTruncated = result > 0;
+				if (isTruncated) {
+					return -result;
+				}
+				else {
+					INT::typeLink limitValue = 1;
+					limitValue <<= (s_numBitsOfChunk * 2 - 1);
+					return static_cast<INT::typeChunkSigned>(limitValue);
+				}
+			}
+		}
+	}
+	else {
+		isTruncated = true;
+		return _sign ? result : -result;
+	}
+
+	return result;
+}
+
 const std::string&& INT::toString(int base = 10) const {
 	assert(base >= 2 && base <= 35);
 	std::string str;

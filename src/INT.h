@@ -13,7 +13,7 @@ namespace zju04nycs {
 	public:
 		typedef unsigned __int64 typeLink;
 		typedef unsigned __int32 typeChunk;
-		typedef __int64 typeLinkSinged;
+		typedef __int64 typeLinkSigned;
 		typedef __int32 typeChunkSigned;
 
 		static const typeLink s_numBitsOfChunk = 32;
@@ -21,14 +21,17 @@ namespace zju04nycs {
 
 	public:
 		INT() {};
-		INT(int v) {
+		INT(const INT& v) :_chunks(v._chunks), _sign(v._sign) {};
+		INT(INT&& v) noexcept :_chunks(std::move(v._chunks)), _sign(v._sign) {};
+
+		INT(INT::typeChunkSigned v) {
 			if (v != 0) {
 				_sign = v > 0 ? 1 : -1;
-				_chunks.push_back(v);
+				_chunks.push_back(std::abs(v));
 			}
 		}
 
-		INT(INT::typeLinkSinged v) {
+		INT(INT::typeLinkSigned v) {
 			if (v != 0) {
 				_sign = v > 0 ? 1 : -1;
 				INT::typeLink x = std::abs(v);
@@ -41,12 +44,28 @@ namespace zju04nycs {
 			}
 		}
 
+		INT(int sign, INT::typeChunk v) {
+			if (v != 0) {
+				_sign = sign;
+				_chunks.push_back(v);
+			}
+		}
+
+		INT(int sign, INT::typeLink v) {
+			if (v != 0) {
+				_sign = sign;
+				INT::typeChunk x = v;
+				_chunks.push_back(v);
+				INT::typeChunk chunkHigher = x >> INT::s_numBitsOfChunk;
+				if (chunkHigher > 0) {
+					_chunks.push_back(chunkHigher);
+				}
+			}
+		}
+
 		explicit INT(const std::string& str, int base = 10) {
 			setValueWithString(str, 10);
 		}
-
-		INT(const INT& v) :_chunks(v._chunks), _sign(v._sign) {};
-		INT(INT&& v) noexcept :_chunks(std::move(v._chunks)), _sign(v._sign) {};
 
 		INT(int sign, const std::vector<typeChunk>& bits) : _sign(sign), _chunks(_chunks) {
 			normalize();
@@ -56,8 +75,43 @@ namespace zju04nycs {
 			normalize();
 		};
 
+		int toInt(bool& isTruncated) const { return toChunkSigned(isTruncated); }
+		int toUint(bool& isTruncated) const { return toChunk(isTruncated); }
+
+		long long toLongLong(bool& isTruncated) const { return toLinkSigned(isTruncated); }
+		int toUlonglong(bool& isTruncated) const { return toLink(isTruncated); }
+
 		const std::string&& toString(int base = 10) const;
 		void setValueWithString(const std::string& str, int base = 10);
+
+		INT::typeChunk toChunk(bool& isTruncated) const {
+			isTruncated = _chunks.size() > 1;
+			if (_chunks.size() == 0) {
+				return 0;
+			}
+
+			return _chunks[0];
+		}
+		INT::typeChunkSigned toChunkSigned(bool& isTruncated) const;
+
+		INT::typeLink toLink(bool& isTruncated) const {
+			isTruncated = _chunks.size() > 2;
+			
+			if (_chunks.size() == 0) {
+				return 0;
+			}
+
+			INT::typeLink result = _chunks[0];
+			if (_chunks.size() > 1) {
+				INT::typeLink higherChunk = _chunks[1];
+				higherChunk <<= INT::s_numBitsOfChunk;
+				result += higherChunk;
+			}
+
+			return result;
+		}
+
+		INT::typeLinkSigned toLinkSigned(bool& isTruncated) const;
 
 	public:
 		INT& operator = (const INT& v) {
