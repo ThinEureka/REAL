@@ -3,76 +3,28 @@
 
 using namespace zju04nycs;
 
-int chunksCompare(const std::vector<INT::typeChunk> chunks1, const std::vector<INT::typeChunk> chunks2);
-std::vector<INT::typeChunk>&& chunksShiftRight(const std::vector<INT::typeChunk> chunks1, unsigned int pos);
-std::vector<INT::typeChunk>&& chunksShiftLeft(const std::vector<INT::typeChunk> chunks1, unsigned int pos);
+int chunksCompare(const std::vector<INT::typeChunk>& chunks1, const std::vector<INT::typeChunk>& chunks2);
+std::vector<INT::typeChunk>&& chunksShiftRight(const std::vector<INT::typeChunk>& chunks1, unsigned int pos);
+std::vector<INT::typeChunk>&& chunksShiftLeft(const std::vector<INT::typeChunk>& chunks1, unsigned int pos);
 
-std::vector<INT::typeChunk>&& chunksPlus(const std::vector<INT::typeChunk> chunks1, const std::vector<INT::typeChunk> chunks2);
-std::vector<INT::typeChunk>&& chunksSubtract(const std::vector<INT::typeChunk> chunks1, const std::vector<INT::typeChunk> chunks2);
+std::vector<INT::typeChunk>&& chunksPlus(const std::vector<INT::typeChunk>& chunks1, const std::vector<INT::typeChunk>& chunks2);
+std::vector<INT::typeChunk>&& chunksSubtract(const std::vector<INT::typeChunk>& chunks1, const std::vector<INT::typeChunk>& chunks2);
 
 int bitsCompare(const INT& v1, int leadBit1, const INT& v2, int leadBit2, int numberBits);
 
 bool isDigit(char c, int base, int& digitValue);
 char chunkToDigit(INT::typeChunk chunk, int base);
 
-void INT::setValueWithString(const std::string& str, int base) {
-	assert(base >= 2 && base <= 35);
-
-	if (str.size() == 0) {
-		clear();
-	}
-	else {
-		_sign = 1;
-		size_t index = 0;
-		enum state {
-			init,
-			set_digit
-		};
-
-		state s = state::init;
-		int digitValue;
-		while (index < str.size()) {
-			char c = str[index++];
-			switch (s)
-			{
-			case init:
-				if (c == '-') {
-					_sign = -1;
-					s = set_digit;
-				}
-				else if (c == '+') {
-					_sign = 1;
-					s = set_digit;
-				}
-				else if (c == ' ' || c == '\t' || c == '\n') {
-					continue;
-				}
-				break;
-			case set_digit:
-				if (!isDigit(c, base, digitValue)) {
-					return;
-				}
-				else {
-					*this *= INT(base);
-					*this += INT(digitValue);
-				}
-				break;
-			default:
-				break;
-			}
-		}
-	}
-}
-
 INT::typeChunkSigned INT::toChunkSigned(bool& isTruncated) const {
+	static const INT::typeChunk signMask = 1 << (INT::s_numBitsOfChunk - 1);
+	static const INT::typeChunk valueMask = ~signMask;
+
 	if (_chunks.size() == 0) {
 		isTruncated = false;
 		return 0;
 	}
 
 	auto tailChunk = _chunks[0];
-	INT::typeChunk signMask = 1 << (INT::s_numBitsOfChunk - 1);
-	INT::typeChunk valueMask = ~signMask;
 	INT::typeChunkSigned  result = tailChunk & valueMask;
 
 	if (_chunks.size() == 1) {
@@ -82,7 +34,7 @@ INT::typeChunkSigned INT::toChunkSigned(bool& isTruncated) const {
 		}
 		else
 		{
-			if (!(signMask & tailChunk)) {
+			if (!(tailChunk & signMask)) {
 				isTruncated = false;
 				return -result;
 			}
@@ -107,6 +59,9 @@ INT::typeChunkSigned INT::toChunkSigned(bool& isTruncated) const {
 }
 
 INT::typeLinkSigned INT::toLinkSigned(bool& isTruncated) const {
+	static const INT::typeChunk signMask = 1 << (INT::s_numBitsOfChunk - 1);
+	static const INT::typeChunk valueMask = ~signMask;
+
 	if (_chunks.size() == 0) {
 		isTruncated = false;
 		return 0;
@@ -120,20 +75,18 @@ INT::typeLinkSigned INT::toLinkSigned(bool& isTruncated) const {
 
 	INT::typeLink lowChunk = _chunks[0];
 	INT::typeChunk highChunk = _chunks[1];
-	INT::typeChunk signMask = 1 << (INT::s_numBitsOfChunk - 1);
-	INT::typeChunk valueMask = ~signMask;
-	INT::typeLinkSigned highChunkMask = highChunk & valueMask;
+	INT::typeLinkSigned highChunkMasked = highChunk & valueMask;
 
-	INT::typeLinkSigned result = highChunkMask << INT::s_numBitsOfChunk;
+	INT::typeLinkSigned result = highChunkMasked << INT::s_numBitsOfChunk;
 	result += lowChunk;
 
 	if (_chunks.size() == 2) {
-		if (_sign) {
+		if (_sign > 0) {
 			isTruncated = highChunk & signMask;
 			return result;
 		} 
 		else {
-			if (!(signMask & highChunk)) {
+			if (!(highChunk & signMask)) {
 				isTruncated = false;
 				return -result;
 			}
@@ -170,7 +123,9 @@ const std::string&& INT::toString(int base = 10) const {
 		return std::move(str);
 	}
 
-	if (_chunks[0] < base) {
+	if (_chunks.size() == 1 && _chunks[0] < base) {
+		//TODO:
+		//optimize when size == 1
 		str += chunkToDigit(_chunks[0], base);
 		return std::move(str);
 	}
@@ -191,6 +146,56 @@ const std::string&& INT::toString(int base = 10) const {
 
 	if (n._chunks.size() > 0) {
 		str += chunkToDigit(n._chunks[0], base);
+	}
+}
+
+void INT::setValueWithString(const std::string& str, int base) {
+	assert(base >= 2 && base <= 35);
+
+	clear();
+	if (str.size() == 0) {
+		return;
+	}
+
+	_sign = 1;
+	size_t index = 0;
+	enum state {
+		init,
+		set_digit
+	};
+
+	state s = state::init;
+	int digitValue;
+	while (index < str.size()) {
+		char c = str[index++];
+		switch (s)
+		{
+		case init:
+			if (c == '-') {
+				_sign = -1;
+				s = set_digit;
+			}
+			else if (c == '+') {
+				_sign = 1;
+				s = set_digit;
+			}
+			else if (c == ' ' || c == '\t' || c == '\n') {
+				continue;
+			}
+			break;
+		case set_digit:
+			if (!isDigit(c, base, digitValue)) {
+				normalize();
+				return;
+			}
+			else {
+				*this *= INT(base);
+				*this += INT(digitValue);
+			}
+			break;
+		default:
+			break;
+		}
 	}
 }
 
@@ -233,15 +238,16 @@ int INT::tailBit() const {
 
 	size_t chunkIndex = 0;
 	INT::typeChunk tailChunk = 0;
-	while (chunkIndex < _chunks.size()) {
+	while (chunkIndex < _chunks.size() - 1) {
 		tailChunk = _chunks[chunkIndex];
 		if (tailChunk != 0) {
 			break;
 		}
+		++chunkIndex;
 	}
 
 	int tailBitInChunk = 0;
-	while (tailBitInChunk != INT::s_numBitsOfChunk) {
+	while (tailBitInChunk < INT::s_numBitsOfChunk - 1) {
 		INT::typeChunk mask = 1;
 		mask <<= tailBitInChunk;
 		if (tailChunk & mask) {
@@ -258,10 +264,6 @@ int INT::tailBit() const {
 void INT::setBitWithoutNormalization(size_t bitPos, bool v) {
 	size_t chunkIndex = bitPos / s_numBitsOfChunk;
 	size_t bitIndex = bitPos - chunkIndex * s_numBitsOfChunk;
-
-	if (bitIndex > 0) {
-		chunkIndex++;
-	}
 
 	if (chunkIndex + 1 > _chunks.size()) {
 		_chunks.resize(chunkIndex + 1);
@@ -297,8 +299,12 @@ bool zju04nycs::operator == (const INT& v1, const INT& v2) {
 }
 
 int zju04nycs::compare(const INT& v1, const INT& v2) {
+	if (&v1 == &v2) {
+		return 0;
+	}
+
 	if (v1._sign != v2._sign) {
-		return v1._sign - v2._sign;
+		return v1._sign > v2._sign ? 1 : -1;
 	}
 
 	auto chunksResult = chunksCompare(v1._chunks, v2._chunks);
@@ -434,8 +440,7 @@ const INT&& zju04nycs::operator * (const INT& v1, const INT& v2) {
 		for (size_t i = 0; i < v2._chunks.size(); ++i) {
 			INT::typeChunk carry = 0;
 			for (size_t j = 0; j < v1._chunks.size(); ++j) {
-				INT::typeLink product = INT::typeLink(v1._chunks[j]) * INT::typeLink(v2._chunks[i]);
-				product += carry;
+				INT::typeLink product = INT::typeLink(v1._chunks[j]) * INT::typeLink(v2._chunks[i]) + carry;
 				chunks[i + j] += INT::typeChunk(product);
 				carry = product >> INT::s_numBitsOfChunk;
 			}
@@ -487,7 +492,7 @@ const INT&& zju04nycs::divide (const INT& v1, const INT& v2,  INT& r) {
 		INT q;
 		q._sign = v1._sign == v2._sign ? 1 : -1;
 		//leadBit2 must be less or equal to leadBit1
-		while (leadBitN >= leadBitD) {
+		while (true) {
 			if (bitsCompare(*pN, leadBitN, *pD, leadBitD, leadBitD + 1) >= 0) {
 				q.setBitWithoutNormalization(leadBitN - leadBitD, 1);
 				bitsSubtract(*pN, leadBitN - leadBitD, *pD, 0, leadBitD + 1);
@@ -512,7 +517,7 @@ const INT&& zju04nycs::divide (const INT& v1, const INT& v2,  INT& r) {
 	}
 }
 
-int chunksCompare(const std::vector<INT::typeChunk> chunks1, const std::vector<INT::typeChunk> chunks2) {
+int chunksCompare(const std::vector<INT::typeChunk>& chunks1, const std::vector<INT::typeChunk>& chunks2) {
 	int size1 = chunks1.size();
 	int size2 = chunks2.size();
 	if (size1 != size2) {
@@ -533,7 +538,7 @@ int chunksCompare(const std::vector<INT::typeChunk> chunks1, const std::vector<I
 	return 0;
 }
 
-std::vector<INT::typeChunk>&& chunksShiftRight(const std::vector<INT::typeChunk> chunks1, unsigned int pos) {
+std::vector<INT::typeChunk>&& chunksShiftRight(const std::vector<INT::typeChunk>& chunks1, unsigned int pos) {
 	std::vector<INT::typeChunk> chunks;
 	if (chunks1.size() == 0) {
 		return std::move(chunks);
@@ -541,7 +546,7 @@ std::vector<INT::typeChunk>&& chunksShiftRight(const std::vector<INT::typeChunk>
 
 	unsigned int shiftChunks = pos / INT::s_numBitsOfChunk;
 	unsigned int shiftBits = pos - shiftChunks * INT::s_numBitsOfChunk;
-	unsigned int crossShiftBits = INT::s_numBitsOfChunk - shiftChunks;
+	unsigned int crossShiftBits = INT::s_numBitsOfChunk - shiftBits;
 
 	if (chunks1.size() <= shiftChunks) {
 		return std::move(chunks);
@@ -556,7 +561,7 @@ std::vector<INT::typeChunk>&& chunksShiftRight(const std::vector<INT::typeChunk>
 		return std::move(chunks);
 	}
 
-	INT::typeChunk mask = (1 << (shiftBits + 1)) - 1;
+	INT::typeChunk mask = (1 << shiftBits) - 1;
 	for (size_t i = 0; i < chunks.size(); ++i) {
 		chunks[i] >>= shiftBits;
 		if (i < chunks.size() - 1) {
@@ -567,7 +572,7 @@ std::vector<INT::typeChunk>&& chunksShiftRight(const std::vector<INT::typeChunk>
 	return std::move(chunks);
 }
 
-std::vector<INT::typeChunk>&& chunksShiftLeft(const std::vector<INT::typeChunk> chunks1, unsigned int pos) {
+std::vector<INT::typeChunk>&& chunksShiftLeft(const std::vector<INT::typeChunk>& chunks1, unsigned int pos) {
 	std::vector<INT::typeChunk> chunks;
 	if (chunks1.size() == 0) {
 		return std::move(chunks);
@@ -575,7 +580,7 @@ std::vector<INT::typeChunk>&& chunksShiftLeft(const std::vector<INT::typeChunk> 
 
 	unsigned int shiftChunks = pos / INT::s_numBitsOfChunk;
 	unsigned int shiftBits = pos - shiftChunks * INT::s_numBitsOfChunk;
-	unsigned int crossShiftBits = INT::s_numBitsOfChunk - shiftChunks;
+	unsigned int crossShiftBits = INT::s_numBitsOfChunk - shiftBits;
 
 	chunks.resize(chunks1.size() + shiftChunks);
 	for (size_t i = 0; i < shiftChunks; ++i) {
@@ -590,9 +595,9 @@ std::vector<INT::typeChunk>&& chunksShiftLeft(const std::vector<INT::typeChunk> 
 		return std::move(chunks);
 	}
 
-	INT::typeChunk mask = !((1 << (shiftBits + 1)) - 1);
+	INT::typeChunk mask = ((1 << shiftBits) - 1) << crossShiftBits;
 	for (size_t i = chunks.size() - 1 ; i >= shiftChunks; --i) {
-		INT::typeChunk shiftOutChunk = ((chunks[i] & mask) >> shiftBits);
+		INT::typeChunk shiftOutChunk = ((chunks[i] & mask) >> crossShiftBits);
 		if (shiftOutChunk > 0) {
 			if (i < chunks.size() - 1) {
 				chunks[i + 1] |= shiftOutChunk;
@@ -607,8 +612,8 @@ std::vector<INT::typeChunk>&& chunksShiftLeft(const std::vector<INT::typeChunk> 
 	return std::move(chunks);
 }
 
-std::vector<INT::typeChunk>&& chunksPlus(const std::vector<INT::typeChunk> chunks1,
-	const std::vector<INT::typeChunk> chunks2) {
+std::vector<INT::typeChunk>&& chunksPlus(const std::vector<INT::typeChunk>& chunks1,
+	const std::vector<INT::typeChunk>& chunks2) {
 	auto pChunksLeft = &chunks1;
 	auto pChunksRight = &chunks2;
 	if (pChunksRight->size() > pChunksLeft->size()) {
@@ -635,13 +640,16 @@ std::vector<INT::typeChunk>&& chunksPlus(const std::vector<INT::typeChunk> chunk
 	return std::move(chunks);
 }
 
-std::vector<INT::typeChunk>&& chunksSubtract(const std::vector<INT::typeChunk> chunks1, const std::vector<INT::typeChunk> chunks2) {
+std::vector<INT::typeChunk>&& chunksSubtract(const std::vector<INT::typeChunk>& chunks1, const std::vector<INT::typeChunk>& chunks2) {
 	std::vector<INT::typeChunk> chunks;
 	chunks.resize(chunks1.size());
 	INT::typeLink borrow = 0;
-	for (size_t i = 0; i < chunks.size(); ++i) {
+	for (size_t i = 0; i < chunks1.size(); ++i) {
 		INT::typeLink chunk1 = chunks1[i];
-		INT::typeLink chunk2 = chunks2[i];
+		INT::typeLink chunk2 = 0;
+		if (i < chunks2.size()) {
+			chunk2 = chunks2[i];
+		}
 		if (chunk1 >= chunk2 + borrow) {
 			chunks[i] = chunk1 - chunk2 - borrow;
 			borrow = 0;
@@ -658,14 +666,12 @@ std::vector<INT::typeChunk>&& chunksSubtract(const std::vector<INT::typeChunk> c
 int bitsCompare(const INT& v1, int leadBit1, const INT& v2, int leadBit2, int numberBits) {
 	int leadOffset = 0;
 	while (leadOffset < numberBits) {
-		int bit1 = v1.bit(v1.bit(leadBit1 + leadOffset));
-		int bit2 = v2.bit(v2.bit(leadBit2 + leadOffset));
+		int bit1 = v1.bit(leadBit1 - leadOffset);
+		int bit2 = v2.bit(leadBit2 - leadOffset);
 		if (bit1 != bit2) {
 			return bit1 > bit2 ? 1 : -1;
 		}
-		else {
-			++leadOffset;
-		}
+		++leadOffset;
 	}
 
 	return 0;
@@ -682,7 +688,7 @@ int bitsCompare(const INT& v1, int leadBit1, const INT& v2, int leadBit2, int nu
 			borrow = 0;
 		}
 		else {
-			v1.setBitWithoutNormalization(tailBit1 + bitOffset, bit1 + 1 - bit2 - borrow);
+			v1.setBitWithoutNormalization(tailBit1 + bitOffset, bit1 + 2 - bit2 - borrow);
 			borrow = 1;
 		}
 

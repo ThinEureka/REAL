@@ -35,11 +35,11 @@ namespace zju04nycs {
 			if (v != 0) {
 				_sign = v > 0 ? 1 : -1;
 				INT::typeLink x = std::abs(v);
-				INT::typeChunk chunk = x;
-				_chunks.push_back(chunk);
-				INT::typeChunk chunkHigher = x >> INT::s_numBitsOfChunk;
-				if (chunkHigher > 0) {
-					_chunks.push_back(chunkHigher);
+				INT::typeChunk lowChunk = x;
+				_chunks.push_back(lowChunk);
+				INT::typeChunk highChunk = x >> INT::s_numBitsOfChunk;
+				if (highChunk > 0) {
+					_chunks.push_back(highChunk);
 				}
 			}
 		}
@@ -51,27 +51,35 @@ namespace zju04nycs {
 			}
 		}
 
-		INT(int sign, INT::typeLink v) {
+		INT(int sign, INT::typeChunkSigned v) {
 			if (v != 0) {
-				_sign = sign;
-				INT::typeChunk x = v;
-				_chunks.push_back(v);
-				INT::typeChunk chunkHigher = x >> INT::s_numBitsOfChunk;
-				if (chunkHigher > 0) {
-					_chunks.push_back(chunkHigher);
+				_sign = v > 0 ? sign : - sign;
+				_chunks.push_back(std::abs( v));
+			}
+		}
+
+		INT(int sign, INT::typeLinkSigned v) {
+			if (v != 0) {
+				_sign = v > 0 ? sign : -sign;
+				INT::typeLink x = std::abs(v);
+				INT::typeChunk lowChunk = x;
+				_chunks.push_back(lowChunk);
+				INT::typeChunk highChunk = x >> INT::s_numBitsOfChunk;
+				if (highChunk > 0) {
+					_chunks.push_back(highChunk);
 				}
 			}
 		}
 
 		explicit INT(const std::string& str, int base = 10) {
-			setValueWithString(str, 10);
+			setValueWithString(str, base);
 		}
 
-		INT(int sign, const std::vector<typeChunk>& bits) : _sign(sign), _chunks(_chunks) {
+		INT(int sign, const std::vector<typeChunk>& chunks) : _sign(sign), _chunks(chunks) {
 			normalize();
 		};
 
-		INT(int sign, std::vector<typeChunk>&& bits) : _sign(sign), _chunks(std::move(bits)) {
+		INT(int sign, std::vector<typeChunk>&& chunks) : _sign(sign), _chunks(std::move(chunks)) {
 			normalize();
 		};
 
@@ -89,23 +97,21 @@ namespace zju04nycs {
 			if (_chunks.size() == 0) {
 				return 0;
 			}
-
 			return _chunks[0];
 		}
 		INT::typeChunkSigned toChunkSigned(bool& isTruncated) const;
 
 		INT::typeLink toLink(bool& isTruncated) const {
 			isTruncated = _chunks.size() > 2;
-			
 			if (_chunks.size() == 0) {
 				return 0;
 			}
 
 			INT::typeLink result = _chunks[0];
 			if (_chunks.size() > 1) {
-				INT::typeLink higherChunk = _chunks[1];
-				higherChunk <<= INT::s_numBitsOfChunk;
-				result += higherChunk;
+				INT::typeLink highChunk = _chunks[1];
+				highChunk <<= INT::s_numBitsOfChunk;
+				result += highChunk;
 			}
 
 			return result;
@@ -120,7 +126,7 @@ namespace zju04nycs {
 			return *this;
 		}
 
-		INT& operator = (INT&& v)noexcept {
+		INT& operator = (INT&& v) noexcept {
 			_chunks = std::move(v._chunks);
 			_sign = v._sign;
 			return *this;
@@ -128,6 +134,8 @@ namespace zju04nycs {
 
 		bool isZero() const { return _chunks.size() == 0; }
 		void clear() { _sign = 1; _chunks.clear(); }
+		bool isPositive() const { return _sign > 0 && _chunks.size() > 0; }
+		bool isNegative() const { return _sign < 0;  }
 
 		int bit(size_t pos) const;
 		void setBit(size_t bitPos, bool v) {
@@ -152,7 +160,7 @@ namespace zju04nycs {
 
 		friend bool operator == (const INT& v1, const INT& v2);
 		friend bool operator != (const INT& v1, const INT& v2) {
-			return v1 != v2;
+			return !(v1 == v2);
 		}
 
 		friend bool operator < (const INT& v1, const INT& v2) {
@@ -246,7 +254,6 @@ namespace zju04nycs {
 		int _sign{ 1 };
 		std::vector<typeChunk> _chunks;
 	};
-	
 }
 
 #endif
