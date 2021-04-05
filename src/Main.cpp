@@ -607,6 +607,26 @@ void testInt() {
 	cout << "x6:" << x6_s << endl;
 	assert(x6_s == s6);
 	cout << "long string constructor test 6 passed" << endl;
+
+	INT N = INT("100");
+	INT sum;
+	for (INT i = 0; i <= N; i = i + 1) {
+		sum += i;
+	}
+	auto sum_s = sum.toString();
+	std::cout << "sum:" << sum_s << std::endl;
+	assert(sum == N * (N + 1) / 2);
+	cout << "sum test 1 passed" << endl;
+
+	INT N2 = INT("200000");
+	INT sum2;
+	for (INT i = 0; i <= N2; i = i + 1) {
+		sum2 += i;
+	}
+	auto sum2_s = sum2.toString();
+	std::cout << "sum2:" << sum2_s << std::endl;
+	assert(sum2 == N2 * (N2 + 1) / 2);
+	cout << "sum test 2 passed" << endl;
 }
 
 int main()
