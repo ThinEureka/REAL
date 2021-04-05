@@ -597,8 +597,8 @@ void testInt() {
 	std::cout << "x4*x5:" << (x4 * x5).toString() << std::endl;
 	std::cout << "x5*x4:" << (x5 * x4).toString() << std::endl;
 
-	assert(x1 * x2 == x2 * x1);
-	assert((x1 * x2).toString() == (x2 * x1).toString());
+	assert(x4 * x5 == x5 * x4);
+	assert((x4 * x5).toString() == (x5 * x4).toString());
 	cout << "multiplication communication law test passed" << std::endl;
 
 	std::string s6 = "400412878166003164546735534092609172319140330852536603355429981136254443797343719815103359446869847213482227876740797726949481901457564006563326790056796257840594244649848624543981509868730249924";
