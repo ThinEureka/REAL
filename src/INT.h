@@ -275,7 +275,7 @@ class INT {
 		}
 		INT& operator *= (const INT& v1) {
 			INT product;
-			return *this = subtract(*this, v1, product);
+			return *this = multiply(*this, v1, product);
 		}
 		INT& operator /= (const INT& v1) {
 			INT q,r;
