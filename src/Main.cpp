@@ -549,6 +549,38 @@ void EvaluatePi()
 	REAL::DisWidth(W+1);
 	cout<<"Pi("<<W-2<<")="<<Pi<<endl;
 }
+
+void testInt() {
+	INT n;
+	assert(n.isZero());
+	assert(!n.isPositive());
+	assert(!n.isNegative());
+	cout << "111111" << std::endl;
+
+	INT one = 1;
+	INT one_ = INT("1");
+	assert(one == one_);
+	assert(!(one != one_));
+	cout << "222222" << std::endl;
+
+	std::string s1 = "123456789123456789123456789123456789";
+	INT x1 = INT(s1);
+	assert(x1.toString() == s1);
+	cout << "33333333" << std::endl;
+
+	std::string s2 = "324324324324243343243243242342432423432434";
+	INT x2 = INT(s2);
+	assert(x2.toString() == s2);
+
+	assert(x1 * x2 == x2 * x1);
+	assert((x1 * x2).toString() == (x2 * x1).toString());
+	cout << "444444444444" << std::endl;
+	INT y = x1 * x2;
+	std::string m = y.toString();
+	cout << m << std::endl;
+	
+}
+
 int main()
 {
 	///	Test2();
@@ -559,7 +591,8 @@ int main()
 	//Test9();
 	//Test10();
 	//Test11();
-	EvaluatePi();
+	//EvaluatePi();
+	testInt();
 	return 0;
 	
 

@@ -11,19 +11,19 @@
 namespace zju04nycs {
 
 	class INT;
-	const INT&& operator & (const INT& v1, const INT& v2);
-	const INT&& operator | (const INT& v1, const INT& v2);
-	const INT&& operator ^ (const INT& v1, const INT& v2);
+	INT operator & (const INT& v1, const INT& v2);
+	INT operator | (const INT& v1, const INT& v2);
+	INT operator ^ (const INT& v1, const INT& v2);
 
-	const INT&& operator >> (const INT& v1, int pos);
-	const INT&& operator << (const INT& v1, int pos);
+	INT operator >> (const INT& v1, int pos);
+	INT operator << (const INT& v1, int pos);
 
-	const INT&& operator +(const INT& v1, const INT& v2);
-	const INT&& operator -(const INT& v1, const INT& v2);
-	const INT&& operator *(const INT& v1, const INT& v2);
-	const INT&& operator /(const INT& v1, const INT& v2);
-	const INT&& operator %(const INT& v1, const INT& v2);
-	const INT&& divide(const INT& v1, const INT& v2, INT& r);
+	INT operator +(const INT& v1, const INT& v2);
+	INT operator -(const INT& v1, const INT& v2);
+	INT operator *(const INT& v1, const INT& v2);
+	INT operator /(const INT& v1, const INT& v2);
+	INT operator %(const INT& v1, const INT& v2);
+	INT divide(const INT& v1, const INT& v2, INT& r);
 
 class INT {
 	public:
@@ -36,9 +36,10 @@ class INT {
 		static const typeLink s_borrowChunkValue = 1LL << INT::s_numBitsOfChunk;
 
 	public:
-		INT() {};
-		INT(const INT& v) :_chunks(v._chunks), _sign(v._sign) {};
-		INT(INT&& v) noexcept :_chunks(std::move(v._chunks)), _sign(v._sign) {};
+		INT();
+		INT(const INT& v);
+		INT(INT&& v) noexcept;
+		INT(const INT&& v) noexcept;
 
 		INT(INT::typeChunkSigned v) {
 			if (v != 0) {
@@ -105,7 +106,7 @@ class INT {
 		long long toLongLong(bool& isTruncated) const { return toLinkSigned(isTruncated); }
 		unsigned long long toUlonglong(bool& isTruncated) const { return toLink(isTruncated); }
 
-		const std::string&& toString(int base = 10) const;
+		std::string toString(int base = 10) const;
 		void setValueWithString(const std::string& str, int base = 10);
 
 		INT::typeChunk toChunk(bool& isTruncated) const {
@@ -136,17 +137,9 @@ class INT {
 		INT::typeLinkSigned toLinkSigned(bool& isTruncated) const;
 
 	public:
-		INT& operator = (const INT& v) {
-			_chunks = v._chunks;
-			_sign = v._sign;
-			return *this;
-		}
-
-		INT& operator = (INT&& v) noexcept {
-			_chunks = std::move(v._chunks);
-			_sign = v._sign;
-			return *this;
-		}
+		INT& operator = (const INT& v);
+		INT& operator = (INT&& v) noexcept;
+		INT& operator = (const INT&& v) noexcept;
 
 		bool isZero() const { return _chunks.size() == 0; }
 		void clear() { _sign = 1; _chunks.clear(); }
@@ -166,12 +159,12 @@ class INT {
 		INT& negate() { if (!isZero()) { _sign = -_sign; } return *this; };
 
 	public:
-		const INT&& operator - () const {
+		const INT operator - () const {
 			INT v = *this;
 			if (!v.isZero()) {
 				v._sign = -v._sign;
 			}
-			return std::move(v);
+			return v;
 		}
 
 		friend bool operator == (const INT& v1, const INT& v2);
@@ -192,26 +185,26 @@ class INT {
 			return compare(v1, v2) >= 0;
 		}
 
-		friend const INT&& operator & (const INT& v1, const INT& v2);
-		friend const INT&& operator | (const INT& v1, const INT& v2);
-		friend const INT&& operator ^ (const INT& v1, const INT& v2);
+		friend INT operator & (const INT& v1, const INT& v2);
+		friend INT operator | (const INT& v1, const INT& v2);
+		friend INT operator ^ (const INT& v1, const INT& v2);
 
-		friend const INT&& operator >> (const INT& v1, int pos);
-		friend const INT&& operator << (const INT& v1, int pos);
+		friend INT operator >> (const INT& v1, int pos);
+		friend INT operator << (const INT& v1, int pos);
 
-		friend const INT&& operator +(const INT& v1, const INT& v2);
-		friend const INT&& operator -(const INT& v1, const INT& v2);
-		friend const INT&& operator *(const INT& v1, const INT& v2);
-		friend const INT&& operator /(const INT& v1, const INT& v2) {
+		friend INT operator +(const INT& v1, const INT& v2);
+		friend INT operator -(const INT& v1, const INT& v2);
+		friend INT operator *(const INT& v1, const INT& v2);
+		friend INT operator /(const INT& v1, const INT& v2) {
 			INT r;
 			return divide(v1, v2, r);
 		}
-		friend const INT&& operator %(const INT& v1, const INT& v2) {
+		friend INT operator %(const INT& v1, const INT& v2) {
 			INT r;
 			divide(v1, v2, r);
-			return std::move(r);
+			return r;
 		}
-		friend const INT&& divide(const INT& v1, const INT& v2, INT& r);
+		friend INT divide(const INT& v1, const INT& v2, INT& r);
 
 		INT& operator &= (const INT& v1) {
 			return *this = *this & v1;
@@ -248,7 +241,7 @@ class INT {
 			divide(*this, v1, r);
 			return *this = std::move(r);
 		}
-		friend const INT&& divide(const INT& v1, const INT& v2, INT& r);
+		friend INT divide(const INT& v1, const INT& v2, INT& r);
 
 	private:
 		void normalize() {
