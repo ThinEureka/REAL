@@ -627,6 +627,18 @@ void testInt() {
 	std::cout << "sum2:" << sum2_s << std::endl;
 	assert(sum2 == N2 * (N2 + 1) / 2);
 	cout << "sum test 2 passed" << endl;
+
+	std::string s7 = "101010101010101101010010101";
+	INT x7 = INT(s7, 2);
+	auto x7_s = x7.toString(2);
+	cout << "x7:" << x7_s << std::endl;
+	assert(x7_s == s7);
+	cout << "base 2 string construtor test passed\n";
+
+	INT y7 = x7 ^ x7;
+	cout << "y7:" << y7.toString() << std::endl;
+	assert(y7.isZero());
+	cout << "xor test7 passed" << endl;
 }
 
 int main()
