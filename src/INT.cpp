@@ -492,6 +492,7 @@ INT& zju04nycs::multiply(const INT & v1, const INT & v2, INT & product) {
 		return product;
 	}
 	else {
+		product._sign = v1._sign == v2._sign ? 1 : -1;
 		for (size_t i = 0; i < v2._chunks.size(); ++i) {
 			INT::typeChunk carry = 0;
 			for (size_t j = 0; j < v1._chunks.size(); ++j) {
