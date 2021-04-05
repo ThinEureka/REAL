@@ -570,6 +570,13 @@ void testInt() {
 	assert(x1.toString() == s1);
 	cout << "33333333" << std::endl;
 
+	long long p = 123456789012345333LL;
+	x1 = INT(p);
+	sX1 = x1.toString();
+	std::cout << sX1 << std::endl;
+	std::cout << p << std::endl;
+	cout << "33333333aaaaaaaaaaaa" << std::endl;
+
 	s1 = "123456789012345353423423423423434";
 	x1 = INT(s1);
 	sX1 = x1.toString();

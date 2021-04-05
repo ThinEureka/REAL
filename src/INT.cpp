@@ -570,7 +570,7 @@ INT& zju04nycs::divide (const INT& v1, const INT& v2, INT& q, INT& r) {
 
 			r.normalize();
 			int comResult = chunksCompare(r._chunks, d._chunks);
-			if (comResult <= 0) {
+			if (comResult < 0) {
 				q.normalize();
 				return q;
 			}
