@@ -324,16 +324,6 @@ class INT {
 			_chunks[chunkIndex] = chunk;
 		}
 
-		void addChunkValue(size_t chunkIndex, INT::typeChunk chunk) {
-			if (chunkIndex >= _chunks.size()) {
-				_chunks.resize(chunkIndex + 1);
-				_chunks[chunkIndex] = chunk;
-			}
-			else {
-				_chunks[chunkIndex] += chunk;
-			}
-		}
-
 		void chunksPlus(const std::vector<INT::typeChunk>& chunks1, const std::vector<INT::typeChunk>& chunks2);
 		void chunksSubtract(const std::vector<INT::typeChunk>& chunks1, const std::vector<INT::typeChunk>& chunks2);
 
