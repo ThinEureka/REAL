@@ -111,7 +111,7 @@ INT::typeLinkSigned INT::toLinkSigned(bool& isTruncated) const {
 	return result;
 }
 
-const std::string&& INT::toString(int base = 10) const {
+const std::string&& INT::toString(int base) const {
 	assert(base >= 2 && base <= 35);
 	std::string str;
 	if (_sign < 0) {
@@ -123,7 +123,7 @@ const std::string&& INT::toString(int base = 10) const {
 		return std::move(str);
 	}
 
-	if (_chunks.size() == 1 && _chunks[0] < base) {
+	if (_chunks.size() == 1 && static_cast<int>(_chunks[0]) < base) {
 		//TODO:
 		//optimize when size == 1
 		str += chunkToDigit(_chunks[0], base);
@@ -635,7 +635,7 @@ std::vector<INT::typeChunk>&& chunksPlus(const std::vector<INT::typeChunk>& chun
 	}
 
 	if (carry != 0) {
-		chunks.push_back(carry);
+		chunks.push_back(static_cast<INT::typeChunk>(carry));
 	}
 	return std::move(chunks);
 }
@@ -651,12 +651,12 @@ std::vector<INT::typeChunk>&& chunksSubtract(const std::vector<INT::typeChunk>& 
 			chunk2 = chunks2[i];
 		}
 		if (chunk1 >= chunk2 + borrow) {
-			chunks[i] = chunk1 - chunk2 - borrow;
+			chunks[i] = static_cast<INT::typeChunk>(chunk1 - chunk2 - borrow);
 			borrow = 0;
 		}
 		else {
-			chunks[i] = INT::s_borrowChunkValue + chunk1
-				- chunk2 - borrow;
+			chunks[i] = static_cast<INT::typeChunk>(INT::s_borrowChunkValue + chunk1
+				- chunk2 - borrow);
 			borrow = 1;
 		}
 	}
@@ -721,7 +721,7 @@ int bitsCompare(const INT& v1, int leadBit1, const INT& v2, int leadBit2, int nu
 }
 
 char chunkToDigit(INT::typeChunk chunk, int base) {
-	if (chunk >= 0 && chunk < base) {
+	if (chunk >= 0 && static_cast<int>(chunk) < base) {
 		if (chunk >= 0 && chunk < 10) {
 			return '0' + chunk;
 		}

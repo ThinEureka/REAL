@@ -1,15 +1,31 @@
 
 #pragma once
 
+//The following code currently only works on machine with little endian.
 #ifndef INT_H
 #define INT_H
 
 #include <vector>
 #include <string>
 
-//The following code currently only works on machine with little endian.
 namespace zju04nycs {
-	class INT {
+
+	class INT;
+	const INT&& operator & (const INT& v1, const INT& v2);
+	const INT&& operator | (const INT& v1, const INT& v2);
+	const INT&& operator ^ (const INT& v1, const INT& v2);
+
+	const INT&& operator >> (const INT& v1, int pos);
+	const INT&& operator << (const INT& v1, int pos);
+
+	const INT&& operator +(const INT& v1, const INT& v2);
+	const INT&& operator -(const INT& v1, const INT& v2);
+	const INT&& operator *(const INT& v1, const INT& v2);
+	const INT&& operator /(const INT& v1, const INT& v2);
+	const INT&& operator %(const INT& v1, const INT& v2);
+	const INT&& divide(const INT& v1, const INT& v2, INT& r);
+
+class INT {
 	public:
 		typedef unsigned __int64 typeLink;
 		typedef unsigned __int32 typeChunk;
@@ -35,7 +51,7 @@ namespace zju04nycs {
 			if (v != 0) {
 				_sign = v > 0 ? 1 : -1;
 				INT::typeLink x = std::abs(v);
-				INT::typeChunk lowChunk = x;
+				INT::typeChunk lowChunk = static_cast<INT::typeChunk>(x);
 				_chunks.push_back(lowChunk);
 				INT::typeChunk highChunk = x >> INT::s_numBitsOfChunk;
 				if (highChunk > 0) {
@@ -62,7 +78,7 @@ namespace zju04nycs {
 			if (v != 0) {
 				_sign = v > 0 ? sign : -sign;
 				INT::typeLink x = std::abs(v);
-				INT::typeChunk lowChunk = x;
+				INT::typeChunk lowChunk = static_cast<INT::typeChunk>(x);
 				_chunks.push_back(lowChunk);
 				INT::typeChunk highChunk = x >> INT::s_numBitsOfChunk;
 				if (highChunk > 0) {
@@ -87,7 +103,7 @@ namespace zju04nycs {
 		int toUint(bool& isTruncated) const { return toChunk(isTruncated); }
 
 		long long toLongLong(bool& isTruncated) const { return toLinkSigned(isTruncated); }
-		int toUlonglong(bool& isTruncated) const { return toLink(isTruncated); }
+		unsigned long long toUlonglong(bool& isTruncated) const { return toLink(isTruncated); }
 
 		const std::string&& toString(int base = 10) const;
 		void setValueWithString(const std::string& str, int base = 10);
