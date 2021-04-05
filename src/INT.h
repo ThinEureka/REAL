@@ -23,7 +23,11 @@ namespace zju04nycs {
 	INT operator *(const INT& v1, const INT& v2);
 	INT operator /(const INT& v1, const INT& v2);
 	INT operator %(const INT& v1, const INT& v2);
-	INT divide(const INT& v1, const INT& v2, INT& r);
+
+	INT& plus(const INT& v1, const INT& v2, INT& sum);
+	INT& subtract(const INT& v1, const INT& v2, INT& sub);
+	INT& multiply(const INT& v1, const INT& v2, INT& product);
+	INT& divide(const INT& v1, const INT& v2, INT& q, INT& r);
 
 class INT {
 	public:
@@ -185,42 +189,96 @@ class INT {
 			return compare(v1, v2) >= 0;
 		}
 
-		friend INT operator & (const INT& v1, const INT& v2);
-		friend INT operator | (const INT& v1, const INT& v2);
-		friend INT operator ^ (const INT& v1, const INT& v2);
+		friend INT operator & (const INT& v1, const INT& v2) {
+			INT v = v1;
+			return v &= v2;
+		}
+		friend INT operator | (const INT& v1, const INT& v2) {
+			INT v = v1;
+			return v |= v2;
+		}
+		friend INT operator ^ (const INT& v1, const INT& v2) {
+			INT v = v1;
+			return v ^= v2;
+		}
 
-		friend INT operator >> (const INT& v1, int pos);
-		friend INT operator << (const INT& v1, int pos);
+		friend INT operator >> (const INT& v1, int pos) {
+			if (v1.isZero() || pos == 0) {
+				return v1;
+			}
+			else {
+				INT v = v1;
+				return v >>= pos;
+			}
+		}
 
-		friend INT operator +(const INT& v1, const INT& v2);
-		friend INT operator -(const INT& v1, const INT& v2);
-		friend INT operator *(const INT& v1, const INT& v2);
+		friend INT operator << (const INT& v1, int pos) {
+			if (v1.isZero() || pos == 0) {
+				return v1;
+			}
+			else {
+				INT v = v1;
+				return v <<= pos;
+			}
+		}
+
+		friend INT operator +(const INT& v1, const INT& v2) {
+			INT sum;
+			plus(v1, v2, sum);
+			return sum;
+		}
+
+		friend INT operator -(const INT& v1, const INT& v2) {
+			INT sub;
+			subtract(v1, v2, sub);
+			return sub;
+		}
+		friend INT operator *(const INT& v1, const INT& v2) {
+			INT product;
+			subtract(v1, v2, product);
+			return product;
+		}
 		friend INT operator /(const INT& v1, const INT& v2) {
-			INT r;
-			return divide(v1, v2, r);
+			INT q, r;
+			divide(v1, v2, q, r);
+			return q;
 		}
 		friend INT operator %(const INT& v1, const INT& v2) {
-			INT r;
-			divide(v1, v2, r);
+			INT q, r;
+			divide(v1, v2, q, r);
 			return r;
 		}
-		friend INT divide(const INT& v1, const INT& v2, INT& r);
 
-		INT& operator &= (const INT& v1) {
-			return *this = *this & v1;
-		}
-		INT& operator |= (const INT& v1) {
-			return *this = *this | v1;
-		}
-		INT& operator ^= (const INT& v1) {
-			return *this = *this ^ v1;
-		}
 
-		INT& operator >>= (int pos) {
-			return *this = *this >> pos;
-		}
+		INT& operator &= (const INT& v1);
+		INT& operator |= (const INT& v1);	
+		INT& operator ^= (const INT& v1);
+
 		INT& operator <<= (int pos) {
-			return *this = *this << pos;
+			if (pos == 0 || isZero()) {
+				// do nothing
+			}
+			else if (pos > 0) {
+				chunksShiftLeft(pos);
+			}
+			else {
+				chunksShiftRight(-pos);
+				normalize();
+			}
+			return *this;
+		}
+		INT& operator >>= (int pos) {
+			if (pos == 0 || isZero()) {
+				// do nothing
+			}
+			else if (pos > 0) {
+				chunksShiftRight(pos);
+				normalize();
+			}
+			else {
+				chunksShiftLeft(-pos);
+			}
+			return *this;
 		}
 		
 		INT& operator += (const INT& v1) {
@@ -237,11 +295,15 @@ class INT {
 			return *this = divide(*this, v1, r);
 		}
 		INT& operator %= (const INT& v1) {
-			INT r;
-			divide(*this, v1, r);
+			INT q,r;
+			divide(*this, v1, q, r);
 			return *this = std::move(r);
 		}
-		friend INT divide(const INT& v1, const INT& v2, INT& r);
+
+		friend INT& plus(const INT& v1, const INT& v2, INT& sum);
+		friend INT& subtract(const INT& v1, const INT& v2, INT& sub);
+		friend INT& multiply(const INT& v1, const INT& v2, INT& product);
+		friend INT& divide(const INT& v1, const INT& v2, INT& q, INT& r);
 
 	private:
 		void normalize() {
@@ -258,6 +320,31 @@ class INT {
 
 		void setBitWithoutNormalization(size_t bitPos, bool v);
 		friend void bitsSubtract(INT& v1, int tailBit1, const INT& v2, int tailBit2, int numberBits);
+
+		//chunk operations, the class may not be normalized after
+		//carrying out the following operations.
+		void setChunk(size_t chunkIndex, INT::typeChunk chunk) {
+			if (chunkIndex > _chunks.size()) {
+				_chunks.resize(chunkIndex + 1);
+			}
+			_chunks[chunkIndex] = chunk;
+		}
+
+		void addChunkValue(size_t chunkIndex, INT::typeChunk chunk) {
+			if (chunkIndex > _chunks.size()) {
+				_chunks.resize(chunkIndex + 1);
+				_chunks[chunkIndex] = chunk;
+			}
+			else {
+				_chunks[chunkIndex] += chunk;
+			}
+		}
+
+		void chunksPlus(const std::vector<INT::typeChunk>& chunks1, const std::vector<INT::typeChunk>& chunks2);
+		void chunksSubtract(const std::vector<INT::typeChunk>& chunks1, const std::vector<INT::typeChunk>& chunks2);
+
+		void chunksShiftRight(unsigned int pos);
+		void chunksShiftLeft(unsigned int pos);
 
 	private:
 		int _sign{ 1 };

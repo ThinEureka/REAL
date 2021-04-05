@@ -4,11 +4,6 @@
 using namespace zju04nycs;
 
 int chunksCompare(const std::vector<INT::typeChunk>& chunks1, const std::vector<INT::typeChunk>& chunks2);
-std::vector<INT::typeChunk> chunksShiftRight(const std::vector<INT::typeChunk>& chunks1, unsigned int pos);
-std::vector<INT::typeChunk> chunksShiftLeft(const std::vector<INT::typeChunk>& chunks1, unsigned int pos);
-
-std::vector<INT::typeChunk> chunksPlus(const std::vector<INT::typeChunk>& chunks1, const std::vector<INT::typeChunk>& chunks2);
-std::vector<INT::typeChunk> chunksSubtract(const std::vector<INT::typeChunk>& chunks1, const std::vector<INT::typeChunk>& chunks2);
 
 int bitsCompare(const INT& v1, int leadBit1, const INT& v2, int leadBit2, int numberBits);
 
@@ -183,9 +178,10 @@ std::string INT::toString(int base) const {
 	INT r;
 	INT n = *this;
 	INT d = base;
+	INT q;
 
 	while (n >= d) {
-		n = divide(n, d, r);
+		n = divide(n, d, q, r);
 		if (r._chunks.size() == 0) {
 			str += '0';
 		}
@@ -368,209 +364,202 @@ int zju04nycs::compare(const INT& v1, const INT& v2) {
 	return v1._sign > 0 ? chunksResult : -chunksResult;
 }
 
-INT zju04nycs::operator & (const INT& v1, const INT& v2) {
-	const INT* pMax = &v1;
-	const INT* pMin = &v2;
-	if (pMin->_chunks.size() > pMax->_chunks.size()) {
-		std::swap(pMin, pMax);
-	}
-	std::vector<INT::typeChunk> chunks;
-	chunks.resize(pMin->_chunks.size());
-	for (size_t i = 0; i < pMin->_chunks.size(); ++i) {
-		chunks[i] = pMax->_chunks[i] & pMin->_chunks[i];
+INT& INT::operator &= (const INT& v1) {
+	if (_chunks.size() > v1._chunks.size()) {
+		_chunks.resize(v1._chunks.size());
 	}
 
-	INT v = INT(v1._sign, std::move(chunks));
-	return v;
+	for (size_t i = 0; i < _chunks.size(); ++i) {
+		_chunks[i] = _chunks[i] & v1._chunks[i];
+	}
+	normalize();
+
+	return *this;
 }
 
-INT zju04nycs::operator | (const INT& v1, const INT& v2) {
-	const INT* pMax = &v1;
-	const INT* pMin = &v2;
-	if (pMin->_chunks.size() > pMax->_chunks.size()) {
-		std::swap(pMin, pMax);
-	}
-	std::vector<INT::typeChunk> chunks = pMax->_chunks;
-	for (size_t i = 0; i < pMin->_chunks.size(); ++i) {
-		chunks[i] = pMax->_chunks[i] | pMin->_chunks[i];
+INT& INT::operator |= (const INT& v1) {
+	if (v1.isZero()) {
+		return *this;
 	}
 
-	INT v = INT(v1._sign, std::move(chunks));
-	return v;
+	if (isZero()) {
+		return *this = v1;
+	}
+
+	if (_chunks.size() < v1._chunks.size()) {
+		_chunks.resize(v1._chunks.size());
+	}
+
+	for (size_t i = 0; i < _chunks[i]; ++i) {
+		_chunks[i] |= v1._chunks[i];
+	}
+	//do not need normalize
+
+	return *this;
 }
 
-INT zju04nycs::operator ^ (const INT& v1, const INT& v2) {
-	const INT* pMax = &v1;
-	const INT* pMin = &v2;
-	if (pMin->_chunks.size() > pMax->_chunks.size()) {
-		std::swap(pMin, pMax);
+INT& INT::operator ^= (const INT& v1) {
+	if (v1._chunks.size() > _chunks.size()) {
+		_chunks.resize(v1._chunks.size());
 	}
-	std::vector<INT::typeChunk> chunks = pMax->_chunks;
-	for (size_t i = 0; i < pMin->_chunks.size(); ++i) {
-		chunks[i] = pMax->_chunks[i] ^ pMin->_chunks[i];
+	for (size_t i = 0; i < _chunks.size(); ++i) {
+		_chunks[i] ^= v1._chunks[i];
 	}
-
-	INT v = INT(v1._sign, std::move(chunks));
-	return v;
+	normalize();
+	return *this;
 }
 
-INT zju04nycs::operator >> (const INT& v1, int pos) {
-	if (pos == 0 || v1.isZero()) {
-		return v1;
+INT& zju04nycs::plus(const INT& v1, const INT& v2, INT& sum){
+	if (v1.isZero()) {
+		sum = v2;
+		return sum;
 	}
-	else if (pos > 0) {
-		std::vector<INT::typeChunk> chunks = chunksShiftRight(v1._chunks, pos);
-		INT result = INT(v1._sign, std::move(chunks));
-		return result;
-	}
-	else {
-		std::vector<INT::typeChunk> chunks = chunksShiftLeft(v1._chunks, -pos);
-		INT result = INT(v1._sign, std::move(chunks));
-		return result;
-	}
-}
 
-INT zju04nycs::operator << (const INT& v1, int pos) {
-	if (pos == 0 || v1.isZero()) {
-		return v1;
+	if (v2.isZero()) {
+		sum = v1;
+		return sum;
 	}
-	else if (pos > 0) {
-		std::vector<INT::typeChunk> chunks = chunksShiftLeft(v1._chunks, pos);
-		INT result = INT(v1._sign, std::move(chunks));
-		return result;
-	}
-	else {
-		std::vector<INT::typeChunk> chunks = chunksShiftRight(v1._chunks, -pos);
-		INT result = INT(v1._sign, std::move(chunks));
-		return result;
-	}
-}
 
-INT zju04nycs::operator + (const INT& v1, const INT& v2) {
 	if (v1._sign == v2._sign) {
-		return INT(v1._sign, chunksPlus(v1._chunks, v2._chunks));
+		sum.chunksPlus(v1._chunks, v2._chunks);
+		sum._sign = v1._sign;
+		sum.normalize();
+		return sum;
 	}
 	else {
 		int comResult = chunksCompare(v1._chunks, v2._chunks);
 		if (comResult == 0) {
-			INT zero;
-			return zero;
+			sum.clear();
+			return sum;
 		}
 		else {
-			auto chunks = comResult > 0 ? chunksSubtract(v1._chunks, v2._chunks) :
-				chunksSubtract(v2._chunks, v1._chunks);
-			INT sum = INT(comResult > 0 ? v1._sign : -v1._sign, std::move(chunks));
+			if (comResult > 0) {
+				sum._sign = v1._sign;
+				sum.chunksSubtract(v1._chunks, v2._chunks);
+			}
+			else {
+				sum._sign = v2._sign;
+				sum.chunksSubtract(v2._chunks, v1._chunks);
+			}
+			sum.normalize();
 			return sum;
 		}
 	}
 }
 
-INT zju04nycs::operator - (const INT& v1, const INT& v2) {
+INT& zju04nycs::subtract(const INT& v1, const INT& v2, INT& sub) {
+	if (v1.isZero()) {
+		sub = v2;
+		sub.negate();
+		return sub;
+	}
+
+	if (v2.isZero()) {
+		sub = v1;
+		return sub;
+	}
+
+	sub.clear();
 	if (v1._sign == -v2._sign) {
-		return INT(v1._sign, chunksPlus(v1._chunks, v2._chunks));
+		sub._sign = v1._sign;
+		sub.chunksPlus(v1._chunks, v2._chunks);
+		sub.normalize();
+		return sub;
 	}
 	else {
 		int comResult = chunksCompare(v1._chunks, v2._chunks);
 		if (comResult == 0) {
-			INT zero;
-			return zero;
+			return sub;
 		} 
 		else {
-			auto chunks = comResult > 0 ? chunksSubtract(v1._chunks, v2._chunks) :
-				chunksSubtract(v2._chunks, v1._chunks);
-			INT sum = INT(comResult > 0 ? v1._sign : -v1._sign, std::move(chunks));
-			return sum;
+			if (comResult > 0) {
+				sub._sign = v1._sign;
+				sub.chunksSubtract(v1._chunks, v2._chunks);
+			} 
+			else {
+				sub._sign = -v1._sign;
+				sub.chunksSubtract(v2._chunks, v1._chunks);
+			}
+			sub.normalize();
+			return sub;
 		}
 	}
 }
 
-INT zju04nycs::operator * (const INT& v1, const INT& v2) {
+INT& zju04nycs::multiply(const INT & v1, const INT & v2, INT & product) {
+	product.clear();
 	if (v1.isZero() || v2.isZero()) {
-		INT zero;
-		return zero;
+		return product;
 	}
 	else {
-		std::vector<INT::typeChunk> chunks;
-		chunks.resize(v1._chunks.size() + v2._chunks.size());
 		for (size_t i = 0; i < v2._chunks.size(); ++i) {
 			INT::typeChunk carry = 0;
 			for (size_t j = 0; j < v1._chunks.size(); ++j) {
-				INT::typeLink product = INT::typeLink(v1._chunks[j]) * INT::typeLink(v2._chunks[i]) + carry;
-				chunks[i + j] += static_cast<INT::typeChunk>(product);
-				carry = static_cast<INT::typeChunk>(product >> INT::s_numBitsOfChunk);
+				INT::typeLink partProduct = INT::typeLink(v1._chunks[j]) * INT::typeLink(v2._chunks[i]) + carry;
+				product.addChunkValue(i+j, static_cast<INT::typeChunk>(partProduct));
+				carry = static_cast<INT::typeChunk>(partProduct >> INT::s_numBitsOfChunk);
 				if (j == v1._chunks.size() - 1) {
-					chunks[i + v2._chunks.size()] += carry;
+					product.addChunkValue(i + v2._chunks.size(), carry);
 				}
 			}
 		}
-		INT v = INT(v1._sign == v2._sign ? 1 : -1, std::move(chunks));
-		return v;
+		product.normalize();
+		return product;
 	}
 }
 
-INT zju04nycs::divide (const INT& v1, const INT& v2,  INT& r) {
+INT& zju04nycs::divide (const INT& v1, const INT& v2, INT& q, INT& r) {
 	assert(!v2.isZero());
 	if (v1.isZero()) {
-		r.clear();
-		INT zero;
-		return zero;
+		q.clear();
+		r = v1;
+		return q;
 	}
 
 	int comResult = chunksCompare(v1._chunks, v2._chunks);
 	if (comResult == 0) {
-		INT v = 1;
-		v._sign = v1._sign == v2._sign ? 1 : -1;
+		//q = 1;
+		q.clear();
+		q.setChunk(0, 1);
+		q.normalize();
+
 		r.clear();
-		return v;
+		return q;
 	}
 	else if (comResult < 0){
+		q.clear();
 		r = v1;
-		INT zero;
-		return zero;
+		return q;
 	}
 	else {
-		INT r;
-		INT tmpD;
-		const INT* pD = &v2;
+		r = v1;
+		int leadBitR = r.leadBit();
 
-		int tail = std::min(v1.tailBit(), v2.tailBit());
-		if (tail > 0) {
-			r = v1 >> tail;
-			tmpD = (*pD) >> tail;
-			pD = &tmpD;
-		}
-		else {
-			r = v1;
-		}
-		INT* pN = &r;
+		const INT& d = v2;
+		const int leadBitD = d.leadBit();
 
-		int leadBitN = pN->leadBit();
-		int leadBitD = pD->leadBit();
-
-		INT q;
+		q.clear();
 		q._sign = v1._sign == v2._sign ? 1 : -1;
 		//leadBit2 must be less or equal to leadBit1
 		while (true) {
-			if (bitsCompare(*pN, leadBitN, *pD, leadBitD, leadBitD + 1) >= 0) {
-				q.setBitWithoutNormalization(leadBitN - leadBitD, 1);
-				bitsSubtract(*pN, leadBitN - leadBitD, *pD, 0, leadBitD + 1);
+			if (bitsCompare(r, leadBitR, d, leadBitD, leadBitD + 1) >= 0) {
+				q.setBitWithoutNormalization(leadBitR - leadBitD, 1);
+				bitsSubtract(r, leadBitR - leadBitD, d, 0, leadBitD + 1);
 			}
 			else {
-				q.setBitWithoutNormalization(leadBitN - leadBitD - 1, 1);
-				bitsSubtract(*pN, leadBitN - leadBitD -1, *pD, 0, leadBitD + 1);
+				q.setBitWithoutNormalization(leadBitR - leadBitD - 1, 1);
+				bitsSubtract(r, leadBitR - leadBitD -1, d, 0, leadBitD + 1);
 			}
 
-			pN->normalize();
-			int comResult = chunksCompare(pN->_chunks, pD->_chunks);
+			r.normalize();
+			int comResult = chunksCompare(r._chunks, d._chunks);
 			if (comResult <= 0) {
 				q.normalize();
 				return q;
 			}
 
-			leadBitN = pN->leadBit();
-			leadBitD = pD->leadBit();
+			leadBitR = r.leadBit();
 		}
-		return q;
 	}
 }
 
@@ -585,9 +574,9 @@ int chunksCompare(const std::vector<INT::typeChunk>& chunks1, const std::vector<
 		return 0;
 	}
 
-	for (size_t i = size1 -1; i >= 0; --i) {
-		auto b1 = chunks1[i];
-		auto b2 = chunks2[i];
+	for (size_t i = size1; i >= 1; --i) {
+		auto b1 = chunks1[i -1];
+		auto b2 = chunks2[i -1];
 		if (b1 != b2) {
 			return b1 > b2 ? 1 : -1;
 		}
@@ -595,82 +584,87 @@ int chunksCompare(const std::vector<INT::typeChunk>& chunks1, const std::vector<
 	return 0;
 }
 
-std::vector<INT::typeChunk> chunksShiftRight(const std::vector<INT::typeChunk>& chunks1, unsigned int pos) {
-	std::vector<INT::typeChunk> chunks;
-	if (chunks1.size() == 0) {
-		return chunks;
+void INT::chunksShiftRight(unsigned int pos) {
+	if (pos == 0) {
+		return;
+	}
+
+	if (_chunks.size() == 0) {
+		return;
 	}
 
 	unsigned int shiftChunks = pos / INT::s_numBitsOfChunk;
 	unsigned int shiftBits = pos - shiftChunks * INT::s_numBitsOfChunk;
 	unsigned int crossShiftBits = INT::s_numBitsOfChunk - shiftBits;
 
-	if (chunks1.size() <= shiftChunks) {
-		return chunks;
+	if (_chunks.size() <= shiftChunks) {
+		_chunks.clear();
+		return;
 	}
 
-	chunks.resize(chunks1.size() - shiftChunks);
-	for (size_t i = shiftChunks; i < chunks1.size(); ++i) {
-		chunks[i - shiftChunks] = chunks1[i];
+	for (size_t i = shiftChunks; i < _chunks.size(); ++i) {
+		_chunks[i - shiftChunks] = _chunks[i];
 	}
 
+	_chunks.resize(_chunks.size() - shiftChunks);
 	if (shiftBits == 0) {
-		return chunks;
+		return;
 	}
 
 	INT::typeChunk mask = (1 << shiftBits) - 1;
-	for (size_t i = 0; i < chunks.size(); ++i) {
-		chunks[i] >>= shiftBits;
-		if (i < chunks.size() - 1) {
-			chunks[i] |= ((chunks[i + 1] & mask) << crossShiftBits);
+	for (size_t i = 0; i < _chunks.size(); ++i) {
+		_chunks[i] >>= shiftBits;
+		if (i < _chunks.size() - 1) {
+			_chunks[i] |= ((_chunks[i + 1] & mask) << crossShiftBits);
 		}
 	}
-
-	return chunks;
 }
 
-std::vector<INT::typeChunk> chunksShiftLeft(const std::vector<INT::typeChunk>& chunks1, unsigned int pos) {
-	std::vector<INT::typeChunk> chunks;
-	if (chunks1.size() == 0) {
-		return chunks;
+void INT::chunksShiftLeft(unsigned int pos) {
+	if (pos == 0) {
+		return;
+	}
+
+	if (_chunks.size() == 0) {
+		return;
 	}
 
 	unsigned int shiftChunks = pos / INT::s_numBitsOfChunk;
 	unsigned int shiftBits = pos - shiftChunks * INT::s_numBitsOfChunk;
 	unsigned int crossShiftBits = INT::s_numBitsOfChunk - shiftBits;
 
-	chunks.resize(chunks1.size() + shiftChunks);
-	for (size_t i = 0; i < shiftChunks; ++i) {
-		chunks[i] = 0;
+	auto oldSize = _chunks.size();
+	auto newSize = oldSize + shiftChunks;
+	_chunks.resize(newSize);
+	for (size_t i = 0; i < oldSize; ++i) {
+		auto index = newSize - 1 - i;
+		_chunks[index] = _chunks[index - shiftChunks];
 	}
 
-	for (size_t i = 0; i < chunks1.size(); ++i) {
-		chunks[i + shiftChunks] = chunks1[i];
+	for (size_t i = 0; i < shiftChunks; ++i) {
+		_chunks[i] = 0;
 	}
 
 	if (shiftBits == 0) {
-		return chunks;
+		return;
 	}
 
 	INT::typeChunk mask = ((1 << shiftBits) - 1) << crossShiftBits;
-	for (size_t i = chunks.size() - 1 ; i >= shiftChunks; --i) {
-		INT::typeChunk shiftOutChunk = ((chunks[i] & mask) >> crossShiftBits);
+	for (size_t i = _chunks.size() - 1 ; i >= shiftChunks; --i) {
+		INT::typeChunk shiftOutChunk = ((_chunks[i] & mask) >> crossShiftBits);
 		if (shiftOutChunk > 0) {
-			if (i < chunks.size() - 1) {
-				chunks[i + 1] |= shiftOutChunk;
+			if (i < _chunks.size() - 1) {
+				_chunks[i + 1] |= shiftOutChunk;
 			}
 			else {
-				chunks.push_back(shiftOutChunk);
+				_chunks.push_back(shiftOutChunk);
 			}
 		}
-		chunks[i] <<= shiftBits;
+		_chunks[i] <<= shiftBits;
 	}
-
-	return chunks;
 }
 
-std::vector<INT::typeChunk> chunksPlus(const std::vector<INT::typeChunk>& chunks1,
-	const std::vector<INT::typeChunk>& chunks2) {
+void INT::chunksPlus(const std::vector<INT::typeChunk>& chunks1, const std::vector<INT::typeChunk>& chunks2) {
 	auto pChunksLeft = &chunks1;
 	auto pChunksRight = &chunks2;
 	if (pChunksRight->size() > pChunksLeft->size()) {
@@ -678,8 +672,8 @@ std::vector<INT::typeChunk> chunksPlus(const std::vector<INT::typeChunk>& chunks
 	}
 
 	INT::typeLink carry = 0;
-	std::vector<INT::typeChunk> chunks = *pChunksLeft;
-	for (size_t i = 0; i < chunks.size(); ++i) {
+	_chunks = *pChunksLeft;
+	for (size_t i = 0; i < _chunks.size(); ++i) {
 		INT::typeLink partSum = 0;
 		if (i < pChunksRight->size()) {
 			partSum = INT::typeLink((*pChunksLeft)[i]) + INT::typeLink((*pChunksRight)[i]) + carry;
@@ -687,20 +681,17 @@ std::vector<INT::typeChunk> chunksPlus(const std::vector<INT::typeChunk>& chunks
 		else {
 			partSum = INT::typeLink((*pChunksLeft)[i]) + carry;
 		}
-		chunks[i] = (INT::typeChunk)(partSum);
+		_chunks[i] = static_cast<INT::typeChunk>(partSum);
 		carry = partSum >> INT::s_numBitsOfChunk;
 	}
 
 	if (carry != 0) {
-		chunks.push_back(static_cast<INT::typeChunk>(carry));
+		_chunks.push_back(static_cast<INT::typeChunk>(carry));
 	}
-
-	return chunks;
 }
 
-std::vector<INT::typeChunk> chunksSubtract(const std::vector<INT::typeChunk>& chunks1, const std::vector<INT::typeChunk>& chunks2) {
-	std::vector<INT::typeChunk> chunks;
-	chunks.resize(chunks1.size());
+void INT::chunksSubtract(const std::vector<INT::typeChunk>& chunks1, const std::vector<INT::typeChunk>& chunks2) {
+	_chunks.resize(chunks1.size());
 	INT::typeLink borrow = 0;
 	for (size_t i = 0; i < chunks1.size(); ++i) {
 		INT::typeLink chunk1 = chunks1[i];
@@ -709,16 +700,15 @@ std::vector<INT::typeChunk> chunksSubtract(const std::vector<INT::typeChunk>& ch
 			chunk2 = chunks2[i];
 		}
 		if (chunk1 >= chunk2 + borrow) {
-			chunks[i] = static_cast<INT::typeChunk>(chunk1 - chunk2 - borrow);
+			_chunks[i] = static_cast<INT::typeChunk>(chunk1 - chunk2 - borrow);
 			borrow = 0;
 		}
 		else {
-			chunks[i] = static_cast<INT::typeChunk>(INT::s_borrowChunkValue + chunk1
+			_chunks[i] = static_cast<INT::typeChunk>(INT::s_borrowChunkValue + chunk1
 				- chunk2 - borrow);
 			borrow = 1;
 		}
 	}
-	return chunks;
 }
 
 int bitsCompare(const INT& v1, int leadBit1, const INT& v2, int leadBit2, int numberBits) {
