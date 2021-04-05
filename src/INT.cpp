@@ -496,8 +496,11 @@ INT zju04nycs::operator * (const INT& v1, const INT& v2) {
 			INT::typeChunk carry = 0;
 			for (size_t j = 0; j < v1._chunks.size(); ++j) {
 				INT::typeLink product = INT::typeLink(v1._chunks[j]) * INT::typeLink(v2._chunks[i]) + carry;
-				chunks[i + j] += INT::typeChunk(product);
-				carry = product >> INT::s_numBitsOfChunk;
+				chunks[i + j] += static_cast<INT::typeChunk>(product);
+				carry = static_cast<INT::typeChunk>(product >> INT::s_numBitsOfChunk);
+				if (j == v1._chunks.size() - 1) {
+					chunks[i + v2._chunks.size()] += carry;
+				}
 			}
 		}
 		INT v = INT(v1._sign == v2._sign ? 1 : -1, std::move(chunks));
