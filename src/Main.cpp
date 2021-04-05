@@ -555,50 +555,58 @@ void testInt() {
 	assert(n.isZero());
 	assert(!n.isPositive());
 	assert(!n.isNegative());
-	cout << "111111" << std::endl;
+	cout << "zero test passed" << std::endl;
 
 	INT one = 1;
 	INT one_ = INT("1");
 	assert(one == one_);
 	assert(!(one != one_));
-	cout << "222222" << std::endl;
+	cout << "one test passed" << std::endl;
 
 	std::string s1 = "12345";
 	INT x1 = INT(s1);
-	std::string sX1 = x1.toString();
-	std::cout << sX1 << std::endl;
-	assert(x1.toString() == s1);
-	cout << "33333333" << std::endl;
+	std::string x1_s = x1.toString();
+	std::cout << "x1:" <<  x1_s << std::endl;
+	assert(x1_s == s1);
+	cout << "simple string constructor test passed" << std::endl;
 
-	long long p = 123456789012345333LL;
-	x1 = INT(p);
-	sX1 = x1.toString();
-	std::cout << sX1 << std::endl;
-	std::cout << p << std::endl;
-	cout << "33333333aaaaaaaaaaaa" << std::endl;
+	long long p2 = 123456789012345333LL;
+	INT x2 = INT(p2);
+	auto x2_s = x2.toString();
+	std::cout << "x2:" << x2_s << std::endl;
+	std::cout << "p2:"<< p2 << std::endl;
+	assert(std::to_string(p2) == x2_s);
+	cout << "long long constructor test passed" << std::endl;
 
-	INT x2 = INT("123456789012345333");
-	std::cout << x2.toString() << std::endl;
-	assert(x1 == x2);
+	INT x3 = INT("123456789012345333");
+	std::cout << "x3:" << x3.toString() << std::endl;
 
-	s1 = "12345678901234";
-	x1 = INT(s1);
-	sX1 = x1.toString();
-	std::cout << sX1 << std::endl;
-	assert(sX1 == s1);
-	cout << "3333333311111111" << std::endl;
+	std::string s4 = "12345678901234";
+	INT x4 = INT(s4);
+	auto x4_s = x4.toString();
+	std::cout << "x4:" << x4_s << std::endl;
+	assert(x4_s == s4);
+	cout << "string constructor test4 passed" << std::endl;
 
-	std::string s2 = "324324324324243343243243242342432423432434";
-	x2 = INT(s2);
-	assert(x2.toString() == s2);
+	std::string s5 = "32433443423434783432432423423423423423423423423423423423472364723647236476274623764723674623746764237647264723476767236472364782374827384723478324324324243343243243242342432423432434";
+	INT x5 = INT(s5);
+	std::cout << "x5:" << x5.toString() << std::endl;
+	assert(x5.toString() == s5);
+	cout << "long string constructor test5 passed" << std::endl;
+
+	std::cout << "x4*x5:" << (x4 * x5).toString() << std::endl;
+	std::cout << "x5*x4:" << (x5 * x4).toString() << std::endl;
 
 	assert(x1 * x2 == x2 * x1);
 	assert((x1 * x2).toString() == (x2 * x1).toString());
-	cout << "444444444444" << std::endl;
-	INT y = x1 * x2;
-	std::string m = y.toString();
-	cout << m << std::endl;
-	
+	cout << "multiplication communication law test passed" << std::endl;
+
+	std::string s6 = "400412878166003164546735534092609172319140330852536603355429981136254443797343719815103359446869847213482227876740797726949481901457564006563326790056796257840594244649848624543981509868730249924";
+	INT x6 = INT(s6);
+	auto x6_s = x6.toString();
+	cout << "x6:" << x6_s << endl;
+	assert(x6_s == s6);
+	cout << "long string constructor test 6 passed" << endl;
 }
 
 int main()

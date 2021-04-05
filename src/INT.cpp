@@ -11,7 +11,7 @@ char chunkToDigit(INT::typeChunk chunk, int base);
 
 const INT INT::s_smallInts[101] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-	11, 12, 13, 14, 15, 16, 17, 18, 19,
+	10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
 	20,	21, 22, 23, 24, 25, 26, 27, 28, 29,
 	30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
 	40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
@@ -525,11 +525,15 @@ INT& zju04nycs::multiply(const INT & v1, const INT & v2, INT & product) {
 		for (size_t i = 0; i < v2._chunks.size(); ++i) {
 			INT::typeChunk carry = 0;
 			for (size_t j = 0; j < v1._chunks.size(); ++j) {
-				INT::typeLink partProduct = INT::typeLink(v1._chunks[j]) * INT::typeLink(v2._chunks[i]) + carry;
-				product.addChunkValue(i+j, static_cast<INT::typeChunk>(partProduct));
-				carry = static_cast<INT::typeChunk>(partProduct >> INT::s_numBitsOfChunk);
-				if (j == v1._chunks.size() - 1) {
-					product.addChunkValue(i + v2._chunks.size(), carry);
+				INT::typeLink partSum =
+					INT::typeLink(product.chunk(i + j)) + INT::typeLink(v1._chunks[j]) * INT::typeLink(v2._chunks[i]) + carry;
+				product.setChunk(i+j, static_cast<INT::typeChunk>(partSum));
+				carry = static_cast<INT::typeChunk>(partSum >> INT::s_numBitsOfChunk);
+				if (carry > 0) {
+					if (j == v1._chunks.size() - 1) {
+						assert(product.chunk(i + j + 1) == 0);
+						product.setChunk(i + j + 1, carry);
+					}
 				}
 			}
 		}

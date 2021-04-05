@@ -154,6 +154,12 @@ class INT {
 		bool isNegative() const { return _sign < 0;  }
 
 		int bit(size_t pos) const;
+		INT::typeChunk chunk(size_t chunkIndex) const {
+			if (chunkIndex < _chunks.size()) {
+				return _chunks[chunkIndex];
+			}
+			return 0;
+		}
 		void setBit(size_t bitPos, bool v) {
 			setBitWithoutNormalization(bitPos, v);
 			normalize();
@@ -312,7 +318,7 @@ class INT {
 		//chunk operations, the class may not be normalized after
 		//carrying out the following operations.
 		void setChunk(size_t chunkIndex, INT::typeChunk chunk) {
-			if (chunkIndex > _chunks.size()) {
+			if (chunkIndex >= _chunks.size()) {
 				_chunks.resize(chunkIndex + 1);
 			}
 			_chunks[chunkIndex] = chunk;
