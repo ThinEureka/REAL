@@ -67,21 +67,23 @@ class INT {
 
 		INT(int sign, INT::typeChunk v) {
 			if (v != 0) {
-				_sign = sign;
+				_sign = sign > 0 ? 1 : -1;
 				_chunks.push_back(v);
 			}
 		}
 
 		INT(int sign, INT::typeChunkSigned v) {
 			if (v != 0) {
-				_sign = v > 0 ? sign : - sign;
+				_sign = sign > 0 ? 1 : - 1;
+				_sign = v > 0 ? _sign : -_sign;
 				_chunks.push_back(std::abs( v));
 			}
 		}
 
 		INT(int sign, INT::typeLinkSigned v) {
 			if (v != 0) {
-				_sign = v > 0 ? sign : -sign;
+				_sign = sign > 0 ? 1 : - 1;
+				_sign = v > 0 ? _sign : -_sign;
 				INT::typeLink x = std::abs(v);
 				INT::typeChunk lowChunk = static_cast<INT::typeChunk>(x);
 				_chunks.push_back(lowChunk);
@@ -165,10 +167,7 @@ class INT {
 	public:
 		const INT operator - () const {
 			INT v = *this;
-			if (!v.isZero()) {
-				v._sign = -v._sign;
-			}
-			return v;
+			return v.negate();
 		}
 
 		friend bool operator == (const INT& v1, const INT& v2);
@@ -203,52 +202,37 @@ class INT {
 		}
 
 		friend INT operator >> (const INT& v1, int pos) {
-			if (v1.isZero() || pos == 0) {
-				return v1;
-			}
-			else {
-				INT v = v1;
-				return v >>= pos;
-			}
+			INT v = v1;
+			return v >>= pos;
 		}
 
 		friend INT operator << (const INT& v1, int pos) {
-			if (v1.isZero() || pos == 0) {
-				return v1;
-			}
-			else {
-				INT v = v1;
-				return v <<= pos;
-			}
+			INT v = v1;
+			return v <<= pos;
 		}
 
 		friend INT operator +(const INT& v1, const INT& v2) {
 			INT sum;
-			plus(v1, v2, sum);
-			return sum;
+			return plus(v1, v2, sum);
 		}
 
 		friend INT operator -(const INT& v1, const INT& v2) {
 			INT sub;
-			subtract(v1, v2, sub);
-			return sub;
+			return subtract(v1, v2, sub);
 		}
 		friend INT operator *(const INT& v1, const INT& v2) {
 			INT product;
-			subtract(v1, v2, product);
-			return product;
+			return multiply(v1, v2, product);
 		}
 		friend INT operator /(const INT& v1, const INT& v2) {
 			INT q, r;
-			divide(v1, v2, q, r);
-			return q;
+			return divide(v1, v2, q, r);
 		}
 		friend INT operator %(const INT& v1, const INT& v2) {
 			INT q, r;
 			divide(v1, v2, q, r);
 			return r;
 		}
-
 
 		INT& operator &= (const INT& v1);
 		INT& operator |= (const INT& v1);	
@@ -282,22 +266,25 @@ class INT {
 		}
 		
 		INT& operator += (const INT& v1) {
-			return *this = *this + v1;
+			INT sum; 
+			return *this = plus(*this, v1, sum);
 		}
 		INT& operator -= (const INT& v1) {
-			return *this = *this - v1;
+			INT sub;
+			return *this = subtract(*this, v1, sub);
 		}
 		INT& operator *= (const INT& v1) {
-			return *this = *this * v1;
+			INT product;
+			return *this = subtract(*this, v1, product);
 		}
 		INT& operator /= (const INT& v1) {
-			INT r;
-			return *this = divide(*this, v1, r);
+			INT q,r;
+			return *this = divide(*this, v1, q, r);
 		}
 		INT& operator %= (const INT& v1) {
 			INT q,r;
 			divide(*this, v1, q, r);
-			return *this = std::move(r);
+			return *this = r;
 		}
 
 		friend INT& plus(const INT& v1, const INT& v2, INT& sum);
