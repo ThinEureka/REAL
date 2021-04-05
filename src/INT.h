@@ -38,6 +38,7 @@ class INT {
 
 		static const typeLink s_numBitsOfChunk = 32;
 		static const typeLink s_borrowChunkValue = 1LL << INT::s_numBitsOfChunk;
+		static const INT s_smallInts[101];
 
 	public:
 		INT();

@@ -577,7 +577,11 @@ void testInt() {
 	std::cout << p << std::endl;
 	cout << "33333333aaaaaaaaaaaa" << std::endl;
 
-	s1 = "123456789012345353423423423423434";
+	INT x2 = INT("123456789012345333");
+	std::cout << x2.toString() << std::endl;
+	assert(x1 == x2);
+
+	s1 = "12345678901234";
 	x1 = INT(s1);
 	sX1 = x1.toString();
 	std::cout << sX1 << std::endl;
@@ -585,7 +589,7 @@ void testInt() {
 	cout << "3333333311111111" << std::endl;
 
 	std::string s2 = "324324324324243343243243242342432423432434";
-	INT x2 = INT(s2);
+	x2 = INT(s2);
 	assert(x2.toString() == s2);
 
 	assert(x1 * x2 == x2 * x1);
