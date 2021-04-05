@@ -563,10 +563,19 @@ void testInt() {
 	assert(!(one != one_));
 	cout << "222222" << std::endl;
 
-	std::string s1 = "123456789123456789123456789123456789";
+	std::string s1 = "12345";
 	INT x1 = INT(s1);
+	std::string sX1 = x1.toString();
+	std::cout << sX1 << std::endl;
 	assert(x1.toString() == s1);
 	cout << "33333333" << std::endl;
+
+	s1 = "123456789012345353423423423423434";
+	x1 = INT(s1);
+	sX1 = x1.toString();
+	std::cout << sX1 << std::endl;
+	assert(sX1 == s1);
+	cout << "3333333311111111" << std::endl;
 
 	std::string s2 = "324324324324243343243243242342432423432434";
 	INT x2 = INT(s2);

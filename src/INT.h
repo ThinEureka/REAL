@@ -306,7 +306,7 @@ class INT {
 		}
 
 		void setBitWithoutNormalization(size_t bitPos, bool v);
-		friend void bitsSubtract(INT& v1, int tailBit1, const INT& v2, int tailBit2, int numberBits);
+		friend void bitsSubtract(INT& v1, int leadBit1, int tailBit1, const INT& v2, int tailBit2, int numberBits);
 
 		//chunk operations, the class may not be normalized after
 		//carrying out the following operations.
@@ -318,7 +318,7 @@ class INT {
 		}
 
 		void addChunkValue(size_t chunkIndex, INT::typeChunk chunk) {
-			if (chunkIndex > _chunks.size()) {
+			if (chunkIndex >= _chunks.size()) {
 				_chunks.resize(chunkIndex + 1);
 				_chunks[chunkIndex] = chunk;
 			}

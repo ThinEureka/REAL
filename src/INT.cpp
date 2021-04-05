@@ -194,6 +194,22 @@ std::string INT::toString(int base) const {
 		str += chunkToDigit(n._chunks[0], base);
 	}
 
+	size_t i = 0;
+	do{
+		size_t targetIndex = i;
+		if (_sign < 0) {
+			targetIndex = i + 1;
+		}
+		size_t swapIndex = str.size() - 1 - i;
+		if (targetIndex < swapIndex) {
+			std::swap(str[targetIndex], str[swapIndex]);
+			++i;
+		}
+		else {
+			break;
+		}
+	} while (true);
+
 	return str;
 }
 
@@ -545,11 +561,11 @@ INT& zju04nycs::divide (const INT& v1, const INT& v2, INT& q, INT& r) {
 		while (true) {
 			if (bitsCompare(r, leadBitR, d, leadBitD, leadBitD + 1) >= 0) {
 				q.setBitWithoutNormalization(leadBitR - leadBitD, 1);
-				bitsSubtract(r, leadBitR - leadBitD, d, 0, leadBitD + 1);
+				bitsSubtract(r, leadBitR, leadBitR - leadBitD, d, 0, leadBitD + 1);
 			}
 			else {
 				q.setBitWithoutNormalization(leadBitR - leadBitD - 1, 1);
-				bitsSubtract(r, leadBitR - leadBitD -1, d, 0, leadBitD + 1);
+				bitsSubtract(r, leadBitR, leadBitR - leadBitD -1, d, 0, leadBitD + 1);
 			}
 
 			r.normalize();
@@ -726,10 +742,10 @@ int bitsCompare(const INT& v1, int leadBit1, const INT& v2, int leadBit2, int nu
 	return 0;
 }
 
- void zju04nycs::bitsSubtract(INT& v1, int tailBit1, const INT& v2, int tailBit2, int numberBits){
+ void zju04nycs::bitsSubtract(INT& v1, int leadBit1, int tailBit1, const INT& v2, int tailBit2, int numberBits){
 	int bitOffset = 0;
 	int borrow = 0;
-	while (bitOffset < numberBits) {
+	while (tailBit1 + bitOffset <= leadBit1) {
 		int bit1 = v1.bit(tailBit1 + bitOffset);
 		int bit2 = v2.bit(tailBit2 + bitOffset);
 		if (bit1 >= bit2 + borrow) {
