@@ -639,6 +639,55 @@ void testInt() {
 	cout << "y7:" << y7.toString() << std::endl;
 	assert(y7.isZero());
 	cout << "xor test7 passed" << endl;
+
+	INT x;
+	INT y;
+	INT a = INT("1334247873434343434343434892374873423423432434343443243434343423423423424334");
+	INT b = INT("9343243424343424324234234343243234343434343434343434343423432423432423443243434");
+	for (int i = 0; i < 10000000; ++i) {
+		INT x = (a + i)* b;
+		auto oldX = x;
+		x *= x;
+		cout << "a1" << endl;
+		x *= x;
+		cout << "a2" << endl;
+		x *= x;
+		cout << "a3" << endl;
+		x *= x;
+		cout << "a4" << endl;
+		x *= x;
+		cout << "a5" << endl;
+		x *= x;
+		cout << "a6" << endl;
+		x *= x;
+		cout << "a7" << endl;
+
+		x += oldX;
+		x -= oldX;
+		cout << "a8" << endl;
+
+		//auto mm = x.toString();
+		//cout << "a8" << endl;
+		std::string mm = "###";
+
+		if (i % 1 == 0) {
+			cout << "i:" << i <<" " << "leadBit of i:" << x.leadBit()
+				<< "decical pos:" << mm.size() << endl;
+		}
+		//y = INT("34234234343434334234234434934343457");
+
+		for (int i = 0; i < 128; ++i) {
+			cout << "ii:"  << i << endl;
+			//cout << "ii:" << i <<" " << "leadBit of i:" << x.leadBit()
+			//	<< "decical pos:" << mm.size() << endl;
+			x /= oldX;
+		}
+		//cout << "x:" << x.toString() << endl;
+		assert(x == 1);
+
+		//cout << "x:" << x.toString() << endl;
+	}
+	cout << "x:" << x.toString() << endl;
 }
 
 int main()
