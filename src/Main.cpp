@@ -572,6 +572,90 @@ void initTestCases() {
 		std::cout << "one test passed" << std::endl;
 		});
 
+
+	testCases.push_back([&] {
+		std::string s1 = "12345";
+		INT x1 = INT(s1);
+		std::string x1_s = x1.toString();
+		std::cout << "x1:" << x1_s << std::endl;
+		assert(x1_s == s1);
+		std::cout << "simple string constructor test1 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		INT x = 342343434343;
+		INT y = x;
+		assert(x == y);
+		assert(!(x != y));
+		assert((x ^ y) == 0);
+		assert((x ^ y).isZero());
+		std::cout << "simple string constructor test2 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		INT x = INT("-342343434343432434234324234");
+		assert(x.isNegative());
+		assert(!x.isPositive());
+		assert(!x.isZero());
+
+		x = -x;
+		assert(!x.isNegative());
+		assert(x.isPositive());
+		assert(!x.isZero());
+
+		auto y = x + (-x);
+		assert(y.isZero());
+		std::cout << "minus test1 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		INT x = -3423434343434324343LL;
+		assert(x.isNegative());
+		assert(!x.isPositive());
+		assert(!x.isZero());
+
+		x = -x;
+		assert(!x.isNegative());
+		assert(x.isPositive());
+		assert(!x.isZero());
+
+		auto y = x + (-x);
+		assert(y.isZero());
+		std::cout << "minus test2 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		INT x = INT(-1, 3423434343434324343LL);
+		assert(x.isNegative());
+		assert(!x.isPositive());
+		assert(!x.isZero());
+
+		x = -x;
+		assert(!-x.isNegative());
+		assert(x.isPositive());
+		assert(!x.isZero());
+
+		auto y = x + (-x);
+		assert(y.isZero());
+		std::cout << "minus test3 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		INT x = INT(-1, -3423434343434324343LL);
+		assert(!x.isNegative());
+		assert(x.isPositive());
+		assert(!x.isZero());
+
+		x = -x;
+		assert(x.isNegative());
+		assert(!x.isPositive());
+		assert(!x.isZero());
+
+		auto y = x + (-x);
+		assert(y.isZero());
+		std::cout << "minus test4 passed" << std::endl;
+		});
+
 	testCases.push_back([&] {
 		std::string s1 = "12345";
 		INT x1 = INT(s1);
@@ -757,16 +841,20 @@ int main()
 	//EvaluatePi();
 	//testInt();
 	initTestCases();
-	bool reverseOrder = true;
+	bool reverseOrder = false;
 
 	if (reverseOrder) {
 		for (auto it = testCases.rbegin(); it != testCases.rend(); ++it) {
+			std::cout << "***************************************************" << std::endl;
 			(*it)();
+			std::cout << "###################################################" << std::endl << std::endl;
 		}
 	}
 	else {
 		for (auto it = testCases.begin(); it != testCases.end(); ++it) {
+			std::cout << std::endl << "***************************************************" << std::endl;
 			(*it)();
+			std::cout << "###################################################" << std::endl << std::endl;
 		}
 	}
 	return 0;

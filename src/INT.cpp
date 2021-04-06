@@ -73,12 +73,12 @@ INT& INT::operator = (const INT&& v) noexcept {
 	return *this;
 }
 
-INT::typeChunkSigned INT::toChunkSigned(bool& isTruncated) const {
+INT::typeChunkSigned INT::toChunkSigned(bool& isOverFlow) const {
 	static const INT::typeChunk signMask = 1 << (INT::s_numBitsOfChunk - 1);
 	static const INT::typeChunk valueMask = ~signMask;
 
 	if (_chunks.size() == 0) {
-		isTruncated = false;
+		isOverFlow = false;
 		return 0;
 	}
 
@@ -87,18 +87,18 @@ INT::typeChunkSigned INT::toChunkSigned(bool& isTruncated) const {
 
 	if (_chunks.size() == 1) {
 		if (_sign > 0) {
-			isTruncated = (signMask & tailChunk);
+			isOverFlow = (signMask & tailChunk);
 			return  result;
 		}
 		else
 		{
 			if (!(tailChunk & signMask)) {
-				isTruncated = false;
+				isOverFlow = false;
 				return -result;
 			}
 			else {
-				isTruncated = result > 0;
-				if (isTruncated) {
+				isOverFlow = result > 0;
+				if (isOverFlow) {
 					return -result;
 				}
 				else {
@@ -109,24 +109,24 @@ INT::typeChunkSigned INT::toChunkSigned(bool& isTruncated) const {
 		}
 	}
 	else {
-		isTruncated = true;
+		isOverFlow = true;
 		return _sign ? result : -result;
 	}
 
 	return result;
 }
 
-INT::typeLinkSigned INT::toLinkSigned(bool& isTruncated) const {
+INT::typeLinkSigned INT::toLinkSigned(bool& isOverFlow) const {
 	static const INT::typeChunk signMask = 1 << (INT::s_numBitsOfChunk - 1);
 	static const INT::typeChunk valueMask = ~signMask;
 
 	if (_chunks.size() == 0) {
-		isTruncated = false;
+		isOverFlow = false;
 		return 0;
 	}
 
 	if (_chunks.size() == 1) {
-		isTruncated = false;
+		isOverFlow = false;
 		INT::typeLinkSigned result = _chunks[0];
 		return _sign > 0 ? result : -result;
 	}
@@ -140,17 +140,17 @@ INT::typeLinkSigned INT::toLinkSigned(bool& isTruncated) const {
 
 	if (_chunks.size() == 2) {
 		if (_sign > 0) {
-			isTruncated = highChunk & signMask;
+			isOverFlow = highChunk & signMask;
 			return result;
 		} 
 		else {
 			if (!(highChunk & signMask)) {
-				isTruncated = false;
+				isOverFlow = false;
 				return -result;
 			}
 			else {
-				isTruncated = result > 0;
-				if (isTruncated) {
+				isOverFlow = result > 0;
+				if (isOverFlow) {
 					return -result;
 				}
 				else {
@@ -162,7 +162,7 @@ INT::typeLinkSigned INT::toLinkSigned(bool& isTruncated) const {
 		}
 	}
 	else {
-		isTruncated = true;
+		isOverFlow = true;
 		return _sign ? result : -result;
 	}
 
@@ -242,17 +242,18 @@ void INT::setValueWithString(const std::string& str, int base) {
 
 	state s = state::init;
 	int digitValue;
+	int sign = 1;
 	while (index < str.size()) {
 		char c = str[index++];
 		switch (s)
 		{
 		case init:
 			if (c == '-') {
-				_sign = -1;
+				sign = -1;
 				s = set_digit;
 			}
 			else if (c == '+') {
-				_sign = 1;
+				sign = 1;
 				s = set_digit;
 			}
 			else if (c == ' ' || c == '\t' || c == '\n') {
@@ -267,6 +268,7 @@ void INT::setValueWithString(const std::string& str, int base) {
 			break;
 		case set_digit:
 			if (!isDigit(c, base, digitValue)) {
+				_sign = sign;
 				normalize();
 				return;
 			}
@@ -279,6 +281,8 @@ void INT::setValueWithString(const std::string& str, int base) {
 			break;
 		}
 	}
+	_sign = sign;
+	normalize();
 }
 
 int INT::bit(size_t pos) const {

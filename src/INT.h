@@ -107,26 +107,26 @@ class INT {
 			normalize();
 		};
 
-		int toInt(bool& isTruncated) const { return toChunkSigned(isTruncated); }
-		int toUint(bool& isTruncated) const { return toChunk(isTruncated); }
+		int toInt(bool& isOverFlow) const { return toChunkSigned(isOverFlow); }
+		int toUint(bool& isOverFlow) const { return toChunk(isOverFlow); }
 
-		long long toLongLong(bool& isTruncated) const { return toLinkSigned(isTruncated); }
-		unsigned long long toUlonglong(bool& isTruncated) const { return toLink(isTruncated); }
+		long long toLongLong(bool& isOverFlow) const { return toLinkSigned(isOverFlow); }
+		unsigned long long toUlonglong(bool& isOverFlow) const { return toLink(isOverFlow); }
 
 		std::string toString(int base = 10) const;
 		void setValueWithString(const std::string& str, int base = 10);
 
-		INT::typeChunk toChunk(bool& isTruncated) const {
-			isTruncated = _chunks.size() > 1;
+		INT::typeChunk toChunk(bool& isOverFlow) const {
+			isOverFlow = _chunks.size() > 1;
 			if (_chunks.size() == 0) {
 				return 0;
 			}
 			return _chunks[0];
 		}
-		INT::typeChunkSigned toChunkSigned(bool& isTruncated) const;
+		INT::typeChunkSigned toChunkSigned(bool& isOverFlow) const;
 
-		INT::typeLink toLink(bool& isTruncated) const {
-			isTruncated = _chunks.size() > 2;
+		INT::typeLink toLink(bool& isOverFlow) const {
+			isOverFlow = _chunks.size() > 2;
 			if (_chunks.size() == 0) {
 				return 0;
 			}
@@ -141,7 +141,7 @@ class INT {
 			return result;
 		}
 
-		INT::typeLinkSigned toLinkSigned(bool& isTruncated) const;
+		INT::typeLinkSigned toLinkSigned(bool& isOverFlow) const;
 
 	public:
 		INT& operator = (const INT& v);
