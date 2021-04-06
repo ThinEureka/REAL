@@ -657,6 +657,65 @@ void initTestCases() {
 		});
 
 	testCases.push_back([&] {
+		int p = -34324324234;
+		INT x = INT(p);
+		bool isOverflow = false;
+		assert(x.toInt(isOverflow) == p);
+		std::cout << "to int test1 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		int p = 34324324234;
+		INT x = INT(-p);
+		bool isOverflow = false;
+		assert(x.toInt(isOverflow) == -p);
+		std::cout << "to int test2 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		long long p = -34324324344324234;
+		INT x = INT(p);
+		bool isOverflow = false;
+		assert(x.toLongLong(isOverflow) == p);
+		std::cout << "to long long test1 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		std::string p = "101011010101010101010101101010101011";
+		INT x = INT(p, 2);
+		std::cout << "x:" << x.toString(2) << std::endl;
+		for (int i = 0; i < p.size(); ++i) {
+			char bit = x.bit(i) ? '1' : '0';
+			assert(bit == p[p.size() - 1 -i]);
+		}
+		std::cout << "bit test 1 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		std::string p = "101011010101010101010101101010101011";
+		INT x = INT(p, 2);
+		std::cout << "x:" << x.toString(2) << std::endl;
+		INT y = x - 1;
+		std::cout << "y:" << x.toString(2) << std::endl;
+		assert(x > y);
+		assert(x >= y);
+		assert(y < x);
+		assert(y <= x);
+		assert(x == x);
+		assert(!(x == y));
+		assert(x != y);
+		std::cout << "compare test 1 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		long long p = 34324324344324234;
+		INT x = INT(-p);
+		bool isOverflow = false;
+		assert(x.toLongLong(isOverflow) == -p);
+		std::cout << "to long long test2 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
 		std::string s1 = "12345";
 		INT x1 = INT(s1);
 		std::string x1_s = x1.toString();
@@ -753,79 +812,56 @@ void initTestCases() {
 		int N = 1000;
 		for (int i = 0; i < 1000; ++i) {
 			auto x_i = x << i;
-			std::cout << "i:" << i << " y leadBit:" << y.leadBit() << endl;
-			//cout << "x_(" << i << "):" << x_i.toString() << endl;
-			//cout << "y:" << y.toString() << endl;
 			assert(x_i == y);
 			y *= 2;
 		}
-		std::cout << "shift left test1 passed";
+		std::cout << "shift left test1 passed" << std::endl;
 
 		x = y;
 		for (int i = 0; i < N; ++i) {
-			std::cout << "i:" << i << " y leadBit:" << y.leadBit() << endl;
 			auto x_i = x >> i;
-			//cout << "x_(" << i << "):" << x_i.toString() << endl;
-			//cout << "y:" << y.toString() << endl;
 			assert(x_i == y);
 			y /= 2;
 		}
-		std::cout << "shift right test1 passed";
+		std::cout << "shift right test1 passed" << std::endl;
 		});
-}
-void testInt() {
-	while (true) {
+
+	testCases.push_back([&] {
+		INT x;
+		INT y;
+		INT a = INT("1334247873434343434343434892374873423423432434343443243434343423423423424334");
+		INT b = INT("23423434343434343434343434343434");
+		INT q, r;
+		divide(a, b, q, r);
+		std::cout << "q:" << q.toString() << std::endl;
+		std::cout << "r:" << r.toString() << std::endl;
+		INT c = b * q + r;
+		std::cout << "a:" << a.toString() << std::endl;
+		std::cout << "c:" << c.toString() << std::endl;
+		assert(a == c);
+		std::cout << "big number * and / test1 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
 		INT x;
 		INT y;
 		INT a = INT("1334247873434343434343434892374873423423432434343443243434343423423423424334");
 		INT b = INT("9343243424343424324234234343243234343434343434343434343423432423432423443243434");
 		for (int i = 0; i < 1; ++i) {
 			INT x = (a + i) * b;
-			auto oldX = x;
-			x *= x;
-			cout << "a1" << endl;
-			x *= x;
-			cout << "a2" << endl;
-			x *= x;
-			cout << "a3" << endl;
-			x *= x;
-			cout << "a4" << endl;
-			x *= x;
-			cout << "a5" << endl;
-			x *= x;
-			cout << "a6" << endl;
-			x *= x;
-			cout << "a7" << endl;
-
-			x += oldX;
-			x -= oldX;
-			cout << "a8" << endl;
-
-			//auto mm = x.toString();
-			//cout << "a8" << endl;
-			std::string mm = "###";
-
-			if (i % 1 == 0) {
-				cout << "i:" << i << " " << "leadBit of i:" << x.leadBit()
-					<< "decical pos:" << mm.size() << endl;
+			auto x0 = x;
+			for (int i = 0; i < 5; ++i) {
+				x *= x;
 			}
-			//y = INT("34234234343434334234234434934343457");
 
-			for (int i = 0; i < 128; ++i) {
-				cout << "ii:" << i << endl;
-				//cout << "ii:" << i <<" " << "leadBit of i:" << x.leadBit()
-				//	<< "decical pos:" << mm.size() << endl;
-				x /= oldX;
+			for (int i = 0; i < 32; ++i) {
+				x /= x0;
 			}
-			//cout << "x:" << x.toString() << endl;
+			cout << "x:" << x.toString() << endl;
 			assert(x == 1);
-
-			//cout << "x:" << x.toString() << endl;
 		}
-		cout << "x:" << x.toString() << endl;
-		break;
-	}
-
+		std::cout << "big number * and / test2 passed" << std::endl;
+		});
 }
 
 int main()
