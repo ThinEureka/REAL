@@ -1,6 +1,9 @@
 #include "INT.h"
 #include "REAL.h"
 #include <fstream>
+#include <functional>
+#include <vector>
+
 using namespace zju04nycs;
 using namespace std;
 
@@ -550,144 +553,195 @@ void EvaluatePi()
 	cout<<"Pi("<<W-2<<")="<<Pi<<endl;
 }
 
+static std::vector<std::function<void()>> testCases;
+
+void initTestCases() {
+	testCases.push_back([&] {
+		INT n;
+		assert(n.isZero());
+		assert(!n.isPositive());
+		assert(!n.isNegative());
+		std::cout << "zero test passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		INT one = 1;
+		INT one_ = INT("1");
+		assert(one == one_);
+		assert(!(one != one_));
+		std::cout << "one test passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		std::string s1 = "12345";
+		INT x1 = INT(s1);
+		std::string x1_s = x1.toString();
+		std::cout << "x1:" << x1_s << std::endl;
+		assert(x1_s == s1);
+		std::cout << "simple string constructor test passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		std::string s6 = "400412878166003164546735534092609172319140330852536603355429981136254443797343719815103359446869847213482227876740797726949481901457564006563326790056796257840594244649848624543981509868730249924";
+		INT x6 = INT(s6);
+		auto x6_s = x6.toString();
+		cout << "x6:" << x6_s << endl;
+		assert(x6_s == s6);
+		cout << "long string constructor test 6 passed" << endl;
+		});
+
+	testCases.push_back([&] {
+		INT N = INT("100");
+		INT sum;
+		for (INT i = 0; i <= N; i = i + 1) {
+			sum += i;
+		}
+		auto sum_s = sum.toString();
+		std::cout << "sum:" << sum_s << std::endl;
+		assert(sum == N * (N + 1) / 2);
+		cout << "sum test 1 passed" << endl;
+		});
+
+	testCases.push_back([&] {
+		INT N2 = INT("200000");
+		INT sum2;
+		for (INT i = 0; i <= N2; i = i + 1) {
+			sum2 += i;
+		}
+		auto sum2_s = sum2.toString();
+		std::cout << "sum2:" << sum2_s << std::endl;
+		assert(sum2 == N2 * (N2 + 1) / 2);
+		cout << "sum test 2 passed" << endl;
+		});
+
+	testCases.push_back([&] {
+		std::string s7 = "101010101010101101010010101";
+		INT x7 = INT(s7, 2);
+		auto x7_s = x7.toString(2);
+		cout << "x7:" << x7_s << std::endl;
+		assert(x7_s == s7);
+		cout << "base 2 string construtor test passed\n";
+
+		INT y7 = x7 ^ x7;
+		cout << "y7:" << y7.toString() << std::endl;
+		assert(y7.isZero());
+		cout << "xor test7 passed" << endl;
+		});
+
+	testCases.push_back([&] {
+		long long p2 = 123456789012345333LL;
+		INT x2 = INT(p2);
+		auto x2_s = x2.toString();
+		std::cout << "x2:" << x2_s << std::endl;
+		std::cout << "p2:" << p2 << std::endl;
+		assert(std::to_string(p2) == x2_s);
+		std::cout << "long long constructor test passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		INT x3 = INT("123456789012345333");
+		std::cout << "x3:" << x3.toString() << std::endl;
+
+		std::string s4 = "12345678901234";
+		INT x4 = INT(s4);
+		auto x4_s = x4.toString();
+		std::cout << "x4:" << x4_s << std::endl;
+		assert(x4_s == s4);
+		cout << "string constructor test4 passed" << std::endl;
+
+		std::string s5 = "32433443423434783432432423423423423423423423423423423423472364723647236476274623764723674623746764237647264723476767236472364782374827384723478324324324243343243243242342432423432434";
+		INT x5 = INT(s5);
+		std::cout << "x5:" << x5.toString() << std::endl;
+		assert(x5.toString() == s5);
+		cout << "long string constructor test5 passed" << std::endl;
+
+		std::cout << "x4*x5:" << (x4 * x5).toString() << std::endl;
+		std::cout << "x5*x4:" << (x5 * x4).toString() << std::endl;
+
+		assert(x4 * x5 == x5 * x4);
+		assert((x4 * x5).toString() == (x5 * x4).toString());
+		cout << "multiplication communication law test passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		INT x = INT("432434243324234234");
+		INT y = x;
+		int N = 1000;
+		for (int i = 0; i < 1000; ++i) {
+			auto x_i = x << i;
+			std::cout << "i:" << i << " y leadBit:" << y.leadBit() << endl;
+			//cout << "x_(" << i << "):" << x_i.toString() << endl;
+			//cout << "y:" << y.toString() << endl;
+			assert(x_i == y);
+			y *= 2;
+		}
+		std::cout << "shift left test1 passed";
+
+		x = y;
+		for (int i = 0; i < N; ++i) {
+			std::cout << "i:" << i << " y leadBit:" << y.leadBit() << endl;
+			auto x_i = x >> i;
+			//cout << "x_(" << i << "):" << x_i.toString() << endl;
+			//cout << "y:" << y.toString() << endl;
+			assert(x_i == y);
+			y /= 2;
+		}
+		std::cout << "shift right test1 passed";
+		});
+}
 void testInt() {
-	INT n;
-	assert(n.isZero());
-	assert(!n.isPositive());
-	assert(!n.isNegative());
-	cout << "zero test passed" << std::endl;
+	while (true) {
+		INT x;
+		INT y;
+		INT a = INT("1334247873434343434343434892374873423423432434343443243434343423423423424334");
+		INT b = INT("9343243424343424324234234343243234343434343434343434343423432423432423443243434");
+		for (int i = 0; i < 1; ++i) {
+			INT x = (a + i) * b;
+			auto oldX = x;
+			x *= x;
+			cout << "a1" << endl;
+			x *= x;
+			cout << "a2" << endl;
+			x *= x;
+			cout << "a3" << endl;
+			x *= x;
+			cout << "a4" << endl;
+			x *= x;
+			cout << "a5" << endl;
+			x *= x;
+			cout << "a6" << endl;
+			x *= x;
+			cout << "a7" << endl;
 
-	INT one = 1;
-	INT one_ = INT("1");
-	assert(one == one_);
-	assert(!(one != one_));
-	cout << "one test passed" << std::endl;
+			x += oldX;
+			x -= oldX;
+			cout << "a8" << endl;
 
-	std::string s1 = "12345";
-	INT x1 = INT(s1);
-	std::string x1_s = x1.toString();
-	std::cout << "x1:" <<  x1_s << std::endl;
-	assert(x1_s == s1);
-	cout << "simple string constructor test passed" << std::endl;
+			//auto mm = x.toString();
+			//cout << "a8" << endl;
+			std::string mm = "###";
 
-	long long p2 = 123456789012345333LL;
-	INT x2 = INT(p2);
-	auto x2_s = x2.toString();
-	std::cout << "x2:" << x2_s << std::endl;
-	std::cout << "p2:"<< p2 << std::endl;
-	assert(std::to_string(p2) == x2_s);
-	cout << "long long constructor test passed" << std::endl;
+			if (i % 1 == 0) {
+				cout << "i:" << i << " " << "leadBit of i:" << x.leadBit()
+					<< "decical pos:" << mm.size() << endl;
+			}
+			//y = INT("34234234343434334234234434934343457");
 
-	INT x3 = INT("123456789012345333");
-	std::cout << "x3:" << x3.toString() << std::endl;
+			for (int i = 0; i < 128; ++i) {
+				cout << "ii:" << i << endl;
+				//cout << "ii:" << i <<" " << "leadBit of i:" << x.leadBit()
+				//	<< "decical pos:" << mm.size() << endl;
+				x /= oldX;
+			}
+			//cout << "x:" << x.toString() << endl;
+			assert(x == 1);
 
-	std::string s4 = "12345678901234";
-	INT x4 = INT(s4);
-	auto x4_s = x4.toString();
-	std::cout << "x4:" << x4_s << std::endl;
-	assert(x4_s == s4);
-	cout << "string constructor test4 passed" << std::endl;
-
-	std::string s5 = "32433443423434783432432423423423423423423423423423423423472364723647236476274623764723674623746764237647264723476767236472364782374827384723478324324324243343243243242342432423432434";
-	INT x5 = INT(s5);
-	std::cout << "x5:" << x5.toString() << std::endl;
-	assert(x5.toString() == s5);
-	cout << "long string constructor test5 passed" << std::endl;
-
-	std::cout << "x4*x5:" << (x4 * x5).toString() << std::endl;
-	std::cout << "x5*x4:" << (x5 * x4).toString() << std::endl;
-
-	assert(x4 * x5 == x5 * x4);
-	assert((x4 * x5).toString() == (x5 * x4).toString());
-	cout << "multiplication communication law test passed" << std::endl;
-
-	std::string s6 = "400412878166003164546735534092609172319140330852536603355429981136254443797343719815103359446869847213482227876740797726949481901457564006563326790056796257840594244649848624543981509868730249924";
-	INT x6 = INT(s6);
-	auto x6_s = x6.toString();
-	cout << "x6:" << x6_s << endl;
-	assert(x6_s == s6);
-	cout << "long string constructor test 6 passed" << endl;
-
-	INT N = INT("100");
-	INT sum;
-	for (INT i = 0; i <= N; i = i + 1) {
-		sum += i;
-	}
-	auto sum_s = sum.toString();
-	std::cout << "sum:" << sum_s << std::endl;
-	assert(sum == N * (N + 1) / 2);
-	cout << "sum test 1 passed" << endl;
-
-	INT N2 = INT("200000");
-	INT sum2;
-	for (INT i = 0; i <= N2; i = i + 1) {
-		sum2 += i;
-	}
-	auto sum2_s = sum2.toString();
-	std::cout << "sum2:" << sum2_s << std::endl;
-	assert(sum2 == N2 * (N2 + 1) / 2);
-	cout << "sum test 2 passed" << endl;
-
-	std::string s7 = "101010101010101101010010101";
-	INT x7 = INT(s7, 2);
-	auto x7_s = x7.toString(2);
-	cout << "x7:" << x7_s << std::endl;
-	assert(x7_s == s7);
-	cout << "base 2 string construtor test passed\n";
-
-	INT y7 = x7 ^ x7;
-	cout << "y7:" << y7.toString() << std::endl;
-	assert(y7.isZero());
-	cout << "xor test7 passed" << endl;
-
-	INT x;
-	INT y;
-	INT a = INT("1334247873434343434343434892374873423423432434343443243434343423423423424334");
-	INT b = INT("9343243424343424324234234343243234343434343434343434343423432423432423443243434");
-	for (int i = 0; i < 10000000; ++i) {
-		INT x = (a + i)* b;
-		auto oldX = x;
-		x *= x;
-		cout << "a1" << endl;
-		x *= x;
-		cout << "a2" << endl;
-		x *= x;
-		cout << "a3" << endl;
-		x *= x;
-		cout << "a4" << endl;
-		x *= x;
-		cout << "a5" << endl;
-		x *= x;
-		cout << "a6" << endl;
-		x *= x;
-		cout << "a7" << endl;
-
-		x += oldX;
-		x -= oldX;
-		cout << "a8" << endl;
-
-		//auto mm = x.toString();
-		//cout << "a8" << endl;
-		std::string mm = "###";
-
-		if (i % 1 == 0) {
-			cout << "i:" << i <<" " << "leadBit of i:" << x.leadBit()
-				<< "decical pos:" << mm.size() << endl;
+			//cout << "x:" << x.toString() << endl;
 		}
-		//y = INT("34234234343434334234234434934343457");
-
-		for (int i = 0; i < 128; ++i) {
-			cout << "ii:"  << i << endl;
-			//cout << "ii:" << i <<" " << "leadBit of i:" << x.leadBit()
-			//	<< "decical pos:" << mm.size() << endl;
-			x /= oldX;
-		}
-		//cout << "x:" << x.toString() << endl;
-		assert(x == 1);
-
-		//cout << "x:" << x.toString() << endl;
+		cout << "x:" << x.toString() << endl;
+		break;
 	}
-	cout << "x:" << x.toString() << endl;
+
 }
 
 int main()
@@ -701,7 +755,20 @@ int main()
 	//Test10();
 	//Test11();
 	//EvaluatePi();
-	testInt();
+	//testInt();
+	initTestCases();
+	bool reverseOrder = true;
+
+	if (reverseOrder) {
+		for (auto it = testCases.rbegin(); it != testCases.rend(); ++it) {
+			(*it)();
+		}
+	}
+	else {
+		for (auto it = testCases.begin(); it != testCases.end(); ++it) {
+			(*it)();
+		}
+	}
 	return 0;
 	
 
