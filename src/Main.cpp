@@ -814,12 +814,84 @@ void initTestCases() {
 		std::cout << "y:" << y.toString(2) << std::endl;
 		std::cout << "x0:" << x0.toString(2) << std::endl;
 		assert(x0 == INT(0));
-		assert((x|x) == x);
-		assert((x&x) == x);
-		std::cout << "x&y:"<< (x & y).toString(2) << std::endl;
-		std::cout << "x|y:"<< (x | y).toString(2) << std::endl;
-		std::cout << "x^y:"<< (x ^ y).toString(2) << std::endl;
-		std::cout << "bit operation passed" << std::endl;
+		assert((x | x) == x);
+		assert((x& x) == x);
+		std::cout << "x&y:" << (x & y).toString(2) << std::endl;
+		std::cout << "x|y:" << (x | y).toString(2) << std::endl;
+		std::cout << "x^y:" << (x ^ y).toString(2) << std::endl;
+		std::cout << "bit operation test 1 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		INT a = INT("342343243647264736476374673647364736476");
+		INT b = INT("3434343434334343434343434");
+
+		std::cout << "a:" << a.toString() << std::endl;
+		std::cout << "b:" << b.toString() << std::endl;
+
+		INT q, r;
+		q = a / b;
+		std::cout << "q:" << q.toString() << std::endl;
+		r = a % b;
+		std::cout << "r:" << r.toString() << std::endl;
+		auto c = b * q + r;
+		std::cout << "c:" << c.toString() << std::endl;
+		assert(a == c);
+		std::cout << "/ % test 1 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		INT a = INT("5489548657467564756744343434346");
+		std::cout << "a:" << a.toString() << std::endl;
+
+		INT b = a << 343;
+		std::cout << "b:" << b.toString() << std::endl;
+		a <<= 343;
+		assert(a == b);
+		std::cout << "a:" << a.toString() << std::endl;
+
+		b = a >> 249;
+		a >>= 249;
+		std::cout << "a:" << a.toString() << std::endl;
+		std::cout << "b:" << b.toString() << std::endl;
+		assert(a == b);
+
+		std::cout << "shift assign test1  passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		INT a = INT("5489548657467564756744343434346");
+		INT b = INT("53423434343343489548657467564756744343434346");
+		std::cout << "a:" << a.toString() << std::endl;
+		std::cout << "b:" << b.toString() << std::endl;
+
+		INT c = a;
+		c += b;
+		std::cout << "c:" << c.toString() << std::endl;
+		assert(c == a + b);
+
+		c = a;
+		c -= b;
+		std::cout << "c:" << c.toString() << std::endl;
+		assert(c == a - b);
+		assert(c + b == a);
+
+		c = a;
+		c *= b;
+		std::cout << "c:" << c.toString() << std::endl;
+		assert(c == a * b);
+
+		c = a;
+		c /= b;
+		std::cout << "c:" << c.toString() << std::endl;
+		assert(c == a / b);
+
+		c = a;
+		c %= b;
+		std::cout << "c:" << c.toString() << std::endl;
+		assert(c == a % b);
+
+		std::cout << "assignment test2  passed" << std::endl;
 		});
 
 	testCases.push_back([&] {

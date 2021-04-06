@@ -190,10 +190,10 @@ std::string INT::toString(int base) const {
 
 	INT r;
 	INT n = *this;
-	const INT& d = s_smallInts[base];
 	INT q;
+	const INT& d = s_smallInts[base];
 
-	while (n >= d) {
+	while (chunksCompare(n._chunks, d._chunks) >= 0) {
 		n = divide(n, d, q, r);
 		if (r._chunks.size() == 0) {
 			str += '0';
