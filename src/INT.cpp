@@ -684,7 +684,7 @@ void INT::chunksShiftLeft(unsigned int pos) {
 	}
 
 	INT::typeChunk mask = ((1 << shiftBits) - 1) << crossShiftBits;
-	for (size_t i = _chunks.size() - 1 ; i >= shiftChunks; --i) {
+	for (int i = _chunks.size() - 1 ; i >= static_cast<int>(shiftChunks); --i) {
 		INT::typeChunk shiftOutChunk = ((_chunks[i] & mask) >> crossShiftBits);
 		if (shiftOutChunk > 0) {
 			if (i < _chunks.size() - 1) {
