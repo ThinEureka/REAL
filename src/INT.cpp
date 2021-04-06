@@ -535,7 +535,6 @@ INT& zju04nycs::multiply(const INT & v1, const INT & v2, INT & product) {
 				carry = static_cast<INT::typeChunk>(partSum >> INT::s_numBitsOfChunk);
 				if (carry > 0) {
 					if (j == v1._chunks.size() - 1) {
-						assert(product.chunk(i + j + 1) == 0);
 						product.setChunk(i + j + 1, carry);
 					}
 				}
