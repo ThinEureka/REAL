@@ -423,8 +423,8 @@ INT& INT::operator |= (const INT& v1) {
 		_chunks.resize(v1._chunks.size());
 	}
 
-	for (size_t i = 0; i < _chunks[i]; ++i) {
-		_chunks[i] |= v1._chunks[i];
+	for (size_t i = 0; i < _chunks.size(); ++i) {
+		_chunks[i] |= v1.chunk(i);
 	}
 	//do not need normalize
 
@@ -436,7 +436,7 @@ INT& INT::operator ^= (const INT& v1) {
 		_chunks.resize(v1._chunks.size());
 	}
 	for (size_t i = 0; i < _chunks.size(); ++i) {
-		_chunks[i] ^= v1._chunks[i];
+		_chunks[i] ^= v1.chunk(i);
 	}
 	normalize();
 	return *this;

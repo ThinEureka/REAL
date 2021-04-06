@@ -805,6 +805,22 @@ void initTestCases() {
 		assert((x4 * x5).toString() == (x5 * x4).toString());
 		cout << "multiplication communication law test passed" << std::endl;
 		});
+	
+	testCases.push_back([&] {
+		INT x = INT("10011100101001010100100100101001010100101001010101010010101010010011001010001010100110011001", 2);
+		INT y = INT("1101111001010101010101010101010010000101011001100100101000111110010010", 2);
+		INT x0 = x ^ x;
+		std::cout << "x:" << x.toString(2) << std::endl;
+		std::cout << "y:" << y.toString(2) << std::endl;
+		std::cout << "x0:" << x0.toString(2) << std::endl;
+		assert(x0 == INT(0));
+		assert((x|x) == x);
+		assert((x&x) == x);
+		std::cout << "x&y:"<< (x & y).toString(2) << std::endl;
+		std::cout << "x|y:"<< (x | y).toString(2) << std::endl;
+		std::cout << "x^y:"<< (x ^ y).toString(2) << std::endl;
+		std::cout << "bit operation passed" << std::endl;
+		});
 
 	testCases.push_back([&] {
 		INT x = INT("432434243324234234");
