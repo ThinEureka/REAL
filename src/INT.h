@@ -148,9 +148,9 @@ class INT {
 		INT& operator = (INT&& v) noexcept;
 		INT& operator = (const INT&& v) noexcept;
 
-		bool isZero() const { return _chunks.size() == 0; }
-		void clear() { _sign = 1; _chunks.clear(); }
-		bool isPositive() const { return _sign > 0 && _chunks.size() > 0; }
+		bool isZero() const { return _sign == 0; }
+		void clear() { _sign = 0; _chunks.clear(); }
+		bool isPositive() const { return _sign > 0; }
 		bool isNegative() const { return _sign < 0;  }
 
 		int bit(size_t pos) const;
@@ -169,7 +169,7 @@ class INT {
 		int tailBit() const;
 
 		friend int compare(const INT& v1, const INT& v2);
-		INT& negate() { if (!isZero()) { _sign = -_sign; } return *this; };
+		INT& negate() {  _sign = -_sign;  return *this; };
 
 	public:
 		const INT operator - () const {
@@ -308,7 +308,7 @@ class INT {
 				_chunks.pop_back();
 			}
 			if (_chunks.size() == 0) {
-				_sign = 1;
+				_sign = 0;
 			}
 		}
 
@@ -331,7 +331,7 @@ class INT {
 		void chunksShiftLeft(unsigned int pos);
 
 	private:
-		int _sign{ 1 };
+		int _sign{ 0 };
 		std::vector<typeChunk> _chunks;
 	};
 }

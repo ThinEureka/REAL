@@ -171,6 +171,10 @@ INT::typeLinkSigned INT::toLinkSigned(bool& isOverFlow) const {
 
 std::string INT::toString(int base) const {
 	assert(base >= 2 && base <= 35);
+	if (_sign == 0) {
+		return "0";
+	}
+
 	std::string str;
 	if (_sign < 0) {
 		str += '-';
@@ -555,8 +559,8 @@ INT& zju04nycs::divide (const INT& v1, const INT& v2, INT& q, INT& r) {
 
 	int comResult = chunksCompare(v1._chunks, v2._chunks);
 	if (comResult == 0) {
-		//q = 1;
 		q.clear();
+		q._sign = 1;
 		q.setChunk(0, 1);
 		q.normalize();
 
