@@ -24,12 +24,18 @@
     <ClCompile Include="..\src\REAL.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\FRAC.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\INT.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\src\REAL.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\FRAC.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
