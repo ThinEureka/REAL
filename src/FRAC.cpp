@@ -130,7 +130,7 @@ void FRAC::normalize() {
 		return;
 	}
 
-	_sign = _n.sign() == _d.sign() ? 1 : -1;
+	_sign = _n.sign() == _d.sign() ? _sign : -_sign;
 	if (_n.isNegative()) {
 		_n.negate();
 	}
