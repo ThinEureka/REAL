@@ -758,6 +758,36 @@ void initTestCases() {
 		});
 
 	testCases.push_back([&] {
+		INT a = INT("343483463746736473467346736476");
+		INT b = INT("364826374736436476374676763746");
+		INT c = INT("342349384938483843874839");
+
+		std::cout << "a:" << a.toString() << std::endl;
+		std::cout << "b:" << b.toString() << std::endl;
+		std::cout << "c:" << c.toString() << std::endl;
+
+		auto s1 = a + (b + c);
+		auto s2 = (a + b) + c;
+		std::cout << "s1:" << s1.toString() << std::endl;
+		std::cout << "s2:" << s2.toString() << std::endl;
+		assert(s1 == s2);
+
+		auto p1 = a * (b * c);
+		auto p2 = (a * b) * c;
+		std::cout << "p1:" << p1.toString() << std::endl;
+		std::cout << "p2:" << p2.toString() << std::endl;
+		assert(p1 == p2);
+
+		auto m1 = a * (b + c);
+		auto m2 = a * b + a * c;
+		std::cout << "m1:" << m1.toString() << std::endl;
+		std::cout << "m2:" << m2.toString() << std::endl;
+
+		assert(m1 == m2);
+		std::cout << "basic plus and multiplcation law test 1 passed" << endl;
+		});
+
+	testCases.push_back([&] {
 		std::string s7 = "101010101010101101010010101";
 		INT x7 = INT(s7, 2);
 		auto x7_s = x7.toString(2);
@@ -892,6 +922,16 @@ void initTestCases() {
 		assert(c == a % b);
 
 		std::cout << "assignment test2  passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		INT x = INT("433847982374873847387483478374837438748347837482434243324234234");
+		for (int i = 2; i <= 35; ++i) {
+			auto str = x.toString(i);
+			std::cout << "base" << i << ":" << str << std::endl;
+			assert(INT(str, i) == x);
+		}
+		std::cout << "any base test1  passed" << std::endl;
 		});
 
 	testCases.push_back([&] {
