@@ -559,11 +559,7 @@ INT& zju04nycs::divide (const INT& v1, const INT& v2, INT& q, INT& r) {
 
 	int comResult = chunksCompare(v1._chunks, v2._chunks);
 	if (comResult == 0) {
-		q.clear();
-		q._sign = 1;
-		q.setChunk(0, 1);
-		q.normalize();
-
+		q.setToOne();
 		r.clear();
 		return q;
 	}

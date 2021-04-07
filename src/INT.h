@@ -149,7 +149,8 @@ class INT {
 		INT& operator = (const INT&& v) noexcept;
 
 		bool isZero() const { return _sign == 0; }
-		void clear() { _sign = 0; _chunks.clear(); }
+		void clear() { _sign = 0; _chunks.clear(); normalize(); }
+		void setToOne() { _sign = 1; _chunks.clear(); setChunk(0, 1); }
 		bool isPositive() const { return _sign > 0; }
 		bool isNegative() const { return _sign < 0;  }
 

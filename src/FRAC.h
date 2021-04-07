@@ -8,10 +8,6 @@
 namespace zju04nycs {
 
 	class FRAC;
-	FRAC operator & (const FRAC& v1, const FRAC& v2);
-	FRAC operator | (const FRAC& v1, const FRAC& v2);
-	FRAC operator ^ (const FRAC& v1, const FRAC& v2);
-
 	FRAC operator +(const FRAC& v1, const FRAC& v2);
 	FRAC operator -(const FRAC& v1, const FRAC& v2);
 	FRAC operator *(const FRAC& v1, const FRAC& v2);
@@ -33,15 +29,25 @@ class FRAC {
 
 	public:
 		FRAC& operator = (const FRAC& v) { _sign = v._sign; _n = v._n; _d = v._d; }
-		FRAC& operator = (FRAC&& v) noexcept;
-		FRAC& operator = (const FRAC&& v) noexcept;
+		FRAC& operator = (FRAC&& v) noexcept { _sign = v._sign; _n = std::move(v._n), _d = std::move(_d); }
+		FRAC& operator = (const FRAC&& v) noexcept { _sign = v._sign; _n = std::move(v._n), _d = std::move(_d); }
 
-		bool isZero() const;
-		void clear();
-		bool isPositive() const;
-		bool isNegative() const;
+		bool isZero() const { return _sign == 0; }
+		void clear() { _sign = 0; _n.clear(); _d.setToOne(); }
+		bool isPositive() const { return _sign > 0; }
+		bool isNegative() const { return _sign < 0; }
 
-		friend int compare(const FRAC& v1, const FRAC& v2);
+		friend int compare(const FRAC& v1, const FRAC& v2, INT& cache1, INT& cache2) {
+			if (v1._sign != v2._sign) {
+				return v1._sign > v2._sign ? 1 : -1;
+			}
+			else {
+				multiply(v1._n, v2._d, cache1);
+				multiply(v1._d, v2._n, cache2);
+				auto comResult = compare(cache1, cache2);
+				return v1._sign >= 0 ? comResult : -comResult;
+			}
+		}
 		FRAC& negate() { if (!isZero()) { _sign = -_sign; } return *this; };
 
 	public:
@@ -56,16 +62,20 @@ class FRAC {
 		}
 
 		friend bool operator < (const FRAC& v1, const FRAC& v2) {
-			return compare(v1, v2) < 0;
+			INT cache1, cache2;
+			return compare(v1, v2, cache1, cache2) < 0;
 		}
 		friend bool operator > (const FRAC& v1, const FRAC& v2) {
-			return compare(v1, v2) > 0;
+			INT cache1, cache2;
+			return compare(v1, v2, cache1, cache2) > 0;
 		}
 		friend bool operator <= (const FRAC& v1, const FRAC& v2) {
-			return compare(v1, v2) <= 0;
+			INT cache1, cache2;
+			return compare(v1, v2, cache1, cache2) <= 0;
 		}
 		friend bool operator >= (const FRAC& v1, const FRAC& v2) {
-			return compare(v1, v2) >= 0;
+			INT cache1, cache2;
+			return compare(v1, v2, cache1, cache2) >= 0;
 		}
 
 		friend FRAC operator +(const FRAC& v1, const FRAC& v2) {
