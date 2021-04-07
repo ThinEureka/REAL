@@ -23,6 +23,9 @@ const INT INT::s_smallInts[101] = {
 	100
 };
 
+const INT& INT::zero = INT::s_smallInts[0];
+const INT& INT::one = INT::s_smallInts[1];
+
 INT::INT() {
 	int i = 0;
 	++i;
@@ -233,7 +236,7 @@ std::string INT::toString(int base) const {
 void INT::setValueWithString(const std::string& str, int base) {
 	assert(base >= 2 && base <= 35);
 
-	clear();
+	setZero();
 	if (str.size() == 0) {
 		return;
 	}
@@ -466,7 +469,7 @@ INT& zju04nycs::plus(const INT& v1, const INT& v2, INT& sum){
 	else {
 		int comResult = chunksCompare(v1._chunks, v2._chunks);
 		if (comResult == 0) {
-			sum.clear();
+			sum.setZero();
 			return sum;
 		}
 		else {
@@ -496,7 +499,7 @@ INT& zju04nycs::subtract(const INT& v1, const INT& v2, INT& sub) {
 		return sub;
 	}
 
-	sub.clear();
+	sub.setZero();
 	if (v1._sign == -v2._sign) {
 		sub._sign = v1._sign;
 		sub.chunksPlus(v1._chunks, v2._chunks);
@@ -524,7 +527,7 @@ INT& zju04nycs::subtract(const INT& v1, const INT& v2, INT& sub) {
 }
 
 INT& zju04nycs::multiply(const INT & v1, const INT & v2, INT & product) {
-	product.clear();
+	product.setZero();
 	if (v1.isZero() || v2.isZero()) {
 		return product;
 	}
@@ -552,19 +555,19 @@ INT& zju04nycs::multiply(const INT & v1, const INT & v2, INT & product) {
 INT& zju04nycs::divide (const INT& v1, const INT& v2, INT& q, INT& r) {
 	assert(!v2.isZero());
 	if (v1.isZero()) {
-		q.clear();
+		q.setZero();
 		r = v1;
 		return q;
 	}
 
 	int comResult = chunksCompare(v1._chunks, v2._chunks);
 	if (comResult == 0) {
-		q.setToOne();
-		r.clear();
+		q.setOne();
+		r.setZero();
 		return q;
 	}
 	else if (comResult < 0){
-		q.clear();
+		q.setZero();
 		r = v1;
 		return q;
 	}
@@ -575,7 +578,7 @@ INT& zju04nycs::divide (const INT& v1, const INT& v2, INT& q, INT& r) {
 		const INT& d = v2;
 		const int leadBitD = d.leadBit();
 
-		q.clear();
+		q.setZero();
 		q._sign = v1._sign == v2._sign ? 1 : -1;
 		//leadBit2 must be less or equal to leadBit1
 		while (true) {

@@ -4,6 +4,7 @@
 #define FRAC_H
 
 #include "INT.h"
+#include <assert.h> 
 
 namespace zju04nycs {
 
@@ -23,19 +24,29 @@ class FRAC {
 		FRAC() {}
 		FRAC (const FRAC& v): _sign(v._sign), _n(v._n), _d(v._d) {}
 		FRAC (const FRAC&& v) noexcept : _sign(v._sign), _n(v._n), _d(v._d){}
+		FRAC(const INT& n, const INT& d) { assert(!d.isZero()); _n = n; _d = d; _sign = 1; normalize(); }
 
 		std::string toString(int base = 10) const;
 		void setValueWithString(const std::string& str, int base = 10);
+		void setValueWith2Ints(const INT& n, const INT& d) {
+			_sign = 1;
+			_n = n;
+			_d = d;
+			normalize();
+		}
 
 	public:
-		FRAC& operator = (const FRAC& v) { _sign = v._sign; _n = v._n; _d = v._d; }
+		FRAC& operator = (const FRAC& v) { _sign = v._sign; _n = v._n; _d = v._d; return *this; }
 		FRAC& operator = (FRAC&& v) noexcept { _sign = v._sign; _n = std::move(v._n), _d = std::move(_d); }
 		FRAC& operator = (const FRAC&& v) noexcept { _sign = v._sign; _n = std::move(v._n), _d = std::move(_d); }
 
 		bool isZero() const { return _sign == 0; }
-		void clear() { _sign = 0; _n.clear(); _d.setToOne(); }
 		bool isPositive() const { return _sign > 0; }
 		bool isNegative() const { return _sign < 0; }
+
+		void clear() { _sign = 0; _n.setZero(); _d.setOne(); }
+		void setZero() { clear(); }
+		void setOne() { _sign = 1; _n.setOne(); _d.setOne(); }
 
 		friend int compare(const FRAC& v1, const FRAC& v2, INT& cache1, INT& cache2) {
 			if (v1._sign != v2._sign) {
@@ -56,7 +67,9 @@ class FRAC {
 			return v.negate();
 		}
 
-		friend bool operator == (const FRAC& v1, const FRAC& v2);
+		friend bool operator == (const FRAC& v1, const FRAC& v2) {
+			return v1._sign == v2._sign && v1._n == v2._n && v1._d == v2._d;
+		}
 		friend bool operator != (const FRAC& v1, const FRAC& v2) {
 			return !(v1 == v2);
 		}
@@ -126,9 +139,18 @@ class FRAC {
 		void normalize();
 
 	private:
-		int _sign;
+		int _sign{};
 		INT _n;
 		INT _d;
+
+		//we do some dirty works to reduce dynamic memory allocation
+		//as long as we do not create and delete FRACS, dynamic memory 
+		//allocation can be reduced.
+		INT _c1;
+		INT _c2;
+		INT _c3;
+		INT _c4;
+		INT _c5;
 	};
 }
 #endif

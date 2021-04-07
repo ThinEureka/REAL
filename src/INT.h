@@ -11,6 +11,9 @@
 namespace zju04nycs {
 
 	class INT;
+	bool operator == (const INT& v1, const INT& v2);
+	bool operator != (const INT& v1, const INT& v2);	
+
 	INT operator & (const INT& v1, const INT& v2);
 	INT operator | (const INT& v1, const INT& v2);
 	INT operator ^ (const INT& v1, const INT& v2);
@@ -39,6 +42,9 @@ class INT {
 		static const typeLink s_numBitsOfChunk = 32;
 		static const typeLink s_borrowChunkValue = 1LL << INT::s_numBitsOfChunk;
 		static const INT s_smallInts[101];
+
+		static const INT& zero;
+		static const INT& one;
 
 	public:
 		INT();
@@ -149,12 +155,14 @@ class INT {
 		INT& operator = (const INT&& v) noexcept;
 
 		bool isZero() const { return _sign == 0; }
-		void clear() { _sign = 0; _chunks.clear(); normalize(); }
-		void setToOne() { _sign = 1; _chunks.clear(); setChunk(0, 1); }
+		void clear() { _sign = 0; _chunks.clear(); }
+		void setZero() { clear(); }
+		void setOne() { _sign = 1; _chunks.clear(); setChunk(0, 1); }
 		bool isPositive() const { return _sign > 0; }
 		bool isNegative() const { return _sign < 0;  }
 
 		int bit(size_t pos) const;
+		int sign() const { return _sign; }
 		INT::typeChunk chunk(size_t chunkIndex) const {
 			if (chunkIndex < _chunks.size()) {
 				return _chunks[chunkIndex];

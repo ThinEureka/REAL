@@ -1,5 +1,6 @@
 #include "INT.h"
 #include "REAL.h"
+#include "algorithm"
 #include <fstream>
 #include <functional>
 #include <vector>

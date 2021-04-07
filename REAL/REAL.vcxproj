@@ -139,12 +139,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\algorithm.cpp" />
     <ClCompile Include="..\src\FRAC.cpp" />
     <ClCompile Include="..\src\INT.cpp" />
     <ClCompile Include="..\src\Main.cpp" />
     <ClCompile Include="..\src\REAL.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\algorithm.h" />
     <ClInclude Include="..\src\FRAC.h" />
     <ClInclude Include="..\src\INT.h" />
     <ClInclude Include="..\src\REAL.h" />
