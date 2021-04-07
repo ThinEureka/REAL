@@ -143,9 +143,16 @@ class FRAC {
 		INT _n;
 		INT _d;
 
-		//we do some dirty works to reduce dynamic memory allocation
-		//as long as we do not create and delete FRACS, dynamic memory 
-		//allocation can be reduced.
+		// We do dirty works to reduce dynamic memory allocation.
+		// As long as we do not create or delete FRACS, by limiting ourselves
+		// to the cached interfaces for all calculation(for example we
+		// use function multilpy insead of operator *), unnecessary dynamic memory 
+		// allocation can be avoided, 
+		// So if dynamica memory allocation is the bottle neck for 
+		// calculation performance, you may perfer using the verbose and 
+		// complcated cache interfaces.
+		// Maybe we can find a better solution in the future.
+		// But for now, such a dirty compromise is made. 
 		INT _c1;
 		INT _c2;
 		INT _c3;
