@@ -1070,6 +1070,43 @@ void addFracTest() {
 		std::cout << "FRAC negation test1 passe" << std::endl;
 		});
 
+	testCases.push_back([&] {
+		FRAC f = FRAC("3424343492489328493849384938943434");
+		std::cout << "f:" << f.toString() << std::endl;
+		FRAC g = FRAC("374827348738478234738783748374837847384784");
+		std::cout << "g:" << g.toString() << std::endl;
+		auto x = f / g;
+		auto y = g / f;
+		std::cout << "x:" << x.toString() << std::endl;
+		std::cout << "y:" << y.toString() << std::endl;
+		assert(x * y == 1);
+		assert(x.d() == y.n() && x.n() == y.d());
+		x.inverse();
+		assert(x == y);
+
+		std::cout << "FRAC divide test1 passe" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		FRAC q("1/32343439");
+		FRAC s = 0;
+		FRAC q_i = 1;
+		for (int i = 0; i < 3; ++i) {
+			s += q_i;
+			q_i *= q;
+		}
+		std::cout << "s:" << s.toString() << std::endl;
+		assert(s == (1-q_i)/(1-q));
+		std::cout << "FRAC divide test2 passe" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		auto x = FRAC(1, 2) + FRAC(1, 3);
+		std::cout << "x:" << x.toString() << std::endl;
+		assert(x == FRAC("5/6"));
+		std::cout << "FRAC plus test1 passe" << std::endl;
+		});
+
 }
 
 int main()
@@ -1084,9 +1121,9 @@ int main()
 	//Test11();
 	//EvaluatePi();
 	//testInt();
-	addFracTest();
 	addIntTest();
-	bool reverseOrder = false;
+	addFracTest();
+	bool reverseOrder = true;
 
 	if (reverseOrder) {
 		for (auto it = testCases.rbegin(); it != testCases.rend(); ++it) {

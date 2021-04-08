@@ -69,6 +69,7 @@ FRAC& zju04nycs::plus(const FRAC& v1, const FRAC& v2, FRAC& sum) {
 	}
 	plus(sum._c1, sum._c2, sum._n);
 	multiply(v1._d, v2._d, sum._d);
+	sum._sign = 1;
 	sum.normalize();
 	return sum;
 }
@@ -96,6 +97,7 @@ FRAC& zju04nycs::subtract(const FRAC& v1, const FRAC& v2, FRAC& sub) {
 	}
 	plus(sub._c1, sub._c2, sub._n);
 	multiply(v1._d, v2._d, sub._d);
+	sub._sign = 1;
 	sub.normalize();
 	return sub;
 }

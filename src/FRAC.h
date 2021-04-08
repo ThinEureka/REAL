@@ -129,7 +129,8 @@ class FRAC {
 				return v1._sign >= 0 ? comResult : -comResult;
 			}
 		}
-		FRAC& negate() { if (!isZero()) { _sign = -_sign; } return *this; };
+		FRAC& negate() { _sign = -_sign;  return *this; };
+		FRAC& inverse() { std::swap(_n, _d); return *this; }
 
 	public:
 		const FRAC operator - () const {
