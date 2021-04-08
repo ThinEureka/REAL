@@ -25,23 +25,25 @@ std::string FRAC::toString(int base) const {
 	}
 }
 
-void FRAC::setValueWithString(const std::string& str, int base) {
+FRAC& FRAC::set(const std::string& str, int base) {
 	auto pos = str.find('/');
 	if (pos == std::string::npos) {
 		_sign = 1;
-		_n.setValueWithString(str, base);
+		_n.set(str, base);
 		_d.setOne();
 		normalize();
+		return *this;
 	}
 
 	assert(pos < str.size() - 1);
 	auto strN = str.substr(0, pos);
 	auto strD = str.substr(pos + 1, str.size() - pos - 1);
-	_d.setValueWithString(strD, base);
+	_d.set(strD, base);
 	assert(!_d.isZero());
-	_n.setValueWithString(strN, base);
+	_n.set(strN, base);
 	_sign = 1;
 	normalize();
+	return *this;
 }
 
 FRAC& zju04nycs::plus(const FRAC& v1, const FRAC& v2, FRAC& sum) {

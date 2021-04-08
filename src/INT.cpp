@@ -188,7 +188,7 @@ std::string INT::toString(int base) const {
 		return str;
 	}
 
-	if (_chunks.size() == 1 && static_cast<int>(_chunks[0]) < base) {
+	if (_chunks.size() == 1 && _chunks[0] < static_cast<INT::typeChunk>(base)) {
 		//TODO:
 		//optimize when size == 1
 		str += chunkToDigit(_chunks[0], base);
@@ -233,12 +233,12 @@ std::string INT::toString(int base) const {
 	return str;
 }
 
-void INT::setValueWithString(const std::string& str, int base) {
+INT& INT::set(const std::string& str, int base) {
 	assert(base >= 2 && base <= 35);
 
 	setZero();
 	if (str.size() == 0) {
-		return;
+		return *this;
 	}
 
 	size_t index = 0;
@@ -277,7 +277,7 @@ void INT::setValueWithString(const std::string& str, int base) {
 			if (!isDigit(c, base, digitValue)) {
 				_sign = sign;
 				normalize();
-				return;
+				return *this;
 			}
 			else {
 				*this *= s_smallInts[base];
@@ -290,6 +290,7 @@ void INT::setValueWithString(const std::string& str, int base) {
 	}
 	_sign = sign;
 	normalize();
+	return *this;
 }
 
 int INT::bit(size_t pos) const {

@@ -24,15 +24,28 @@ class FRAC {
 		FRAC() {}
 		FRAC (const FRAC& v): _sign(v._sign), _n(v._n), _d(v._d) {}
 		FRAC (const FRAC&& v) noexcept : _sign(v._sign), _n(v._n), _d(v._d){}
-		FRAC(const INT& n, const INT& d) { assert(!d.isZero()); _n = n; _d = d; _sign = 1; normalize(); }
+		//FRAC(const std::string& str, int base) { set(str, base); }
+		FRAC(const std::string& str, int base = 10) { set(str, base); }
+		FRAC(const INT& n, const INT& d) { set(n, d); }
+		FRAC(const INT& n) { set(n); }
 
 		std::string toString(int base = 10) const;
-		void setValueWithString(const std::string& str, int base = 10);
-		void setValueWith2Ints(const INT& n, const INT& d) {
+		FRAC& set(const std::string& str, int base = 10);
+		FRAC& set(const INT& n, const INT& d) {
+			assert(!d.isZero());
 			_sign = 1;
 			_n = n;
 			_d = d;
 			normalize();
+			return *this;
+		}
+
+		FRAC& set(const INT& n) {
+			_sign = 1;
+			_n = n;
+			_d.setOne();
+			normalize();
+			return *this;
 		}
 
 	public:

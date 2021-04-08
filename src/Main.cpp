@@ -1011,6 +1011,42 @@ void addFracTest() {
 		assert(f.d() * a == f.n() * b);
 		std::cout << "FRAC [int,int]constructor test pass" << std::endl;
 		});
+
+	testCases.push_back([&] {
+		std::string strA = "1342";
+		auto a = INT(strA);
+		std::cout << "a:" << a.toString() << std::endl;
+		std::string strB = "42";
+		auto b = INT(strB);
+		std::cout << "b:" << b.toString() << std::endl;
+		FRAC f = FRAC(strA + '/' + strB);
+		std::cout << "f:" << f.toString() << std::endl;
+		assert(a * f.d() == b * f.n());
+		std::cout << "FRAC [string,int]constructor test2 pass" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		std::string strA = "3434234798234723748324782734823748374834";
+		auto a = INT(strA);
+		std::cout << "a:" << a.toString() << std::endl;
+		std::string strB = "987238472673463746347346374637467364763746374673";
+		auto b = INT(strB);
+		std::cout << "b:" << b.toString() << std::endl;
+		FRAC f = FRAC(strA + '/' + strB);
+		std::cout << "f:" << f.toString() << std::endl;
+		assert(a * f.d() == b * f.n());
+		std::cout << "FRAC [string,int]constructor test2 pass" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		FRAC f = FRAC("-343434343434342/2343422221");
+		std::cout << "f:" << f.toString() << std::endl;
+		assert(f.isNegative());
+		assert(!f.isZero());
+		assert(!f.isPositive());
+		std::cout << "FRAC negation test1 passe" << std::endl;
+		});
+
 }
 
 int main()

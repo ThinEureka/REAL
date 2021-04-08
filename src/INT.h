@@ -102,7 +102,7 @@ class INT {
 		}
 
 		explicit INT(const std::string& str, int base = 10) {
-			setValueWithString(str, base);
+			set(str, base);
 		}
 
 		INT(int sign, const std::vector<typeChunk>& chunks) : _sign(sign), _chunks(chunks) {
@@ -120,7 +120,7 @@ class INT {
 		unsigned long long toUlonglong(bool& isOverFlow) const { return toLink(isOverFlow); }
 
 		std::string toString(int base = 10) const;
-		void setValueWithString(const std::string& str, int base = 10);
+		INT& set(const std::string& str, int base = 10);
 
 		INT::typeChunk toChunk(bool& isOverFlow) const {
 			isOverFlow = _chunks.size() > 1;
