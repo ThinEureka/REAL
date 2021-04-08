@@ -27,6 +27,7 @@ class FRAC {
 		//FRAC(const std::string& str, int base) { set(str, base); }
 		FRAC(const std::string& str, int base = 10) { set(str, base); }
 		FRAC(const INT& n, const INT& d) { set(n, d); }
+		FRAC(long  n, long d) { set(n, d); }
 		FRAC(const INT& n) { *this = n; }
 		FRAC(int n) {
 			*this = n;
@@ -48,6 +49,15 @@ class FRAC {
 		FRAC& set(const std::string& str, int base = 10);
 		FRAC& set(const INT& n, const INT& d) {
 			assert(!d.isZero());
+			_sign = 1;
+			_n = n;
+			_d = d;
+			normalize();
+			return *this;
+		}
+
+		FRAC& set(long long n, long long d) {
+			assert(d != 0);
 			_sign = 1;
 			_n = n;
 			_d = d;
@@ -217,7 +227,6 @@ class FRAC {
 		INT _c2;
 		INT _c3;
 		INT _c4;
-		INT _c5;
 	};
 }
 #endif

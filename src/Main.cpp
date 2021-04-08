@@ -1003,6 +1003,28 @@ void addFracTest() {
 		});
 
 	testCases.push_back([&] {
+		FRAC f = -3;
+		std::cout << "f:" << f.toString() << std::endl;
+		FRAC g =  3434323434;
+		std::cout << "g:" << g.toString() << std::endl;
+		std::cout << "FRAC constructor[int] test pass" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		FRAC f = -34234323423LL;
+		std::cout << "f:" << f.toString() << std::endl;
+		FRAC g =  34343343434243243LL;
+		std::cout << "g:" << g.toString() << std::endl;
+		std::cout << "FRAC constructor[long long] test pass" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		FRAC f(342432434, 324234234);
+		std::cout << "f:" << f.toString() << std::endl;
+		std::cout << "FRAC constructor[long long] test pass" << std::endl;
+		});
+
+	testCases.push_back([&] {
 		INT a = INT("343243434343434343434242348347384734736000");
 		INT b = INT("7343434343434343434343800");
 		std::cout << "a:" << a.toString() << std::endl;
@@ -1010,7 +1032,7 @@ void addFracTest() {
 		FRAC f(a, b);
 		std::cout << "f:" << f.toString() << std::endl;
 		assert(f.d() * a == f.n() * b);
-		std::cout << "FRAC [int,int]constructor test pass" << std::endl;
+		std::cout << "FRAC [INT,INT]constructor test pass" << std::endl;
 		});
 
 	testCases.push_back([&] {
@@ -1062,9 +1084,9 @@ int main()
 	//Test11();
 	//EvaluatePi();
 	//testInt();
-	addIntTest();
 	addFracTest();
-	bool reverseOrder = true;
+	addIntTest();
+	bool reverseOrder = false;
 
 	if (reverseOrder) {
 		for (auto it = testCases.rbegin(); it != testCases.rend(); ++it) {

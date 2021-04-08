@@ -142,13 +142,12 @@ void FRAC::normalize() {
 		_d.negate();
 	}
 
-	auto& gcd = _c1;
-	zju04nycs::gcd(_n, _d, gcd, _c2, _c3, _c4, _c5);
-	if (gcd != INT::one) {
-		divide(_n, gcd, _c2, _c3);
+	zju04nycs::gcd(_n, _d, _c1, _c2, _c3, _c4);
+	if (_c1 != INT::one) {
+		divide(_n, _c1, _c2, _c3);
 		_n = _c2;
 
-		divide(_d, gcd, _c2, _c3);
+		divide(_d, _c1, _c2, _c3);
 		_d = _c2;
 	}
 }

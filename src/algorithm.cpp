@@ -5,7 +5,7 @@
 using namespace zju04nycs;
 
 INT& zju04nycs::gcd(const INT& m, const INT& n, INT& gcd,
-	INT& c1, INT& c2, INT& c3, INT& c4) {
+	INT& c1, INT& c2, INT& c3) {
 	if (m == INT::one){
 		return gcd.setOne();
 	}
@@ -14,22 +14,27 @@ INT& zju04nycs::gcd(const INT& m, const INT& n, INT& gcd,
 		return gcd.setOne();
 	}
 
+	if (m == n) {
+		return gcd = m;
+	}
+
 	if (m < n) {
 		c1 = n;
-		c2 = m;
+		gcd = m;
 	}
 	else
 	{
 		c1 = m;
-		c2 = n;
+		gcd = n;
 	}
 
 	while (true) {
-		divide(c1, c2, c3, c4);
-		if (c4.isZero()) {
-			return gcd = c2;
+		divide(c1, gcd, c2, c3);
+		if (c3.isZero()) {
+			return gcd;
 		}
-		c1 = c2;
-		c2 = c4;
+
+		c1 = gcd;
+		gcd = c3;
 	}
 }
