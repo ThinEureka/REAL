@@ -52,53 +52,20 @@ class INT {
 		INT(INT&& v) noexcept;
 		INT(const INT&& v) noexcept;
 
+		INT(INT::typeChunk v) {
+			*this = v;
+		}
+
 		INT(INT::typeChunkSigned v) {
-			if (v != 0) {
-				_sign = v > 0 ? 1 : -1;
-				_chunks.push_back(std::abs(v));
-			}
+			*this = v;
 		}
 
 		INT(INT::typeLinkSigned v) {
-			if (v != 0) {
-				_sign = v > 0 ? 1 : -1;
-				INT::typeLink x = std::abs(v);
-				INT::typeChunk lowChunk = static_cast<INT::typeChunk>(x);
-				_chunks.push_back(lowChunk);
-				INT::typeChunk highChunk = x >> INT::s_numBitsOfChunk;
-				if (highChunk > 0) {
-					_chunks.push_back(highChunk);
-				}
-			}
+			*this = v;
 		}
 
-		INT(int sign, INT::typeChunk v) {
-			if (v != 0) {
-				_sign = sign > 0 ? 1 : -1;
-				_chunks.push_back(v);
-			}
-		}
-
-		INT(int sign, INT::typeChunkSigned v) {
-			if (v != 0) {
-				_sign = sign > 0 ? 1 : - 1;
-				_sign = v > 0 ? _sign : -_sign;
-				_chunks.push_back(std::abs( v));
-			}
-		}
-
-		INT(int sign, INT::typeLinkSigned v) {
-			if (v != 0) {
-				_sign = sign > 0 ? 1 : - 1;
-				_sign = v > 0 ? _sign : -_sign;
-				INT::typeLink x = std::abs(v);
-				INT::typeChunk lowChunk = static_cast<INT::typeChunk>(x);
-				_chunks.push_back(lowChunk);
-				INT::typeChunk highChunk = x >> INT::s_numBitsOfChunk;
-				if (highChunk > 0) {
-					_chunks.push_back(highChunk);
-				}
-			}
+		INT(INT::typeLink v) {
+			*this = v;
 		}
 
 		explicit INT(const std::string& str, int base = 10) {
@@ -121,6 +88,18 @@ class INT {
 
 		std::string toString(int base = 10) const;
 		INT& set(const std::string& str, int base = 10);
+
+		INT& set (int sign, const std::vector<typeChunk>& chunks){
+			_sign = sign;
+			_chunks = chunks;
+			normalize();
+		};
+
+		INT& set (int sign, std::vector<typeChunk>&& chunks) {
+			_sign = sign;
+			_chunks = std::move(chunks);
+			normalize();
+		};
 
 		INT::typeChunk toChunk(bool& isOverFlow) const {
 			isOverFlow = _chunks.size() > 1;
@@ -153,6 +132,52 @@ class INT {
 		INT& operator = (const INT& v);
 		INT& operator = (INT&& v) noexcept;
 		INT& operator = (const INT&& v) noexcept;
+		INT& operator = (INT::typeChunk v) {
+			clear();
+			if (v != 0) {
+				_sign = 1;
+				_chunks.push_back(v);
+			}
+			return *this;
+		}
+
+		INT& operator = (INT::typeChunkSigned v) {
+			clear();
+			if (v != 0) {
+				_sign = v > 0 ? 1 : -1;
+				_chunks.push_back(v);
+			}
+			return *this;
+		}
+
+		INT& operator = (INT::typeLink v) {
+			clear();
+			if (v != 0) {
+				_sign = 1;
+				INT::typeChunk lowChunk = static_cast<INT::typeChunk>(1);
+				_chunks.push_back(lowChunk);
+				INT::typeChunk highChunk = v >> INT::s_numBitsOfChunk;
+				if (highChunk > 0) {
+					_chunks.push_back(highChunk);
+				}
+			}
+			return *this;
+		}
+
+		INT& operator = (INT::typeLinkSigned v) {
+			clear();
+			if (v != 0) {
+				_sign = v > 0 ? 1 : -1;
+				INT::typeLink x = std::abs(v);
+				INT::typeChunk lowChunk = static_cast<INT::typeChunk>(x);
+				_chunks.push_back(lowChunk);
+				INT::typeChunk highChunk = x >> INT::s_numBitsOfChunk;
+				if (highChunk > 0) {
+					_chunks.push_back(highChunk);
+				}
+			}
+			return *this;
+		}
 
 		bool isZero() const { return _sign == 0; }
 		INT& clear() { _sign = 0; _chunks.clear(); return *this; }

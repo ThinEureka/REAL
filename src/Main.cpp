@@ -627,13 +627,13 @@ void addIntTest() {
 		});
 
 	testCases.push_back([&] {
-		INT x = INT(-1, 3423434343434324343LL);
+		INT x = INT(-3423434343434324343LL);
 		assert(x.isNegative());
 		assert(!x.isPositive());
 		assert(!x.isZero());
 
 		x = -x;
-		assert(!-x.isNegative());
+		assert(!x.isNegative());
 		assert(x.isPositive());
 		assert(!x.isZero());
 
@@ -643,7 +643,8 @@ void addIntTest() {
 		});
 
 	testCases.push_back([&] {
-		INT x = INT(-1, -3423434343434324343LL);
+		INT x = INT(-3423434343434324343LL);
+		x.negate();
 		assert(!x.isNegative());
 		assert(x.isPositive());
 		assert(!x.isZero());

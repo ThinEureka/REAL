@@ -27,7 +27,22 @@ class FRAC {
 		//FRAC(const std::string& str, int base) { set(str, base); }
 		FRAC(const std::string& str, int base = 10) { set(str, base); }
 		FRAC(const INT& n, const INT& d) { set(n, d); }
-		FRAC(const INT& n) { set(n); }
+		FRAC(const INT& n) { *this = n; }
+		FRAC(int n) {
+			*this = n;
+		}
+
+		FRAC(unsigned int n) {
+			*this = n;
+		}
+
+		FRAC(long long n) {
+			*this = n;
+		}
+
+		FRAC(unsigned long long n) {
+			*this = n;
+		}
 
 		std::string toString(int base = 10) const;
 		FRAC& set(const std::string& str, int base = 10);
@@ -40,7 +55,12 @@ class FRAC {
 			return *this;
 		}
 
-		FRAC& set(const INT& n) {
+	public:
+		FRAC& operator = (const FRAC& v) { _sign = v._sign; _n = v._n; _d = v._d; return *this; }
+		FRAC& operator = (FRAC&& v) noexcept { _sign = v._sign; _n = std::move(v._n), _d = std::move(_d); }
+		FRAC& operator = (const FRAC&& v) noexcept { _sign = v._sign; _n = std::move(v._n), _d = std::move(_d); }
+
+		FRAC& operator = (const INT& n) {
 			_sign = 1;
 			_n = n;
 			_d.setOne();
@@ -48,10 +68,37 @@ class FRAC {
 			return *this;
 		}
 
-	public:
-		FRAC& operator = (const FRAC& v) { _sign = v._sign; _n = v._n; _d = v._d; return *this; }
-		FRAC& operator = (FRAC&& v) noexcept { _sign = v._sign; _n = std::move(v._n), _d = std::move(_d); }
-		FRAC& operator = (const FRAC&& v) noexcept { _sign = v._sign; _n = std::move(v._n), _d = std::move(_d); }
+		FRAC& operator = (int n) {
+			_sign = 1;
+			_n = n;
+			_d.setOne();
+			normalize();
+			return *this;
+		}
+
+		FRAC& operator = (long long n) {
+			_sign = 1;
+			_n = n;
+			_d.setOne();
+			normalize();
+			return *this;
+		}
+
+		FRAC& operator = (unsigned int n) {
+			_sign = 1;
+			_n = n;
+			_d.setOne();
+			normalize();
+			return *this;
+		}
+
+		FRAC& operator = (unsigned long long n) {
+			_sign = 1;
+			_n = n;
+			_d.setOne();
+			normalize();
+			return *this;
+		}
 
 		bool isZero() const { return _sign == 0; }
 		bool isPositive() const { return _sign > 0; }
