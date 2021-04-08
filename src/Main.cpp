@@ -1,4 +1,5 @@
 #include "INT.h"
+#include "FRAC.h"
 #include "REAL.h"
 #include "algorithm"
 #include <fstream>
@@ -556,7 +557,7 @@ void EvaluatePi()
 
 static std::vector<std::function<void()>> testCases;
 
-void initTestCases() {
+void addIntTest() {
 	testCases.push_back([&] {
 		INT n;
 		assert(n.isZero());
@@ -993,6 +994,25 @@ void initTestCases() {
 		});
 }
 
+void addFracTest() {
+	testCases.push_back([&] {
+		FRAC f;
+		std::cout << "f:" << f.toString() << std::endl;
+		std::cout << "FRAC default constructor test pass" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		INT a = INT("343243434343434343434242348347384734736000");
+		INT b = INT("7343434343434343434343800");
+		std::cout << "a:" << a.toString() << std::endl;
+		std::cout << "b:" << a.toString() << std::endl;
+		FRAC f(a, b);
+		std::cout << "f:" << f.toString() << std::endl;
+		assert(f.d() * a == f.n() * b);
+		std::cout << "FRAC [int,int]constructor test pass" << std::endl;
+		});
+}
+
 int main()
 {
 	///	Test2();
@@ -1005,8 +1025,9 @@ int main()
 	//Test11();
 	//EvaluatePi();
 	//testInt();
-	initTestCases();
-	bool reverseOrder = false;
+	addIntTest();
+	addFracTest();
+	bool reverseOrder = true;
 
 	if (reverseOrder) {
 		for (auto it = testCases.rbegin(); it != testCases.rend(); ++it) {

@@ -124,6 +124,7 @@ FRAC& zju04nycs::divide(const FRAC& v1, const FRAC& v2, FRAC& q) {
 	q.normalize();
 	return q;
 }
+
 void FRAC::normalize() {
 	if (_n.isZero()) {
 		clear();

@@ -155,9 +155,9 @@ class INT {
 		INT& operator = (const INT&& v) noexcept;
 
 		bool isZero() const { return _sign == 0; }
-		void clear() { _sign = 0; _chunks.clear(); }
-		void setZero() { clear(); }
-		void setOne() { _sign = 1; _chunks.clear(); setChunk(0, 1); }
+		INT& clear() { _sign = 0; _chunks.clear(); return *this; }
+		INT& setZero() { return clear(); }
+		INT& setOne() { _sign = 1; _chunks.clear(); setChunk(0, 1); return *this; }
 		bool isPositive() const { return _sign > 0; }
 		bool isNegative() const { return _sign < 0;  }
 
