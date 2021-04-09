@@ -1109,6 +1109,84 @@ void addFracTest() {
 
 }
 
+void getAn(FRAC& A, int n, int a) {
+	A.setZero();
+	FRAC q;
+	FRAC u;
+	FRAC tmp;
+	for (int i = 1; i <= n; ++i) {
+		if (i == 1) {
+			q.set(1, a);
+			u = q;
+		}
+		else
+		{
+			divide(q, a*a, tmp);
+			divide(tmp, 2 * n - 1, u);
+			if (i % 2) {
+				u.negate();
+			}
+		}
+		A = zju04nycs::plus(A, u, tmp);
+	}
+}
+
+//(2n-1)q^(2*n-1) > p * 10^k
+int getNFor_q_with_p(int k, int q, int p) {
+	INT tmp;
+	INT ten_k = 1;
+
+	for (int i = 0; i < k; ++i) {
+		multiply(ten_k, 10, tmp);
+		ten_k = tmp;
+	}
+	INT right;
+	multiply(ten_k, p, right);
+
+	int n = 1;
+	INT q_2n_minus_one = q;
+	const INT q_2 = q*q;
+	INT _2n_minus_one;
+	INT left;
+	do {
+		multiply(q_2n_minus_one, q_2, tmp);
+		q_2n_minus_one = tmp;
+		_2n_minus_one = 2 * n - 1;
+		multiply(tmp, _2n_minus_one, left);
+		if (left > right) {
+			return n;
+		}
+		++n;
+	} while (true);
+
+}
+
+void addPiTest() {
+	FRAC An;
+	FRAC Am;
+
+	for (int k = 0; k < 100000; k += 1000) {
+		int n = getNFor_q_with_p(k, 5, 16);
+		cout << "k:" << k << std::endl;
+		cout << "n for 5:" << n << std::endl;
+
+		int m = getNFor_q_with_p(k, 5, 239);
+		cout << "m for 239:" << n << std::endl;
+
+		getAn(An, n, 5);
+		cout << "An:" << n << std::endl;
+		getAn(Am, m, 239);
+		cout << "Am:" << m << std::endl;
+
+		/*
+		An(A, i, 5);
+		std::cout << "i5:" << i << std::endl;
+		An(A, i, 239);
+		std::cout << "i239:" << i << std::endl;
+		*/
+	}
+}
+
 int main()
 {
 	///	Test2();
@@ -1123,6 +1201,7 @@ int main()
 	//testInt();
 	addIntTest();
 	addFracTest();
+	addPiTest();
 	bool reverseOrder = true;
 
 	if (reverseOrder) {
