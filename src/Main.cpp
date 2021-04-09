@@ -1111,19 +1111,20 @@ void addFracTest() {
 
 void getAn(FRAC& A, int n, int a) {
 	A.setZero();
-	FRAC q;
-	FRAC u;
-	FRAC tmp;
+	static FRAC q;
+	static FRAC u;
+	static FRAC tmp;
+	static FRAC a_2;
+	a_2 = a * a;
 	for (int i = 1; i <= n; ++i) {
 		if (i == 1) {
-			q.set(1, a);
-			u = q;
+			u = q.set(1, a);
 		}
 		else
 		{
-			divide(q, a*a, tmp);
-			divide(tmp, 2 * n - 1, u);
-			if (i % 2) {
+			q = divide(q, a_2, tmp);
+			divide(q, 2 * i - 1, u);
+			if (i % 2 == 0) {
 				u.negate();
 			}
 		}
@@ -1133,21 +1134,24 @@ void getAn(FRAC& A, int n, int a) {
 
 //(2n-1)q^(2*n-1) > p * 10^k
 int getNFor_q_with_p(int k, int q, int p) {
-	INT tmp;
-	INT ten_k = 1;
+	static INT tmp;
+	static INT ten_k = 1;
 
 	for (int i = 0; i < k; ++i) {
 		multiply(ten_k, 10, tmp);
 		ten_k = tmp;
 	}
-	INT right;
+	static INT right;
 	multiply(ten_k, p, right);
 
 	int n = 1;
-	INT q_2n_minus_one = q;
-	const INT q_2 = q*q;
-	INT _2n_minus_one;
-	INT left;
+	static INT q_2n_minus_one;
+	q_2n_minus_one = q;
+
+	static  INT q_2;
+	q_2 = q * q;
+	static INT _2n_minus_one;
+	static INT left;
 	do {
 		multiply(q_2n_minus_one, q_2, tmp);
 		q_2n_minus_one = tmp;
@@ -1161,23 +1165,85 @@ int getNFor_q_with_p(int k, int q, int p) {
 
 }
 
+std::string& convertToDecimal(std::string& str, const FRAC& f, int N) {
+	str.clear();
+	static const INT& ten = INT::s_smallInts[10];
+	static INT n,d,q,r, tmp;
+	n = f.n();
+	d = f.d();
+
+	bool hasAddDot = false;
+	int precision = 0;
+	do {
+		while (n < d) {
+			if (!hasAddDot) {
+				str += "0.";
+			}
+			else{
+				str += "0";
+			}
+			++precision;
+			multiply(n, ten, tmp);
+			n = tmp;
+		}
+
+		divide(n, d, q, r);
+		str += q.toString();
+		if (r.isZero()) {
+			return str;
+		}
+
+		n = r;
+		++precision;
+		if (precision >= N) {
+			return str;
+		}
+
+		if (!hasAddDot) {
+			str += '.';
+			hasAddDot = true;
+		}
+		multiply(n, ten, tmp);
+		n = tmp;
+	} while (true);
+}
+
 void addPiTest() {
 	FRAC An;
 	FRAC Am;
+	FRAC Pi;
+	static FRAC tmp;
 
-	for (int k = 0; k < 100000; k += 1000) {
+	for (int k = 0; k < 10000; k += 1) {
+		std::cout << "k:" << k << std::endl;
+		std::cout << "calculating n for 5..." << std::endl;
 		int n = getNFor_q_with_p(k, 5, 16);
-		cout << "k:" << k << std::endl;
-		cout << "n for 5:" << n << std::endl;
+		std::cout << "n for 5:" << n << std::endl;
 
-		int m = getNFor_q_with_p(k, 5, 239);
-		cout << "m for 239:" << n << std::endl;
+		std::cout << "calculating m for 239..." << std::endl;
+		int m = getNFor_q_with_p(k, 239, 4);
+		std::cout << "m:" << m << std::endl;
 
+		std::cout << "calucation An for 5..." << n << std::endl;
 		getAn(An, n, 5);
-		cout << "An:" << n << std::endl;
-		getAn(Am, m, 239);
-		cout << "Am:" << m << std::endl;
+		An = multiply(An, 16, tmp);
+		//std::cout << "An:" << An.toString() << std::endl;
 
+		std::cout << "calucation An for 239..." << n << std::endl;
+		getAn(Am, m, 239);
+		Am = multiply(Am, 4, tmp);
+		//std::cout << "Am:" << Am.toString() << std::endl;
+
+		std::cout << "calculating Pi..." << std::endl;
+		zju04nycs::subtract(An, Am, Pi);
+
+		//std::cout << "outputing Pi as frac..." << std::endl;
+		//std::cout << "Pi(f):" << Pi.toString() << std::endl;
+
+		std::cout << "converting Pi to decimal..." << std::endl;
+		std::string strPi;
+		convertToDecimal(strPi, Pi, k + 1);
+		std::cout << "Pi:" << strPi  <<std::endl;
 		/*
 		An(A, i, 5);
 		std::cout << "i5:" << i << std::endl;
@@ -1185,6 +1251,8 @@ void addPiTest() {
 		std::cout << "i239:" << i << std::endl;
 		*/
 	}
+	int g = 0;
+	std::cin >> g;
 }
 
 int main()
