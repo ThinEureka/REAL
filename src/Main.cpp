@@ -1135,7 +1135,8 @@ void getAn(FRAC& A, int n, int a) {
 //(2n-1)q^(2*n-1) > p * 10^k
 int getNFor_q_with_p(int k, int q, int p) {
 	static INT tmp;
-	static INT ten_k = 1;
+	static INT ten_k;
+	ten_k = 1;
 
 	for (int i = 0; i < k; ++i) {
 		multiply(ten_k, 10, tmp);
