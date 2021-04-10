@@ -5,6 +5,7 @@
 #include <fstream>
 #include <functional>
 #include <vector>
+#include <map>
 
 using namespace zju04nycs;
 using namespace std;
@@ -1256,6 +1257,112 @@ void addPiTest() {
 	std::cin >> g;
 }
 
+const INT& getPower(int a, int n, std::map<int, INT*>& cache) {
+	auto it = cache.find(n);
+	if (it != cache.end()) {
+		return (*(it->second));
+	}
+
+	if (n == 0) {
+		return INT::one;
+	}
+
+	INT* x = new INT(a);
+	(*x) *= getPower(a, n - 1, cache);
+	cache.insert(std::make_pair(n, x));
+
+	return *x;
+}
+
+const INT& getOddFac(int n) {
+	static std::map<int, INT*> cache;
+	auto it = cache.find(n);
+	if (it != cache.end()) {
+		return (*(it->second));
+	}
+
+	if (n == 1) {
+		return INT::one;
+	}
+
+	INT* x = new INT(2*n -1);
+	(*x) *= getOddFac(n - 1);
+	cache.insert(std::make_pair(n, x));
+
+	return *x;
+}
+
+void getIntAn(FRAC& A, int n, int a) {
+	A.setZero();
+	std::map<int, INT*> cache;
+	INT Pn = getOddFac(n);
+	INT Qn = getPower(a, 2*n-1, cache);
+	INT N;
+	INT D;
+	INT U;
+	INT tmp;
+	INT tmp1;
+
+	for (int i = 1; i <= n; ++i) {
+		const INT& qn = getPower(a, 2 * (n - i), cache);
+		zju04nycs::divide(Pn, 2 * i - 1, tmp, tmp1);
+
+		if (i % 2 == 0) {
+			tmp.negate();
+		}
+		multiply(qn, tmp, tmp1);
+		N = zju04nycs::plus(N, tmp1, tmp);
+	}
+
+	multiply(Pn, Qn, D);
+	A.set(N, D);
+}
+
+void addPiIntTest() {
+	FRAC An;
+	FRAC Am;
+	FRAC Pi;
+	static FRAC tmp;
+
+	for (int k = 0; k < 10000; k += 1000) {
+		const clock_t begin_time = clock();
+// do something
+		std::cout << "k:" << k << std::endl;
+		std::cout << "calculating n for 5..." << std::endl;
+		int n = getNFor_q_with_p(k, 5, 16);
+		std::cout << "n for 5:" << n << std::endl;
+
+		std::cout << "calculating m for 239..." << std::endl;
+		int m = getNFor_q_with_p(k, 239, 4);
+		std::cout << "m:" << m << std::endl;
+
+		std::cout << "calucation An for 5..." << n << std::endl;
+		getIntAn(An, n, 5);
+		An = multiply(An, 16, tmp);
+		std::cout << "An:" << An.toString() << std::endl;
+
+		std::cout << "calucation An for 239..." << n << std::endl;
+		getIntAn(Am, m, 239);
+		Am = multiply(Am, 4, tmp);
+		std::cout << "Am:" << Am.toString() << std::endl;
+
+		std::cout << "calculating Pi..." << std::endl;
+		zju04nycs::subtract(An, Am, Pi);
+
+		//std::cout << "outputing Pi as frac..." << std::endl;
+		//std::cout << "Pi(f):" << Pi.toString() << std::endl;
+
+		std::cout << "converting Pi to decimal..." << std::endl;
+		std::string strPi;
+		convertToDecimal(strPi, Pi, k + 1);
+		std::cout << "Pi(" << k <<"):" << strPi  <<std::endl;
+
+		std::cout << "Using time(" << k << "):" << float(clock() - begin_time) / CLOCKS_PER_SEC << std::endl;
+	}
+	int g = 0;
+	std::cin >> g;
+}
+
 int main()
 {
 	///	Test2();
@@ -1268,9 +1375,10 @@ int main()
 	//Test11();
 	//EvaluatePi();
 	//testInt();
-	addIntTest();
-	addFracTest();
-	addPiTest();
+	//addIntTest();
+	//addFracTest();
+	//addPiTest();
+	addPiIntTest();
 	bool reverseOrder = true;
 
 	if (reverseOrder) {
