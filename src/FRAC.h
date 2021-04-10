@@ -67,8 +67,8 @@ class FRAC {
 
 	public:
 		FRAC& operator = (const FRAC& v) { _sign = v._sign; _n = v._n; _d = v._d; return *this; }
-		FRAC& operator = (FRAC&& v) noexcept { _sign = v._sign; _n = std::move(v._n), _d = std::move(_d); }
-		FRAC& operator = (const FRAC&& v) noexcept { _sign = v._sign; _n = std::move(v._n), _d = std::move(_d); }
+		FRAC& operator = (FRAC&& v) noexcept { _sign = v._sign; _n = std::move(v._n), _d = std::move(_d); return *this; }
+		FRAC& operator = (const FRAC&& v) noexcept { _sign = v._sign; _n = std::move(v._n), _d = std::move(_d); return *this; }
 
 		FRAC& operator = (const INT& n) {
 			_sign = 1;
@@ -130,7 +130,7 @@ class FRAC {
 			}
 		}
 		FRAC& negate() { _sign = -_sign;  return *this; };
-		FRAC& inverse() { std::swap(_n, _d); return *this; }
+		FRAC& inverse() { std::swap(_n, _d); normalize(); return *this; }
 
 	public:
 		const FRAC operator - () const {
