@@ -1257,44 +1257,61 @@ void addPiTest() {
 	std::cin >> g;
 }
 
-const INT& getPower(int a, int n, std::map<int, INT*>& cache) {
-	auto it = cache.find(n);
-	if (it != cache.end()) {
-		return (*(it->second));
-	}
-
+const INT& getPower(int a, int n, std::vector<const INT*>& cache) {
 	if (n == 0) {
 		return INT::one;
 	}
 
-	INT* x = new INT(a);
-	(*x) *= getPower(a, n - 1, cache);
-	cache.insert(std::make_pair(n, x));
+	int index = n - 1;
+	if (index < cache.size()) {
+		return *cache[index];
+	}
 
-	return *x;
+
+	for (int i = cache.size(); i < n; ++i) {
+		INT* x = nullptr;
+		if (i == 0) {
+			x = new INT(a);
+			cache.push_back(x);
+		}
+		else
+		{
+			x = new INT();
+			multiply(*cache[i - 1], a, *x);
+			cache.push_back(x);
+		}
+	}
+
+	return *cache[index];
 }
 
 const INT& getOddFac(int n) {
-	static std::map<int, INT*> cache;
-	auto it = cache.find(n);
-	if (it != cache.end()) {
-		return (*(it->second));
+	auto index = n - 1;
+	static std::vector<const INT*> cache;
+	if (index < cache.size()) {
+		return *(cache[index]);
 	}
 
 	if (n == 1) {
 		return INT::one;
 	}
 
-	INT* x = new INT(2*n -1);
-	(*x) *= getOddFac(n - 1);
-	cache.insert(std::make_pair(n, x));
-
-	return *x;
+	for (int i = cache.size(); i <= index; ++i) {
+		if (i == 0) {
+			cache.push_back(&INT::one);
+		}
+		else {
+			auto x = new INT(*cache[i - 1]);
+			*x *= (2 * i + 1);
+			cache.push_back(x);
+		}
+	}
+	return *(cache[index]);
 }
 
 void getIntAn(FRAC& A, int n, int a) {
 	A.setZero();
-	std::map<int, INT*> cache;
+	std::vector<const INT*> cache;
 	INT Pn = getOddFac(n);
 	INT Qn = getPower(a, 2*n-1, cache);
 	INT N;
