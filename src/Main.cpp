@@ -1167,12 +1167,10 @@ int getNFor_q_with_p(int k, int q, int p) {
 
 }
 
-std::string& convertToDecimal(std::string& str, const FRAC& f, int N) {
+std::string& convertToDecimal(std::string& str,  INT& n, INT& d, int N) {
 	str.clear();
 	static const INT& ten = INT::s_smallInts[10];
-	static INT n,d,q,r, tmp;
-	n = f.n();
-	d = f.d();
+	static INT q,r, tmp;
 
 	bool hasAddDot = false;
 	int precision = 0;
@@ -1244,7 +1242,9 @@ void addPiTest() {
 
 		std::cout << "converting Pi to decimal..." << std::endl;
 		std::string strPi;
-		convertToDecimal(strPi, Pi, k + 1);
+		INT pi_n = Pi.n();
+		INT pi_d = Pi.d();
+		convertToDecimal(strPi, pi_n, pi_d, k + 1);
 		std::cout << "Pi:" << strPi  <<std::endl;
 		/*
 		An(A, i, 5);
@@ -1309,13 +1309,10 @@ const INT& getOddFac(int n) {
 	return *(cache[index]);
 }
 
-void getIntAn(FRAC& A, int n, int a) {
-	A.setZero();
+void getIntAn(INT& P, INT& Q, int n, int a) {
 	std::vector<const INT*> cache;
 	INT Pn = getOddFac(n);
 	INT Qn = getPower(a, 2*n-1, cache);
-	INT N;
-	INT D;
 	INT U;
 	INT tmp;
 	INT tmp1;
@@ -1328,20 +1325,19 @@ void getIntAn(FRAC& A, int n, int a) {
 			tmp.negate();
 		}
 		multiply(qn, tmp, tmp1);
-		N = zju04nycs::plus(N, tmp1, tmp);
+		P = zju04nycs::plus(P, tmp1, tmp);
 	}
 
-	multiply(Pn, Qn, D);
-	A.set(N, D);
+	multiply(Pn, Qn, Q);
 }
 
 void addPiIntTest() {
-	FRAC An;
-	FRAC Am;
 	FRAC Pi;
-	static FRAC tmp;
+	INT Pn, Qn, Pm, Qm;
+	INT tmp;
+	INT c1, c2, c3, c4;
 
-	for (int k = 0; k < 10000; k += 1000) {
+	for (int k = 1000; k < 10000; k += 3000) {
 		const clock_t begin_time = clock();
 // do something
 		std::cout << "k:" << k << std::endl;
@@ -1354,24 +1350,28 @@ void addPiIntTest() {
 		std::cout << "m:" << m << std::endl;
 
 		std::cout << "calucation An for 5..." << n << std::endl;
-		getIntAn(An, n, 5);
-		An = multiply(An, 16, tmp);
-		std::cout << "An:" << An.toString() << std::endl;
+		getIntAn(Pn, Qn, n, 5);
+		Pn = multiply(Pn, 16, tmp);
+		//std::cout << "An:" << Pn.toString() << "/" << Qn.toString() << std::endl;
 
 		std::cout << "calucation An for 239..." << n << std::endl;
-		getIntAn(Am, m, 239);
-		Am = multiply(Am, 4, tmp);
-		std::cout << "Am:" << Am.toString() << std::endl;
+		getIntAn(Pm, Qm, m, 239);
+		Pm = multiply(Pm, 4, tmp);
+		//std::cout << "Am:" << Pm.toString() << "/" << Qm.toString() << std::endl;
 
 		std::cout << "calculating Pi..." << std::endl;
-		zju04nycs::subtract(An, Am, Pi);
+		multiply(Pn, Qm, c1);
+		multiply(Pm, Qn, c2);
+
+		zju04nycs::subtract(c1, c2, c3);
+		multiply(Qn, Qm, c4);
 
 		//std::cout << "outputing Pi as frac..." << std::endl;
 		//std::cout << "Pi(f):" << Pi.toString() << std::endl;
 
 		std::cout << "converting Pi to decimal..." << std::endl;
 		std::string strPi;
-		convertToDecimal(strPi, Pi, k + 1);
+		convertToDecimal(strPi, c3, c4, k + 1);
 		std::cout << "Pi(" << k <<"):" << strPi  <<std::endl;
 
 		std::cout << "Using time(" << k << "):" << float(clock() - begin_time) / CLOCKS_PER_SEC << std::endl;
