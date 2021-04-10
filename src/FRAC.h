@@ -130,7 +130,7 @@ class FRAC {
 			}
 		}
 		FRAC& negate() { _sign = -_sign;  return *this; };
-		FRAC& inverse() { std::swap(_n, _d); normalize(); return *this; }
+		FRAC& inverse() { std::swap(_n, _d); return *this; }
 
 	public:
 		const FRAC operator - () const {
