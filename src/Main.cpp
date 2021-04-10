@@ -1312,13 +1312,15 @@ const INT& getOddFac(int n) {
 void getIntAn(INT& P, INT& Q, int n, int a) {
 	std::vector<const INT*> cache;
 	INT Pn = getOddFac(n);
-	INT Qn = getPower(a, 2*n-1, cache);
+	INT Qn; 
+	INT c =getPower(a * a,  n - 1, cache);
+	multiply(c, a, Qn);
 	INT U;
 	INT tmp;
 	INT tmp1;
 
 	for (int i = 1; i <= n; ++i) {
-		const INT& qn = getPower(a, 2 * (n - i), cache);
+		const INT& qn = getPower(a*a, n - i, cache);
 		zju04nycs::divide(Pn, 2 * i - 1, tmp, tmp1);
 
 		if (i % 2 == 0) {
@@ -1337,7 +1339,7 @@ void addPiIntTest() {
 	INT tmp;
 	INT c1, c2, c3, c4;
 
-	for (int k = 1000; k < 10000; k += 3000) {
+	for (int k = 1000; k < 200000; k += 3000) {
 		const clock_t begin_time = clock();
 // do something
 		std::cout << "k:" << k << std::endl;
