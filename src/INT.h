@@ -50,7 +50,6 @@ class INT {
 		INT();
 		INT(const INT& v);
 		INT(INT&& v) noexcept;
-		INT(const INT&& v) noexcept;
 
 		INT(INT::typeChunk v) {
 			*this = v;
@@ -131,7 +130,6 @@ class INT {
 	public:
 		INT& operator = (const INT& v);
 		INT& operator = (INT&& v) noexcept;
-		INT& operator = (const INT&& v) noexcept;
 		INT& operator = (INT::typeChunk v) {
 			clear();
 			if (v != 0) {

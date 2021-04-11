@@ -1291,6 +1291,7 @@ const INT& getOddFac(int n) {
 	if (index < cache.size()) {
 		return *(cache[index]);
 	}
+	static INT c1;
 
 	if (n == 1) {
 		return INT::one;
@@ -1301,8 +1302,8 @@ const INT& getOddFac(int n) {
 			cache.push_back(&INT::one);
 		}
 		else {
-			auto x = new INT(*cache[i - 1]);
-			*x *= (2 * i + 1);
+			auto x = new INT();
+			multiply(*cache[i - 1], 2 * i + 1, *x);
 			cache.push_back(x);
 		}
 	}
@@ -1311,8 +1312,10 @@ const INT& getOddFac(int n) {
 
 void getIntAn(INT& P, INT& Q, int n, int a) {
 	std::vector<const INT*> cache;
+	std::cout << "getOddFac" << std::endl;
 	INT Pn = getOddFac(n);
 	INT Qn; 
+	std::cout << "getPower" << std::endl;
 	INT c =getPower(a * a,  n - 1, cache);
 	multiply(c, a, Qn);
 	INT U;
@@ -1320,6 +1323,7 @@ void getIntAn(INT& P, INT& Q, int n, int a) {
 	INT tmp1;
 
 	for (int i = 1; i <= n; ++i) {
+		//std::cout << "i:" << i << std::endl;
 		const INT& qn = getPower(a*a, n - i, cache);
 		zju04nycs::divide(Pn, 2 * i - 1, tmp, tmp1);
 
@@ -1339,16 +1343,16 @@ void addPiIntTest() {
 	INT tmp;
 	INT c1, c2, c3, c4;
 
-	for (int k = 1000; k < 200000; k += 3000) {
+	for (int k = 20000; k < 200000; k += 3000) {
 		const clock_t begin_time = clock();
 // do something
 		std::cout << "k:" << k << std::endl;
 		std::cout << "calculating n for 5..." << std::endl;
-		int n = getNFor_q_with_p(k, 5, 16);
+		int n = getNFor_q_with_p(k + 1, 5, 16);
 		std::cout << "n for 5:" << n << std::endl;
 
 		std::cout << "calculating m for 239..." << std::endl;
-		int m = getNFor_q_with_p(k, 239, 4);
+		int m = getNFor_q_with_p(k + 1, 239, 4);
 		std::cout << "m:" << m << std::endl;
 
 		std::cout << "calucation An for 5..." << n << std::endl;

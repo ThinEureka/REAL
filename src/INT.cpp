@@ -43,12 +43,6 @@ INT::INT(INT&& v) noexcept :_chunks(std::move(v._chunks)), _sign(v._sign)
 	g++;
 }
 
-INT::INT(const INT&& v) noexcept :_chunks(std::move(v._chunks)), _sign(v._sign) 
-{
-	int g = 0;
-	g++;
-}
-
 INT& INT::operator = (const INT& v) {
 	if (this == &v) {
 		return *this;
@@ -59,15 +53,6 @@ INT& INT::operator = (const INT& v) {
 }
 
 INT& INT::operator = (INT&& v) noexcept {
-	if (this == &v) {
-		return *this;
-	}
-	_chunks = std::move(v._chunks);
-	_sign = v._sign;
-	return *this;
-}
-
-INT& INT::operator = (const INT&& v) noexcept {
 	if (this == &v) {
 		return *this;
 	}

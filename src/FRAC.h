@@ -23,7 +23,7 @@ class FRAC {
 	public:
 		FRAC() {}
 		FRAC (const FRAC& v): _sign(v._sign), _n(v._n), _d(v._d) {}
-		FRAC (const FRAC&& v) noexcept : _sign(v._sign), _n(v._n), _d(v._d){}
+		FRAC (FRAC&& v) noexcept : _sign(v._sign), _n(v._n), _d(v._d){}
 		//FRAC(const std::string& str, int base) { set(str, base); }
 		FRAC(const std::string& str, int base = 10) { set(str, base); }
 		FRAC(const INT& n, const INT& d) { set(n, d); }
@@ -68,7 +68,6 @@ class FRAC {
 	public:
 		FRAC& operator = (const FRAC& v) { _sign = v._sign; _n = v._n; _d = v._d; return *this; }
 		FRAC& operator = (FRAC&& v) noexcept { _sign = v._sign; _n = std::move(v._n), _d = std::move(v._d); return *this; }
-		FRAC& operator = (const FRAC&& v) noexcept { _sign = v._sign; _n = std::move(v._n), _d = std::move(v._d); return *this; }
 
 		FRAC& operator = (const INT& n) {
 			_sign = 1;
