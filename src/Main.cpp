@@ -1285,9 +1285,8 @@ const INT& getPower(int a, int n, std::vector<const INT*>& cache) {
 	return *cache[index];
 }
 
-const INT& getOddFac(int n) {
+const INT& getOddFac(int n, std::vector<const INT*>& cache) {
 	auto index = n - 1;
-	static std::vector<const INT*> cache;
 	if (index < cache.size()) {
 		return *(cache[index]);
 	}
@@ -1310,10 +1309,10 @@ const INT& getOddFac(int n) {
 	return *(cache[index]);
 }
 
-void getIntAn(INT& P, INT& Q, int n, int a) {
+void getIntAn(INT& P, INT& Q, int n, int a, std::vector<const INT*>& facCache) {
 	std::vector<const INT*> cache;
 	std::cout << "getOddFac" << std::endl;
-	INT Pn = getOddFac(n);
+	INT Pn = getOddFac(n, facCache);
 	INT Qn; 
 	std::cout << "getPower" << std::endl;
 	INT c =getPower(a * a,  n - 1, cache);
@@ -1335,6 +1334,11 @@ void getIntAn(INT& P, INT& Q, int n, int a) {
 	}
 
 	multiply(Pn, Qn, Q);
+	//release memory: well it's a toy, but it occupies lots of memory when the number is large
+	for (auto x : cache) {
+		delete x;
+	}
+	cache.clear();
 }
 
 void addPiIntTest() {
@@ -1342,10 +1346,10 @@ void addPiIntTest() {
 	INT Pn, Qn, Pm, Qm;
 	INT tmp;
 	INT c1, c2, c3, c4;
+	std::vector<const INT*> facCache;
 
-	for (int k = 20000; k < 200000; k += 3000) {
+	for (int k = 100; k < 200000; k += 100) {
 		const clock_t begin_time = clock();
-// do something
 		std::cout << "k:" << k << std::endl;
 		std::cout << "calculating n for 5..." << std::endl;
 		int n = getNFor_q_with_p(k + 1, 5, 16);
@@ -1356,14 +1360,22 @@ void addPiIntTest() {
 		std::cout << "m:" << m << std::endl;
 
 		std::cout << "calucation An for 5..." << n << std::endl;
-		getIntAn(Pn, Qn, n, 5);
+		getIntAn(Pn, Qn, n, 5, facCache);
 		Pn = multiply(Pn, 16, tmp);
 		//std::cout << "An:" << Pn.toString() << "/" << Qn.toString() << std::endl;
 
 		std::cout << "calucation An for 239..." << n << std::endl;
-		getIntAn(Pm, Qm, m, 239);
+		getIntAn(Pm, Qm, m, 239, facCache);
 		Pm = multiply(Pm, 4, tmp);
 		//std::cout << "Am:" << Pm.toString() << "/" << Qm.toString() << std::endl;
+		//release memory
+		std::cout << "release mem for cache" << std::endl;
+		for (auto x : facCache) {
+			if (x != &INT::one) {
+				delete x;
+			}
+		}
+		facCache.clear();
 
 		std::cout << "calculating Pi..." << std::endl;
 		multiply(Pn, Qm, c1);
