@@ -20,8 +20,8 @@ void Print(int n=30)
 		cout<<'*';
 	}
 	cout<<endl;
-
 }
+
 void Far(int k,ostream &os = cout)
 {
 	static REAL R = 1;
@@ -36,7 +36,6 @@ void Far(int k,ostream &os = cout)
 	}
 	n = k;
 	os<<k<<"!:"<<R<<endl;
-	
 }
 
 void TestPlus(const REAL & N,ostream &os = cout)
@@ -100,7 +99,6 @@ void Test2()
 		cout<<"D"<<R<<endl;
 		REAL::DisBase('b');
 		cout<<"b:"<<R<<endl;
-
 	}while( R!=0);
 }
 
@@ -135,6 +133,7 @@ void e(int p = 1000)
 	REAL::DisWidth(p + 2);
 	NPV(E);
 }
+
 REAL e_m_k(int m,int Tm)
 {
 	REAL E = 1;
@@ -156,7 +155,6 @@ REAL e_m_k(int m,int Tm)
 		Plus(REAL::TMP = E,REAL::DIV <<= i*m,E);
 	}
 	return E;
-
 }
 
 REAL e_spin( int m ,int Tm,int Em)
@@ -210,6 +208,7 @@ void Test3()
 	NPV(REAL(1,5));
 	NPV(REAL(1,6));
 }
+
 void Test4()
 {
 	///	Test2();
@@ -221,6 +220,7 @@ void Test4()
 	}while(k);
 
 }
+
 void Test5()
 {
 	int k;
@@ -231,6 +231,7 @@ void Test5()
 		Far(k);
 	}while(k);
 }
+
 void Test6()
 {
 	REAL R;
@@ -240,14 +241,17 @@ void Test6()
 		NPV(R);
 	}while(R!=0);
 }
+
 REAL Test7_f(REAL x)
 {
 	return x*x*x - 2*x -5;
 }
+
 REAL Test7_f1(REAL x)
 {
 	return 3*x*x - 2;
 }
+
 void Test7()
 {
 	REAL (*f)(REAL);
@@ -282,6 +286,7 @@ void Test7()
 	NPV(x2);
 
 }
+
 void Test8()
 {
 	REAL::DisWidth(50);
@@ -293,9 +298,9 @@ REAL Test9_f(const REAL &x)
 {
 	return 1/(1+x*x);
 }
+
 void Test9()
 {
-
 	REAL (*f)(const REAL &);
 	f = Test9_f;
 
@@ -347,6 +352,7 @@ REAL Test10_f(const REAL &x)
 {
 	return 1/(1+x*x);
 }
+
 void Test10()
 {
 
@@ -482,10 +488,6 @@ void Test11()
 	NPV( S = S*2 + S1 + S2*4);
 	REAL::DisWidth(10);
 	NPV( S*(b-a)/(6*n));
-
-
-
-	
 }
 
 void GetPi(int nPrec,REAL &Pi)
@@ -536,9 +538,8 @@ void GetPi(int nPrec,REAL &Pi)
 		Plus(REAL::TMP = Pi,REAL::DIV,Pi);
 		Multiply(REAL::TMP = Term,N_p_2,Term);
 	}
-
-
 }
+
 void EvaluatePi()
 {
 	int W;
@@ -557,6 +558,58 @@ void EvaluatePi()
 }
 
 static std::vector<std::function<void()>> testCases;
+
+void addRealTest() {
+	testCases.push_back([&] {
+		Test1();
+		});
+
+	testCases.push_back([&] {
+		Test2();
+		});
+
+	testCases.push_back([&] {
+		Test3();
+		});
+
+	testCases.push_back([&] {
+		Test4();
+		});
+	
+	testCases.push_back([&] {
+		Test5();
+		});
+	
+	testCases.push_back([&] {
+		Test6();
+		});
+	
+	testCases.push_back([&] {
+		Test7();
+		});
+	
+	testCases.push_back([&] {
+		Test8();
+		});
+	
+	testCases.push_back([&] {
+		Test9();
+		});
+
+	testCases.push_back([&] {
+		Test10();
+		});
+	
+	testCases.push_back([&] {
+		Test11();
+		});
+}
+
+void addPiTestWithREAL() {
+	testCases.push_back([&] {
+		EvaluatePi();
+		});
+}
 
 void addIntTest() {
 	testCases.push_back([&] {
@@ -1208,13 +1261,13 @@ std::string& convertToDecimal(std::string& str,  INT& n, INT& d, int N) {
 	} while (true);
 }
 
-void addPiTest() {
+void calculatePiWithFRAC() {
 	FRAC An;
 	FRAC Am;
 	FRAC Pi;
 	static FRAC tmp;
 
-	for (int k = 0; k < 10000; k += 1) {
+	for (int k = 0; k < 100; k += 1) {
 		std::cout << "k:" << k << std::endl;
 		std::cout << "calculating n for 5..." << std::endl;
 		int n = getNFor_q_with_p(k, 5, 16);
@@ -1341,14 +1394,14 @@ void getIntAn(INT& P, INT& Q, int n, int a, std::vector<const INT*>& facCache) {
 	cache.clear();
 }
 
-void addPiIntTest() {
+void calculatePiWithINT() {
 	FRAC Pi;
 	INT Pn, Qn, Pm, Qm;
 	INT tmp;
 	INT c1, c2, c3, c4;
 	std::vector<const INT*> facCache;
 
-	for (int k = 100; k < 200000; k += 100) {
+	for (int k = 100; k < 200; k += 10) {
 		const clock_t begin_time = clock();
 		std::cout << "k:" << k << std::endl;
 		std::cout << "calculating n for 5..." << std::endl;
@@ -1394,27 +1447,31 @@ void addPiIntTest() {
 
 		std::cout << "Using time(" << k << "):" << float(clock() - begin_time) / CLOCKS_PER_SEC << std::endl;
 	}
-	int g = 0;
-	std::cin >> g;
+}
+
+void addPiTestWithINT() {
+	testCases.push_back([&] {
+		calculatePiWithINT();
+		});
+}
+
+void addPiTestWithFRAC() {
+	testCases.push_back([&] {
+		calculatePiWithINT();
+		});
 }
 
 int main()
 {
-	///	Test2();
-	//Test6();
-	//e1();
-	//Test7();
-	//Test8();
-	//Test9();
-	//Test10();
-	//Test11();
-	//EvaluatePi();
-	//testInt();
-	//addIntTest();
-	//addFracTest();
-	//addPiTest();
-	addPiIntTest();
-	bool reverseOrder = true;
+//	addRealTest();
+//	addPiTestWithREAL();
+	addIntTest();
+	addFracTest();
+	//pi
+	addPiTestWithINT();
+	addPiTestWithFRAC();
+
+	bool reverseOrder = false;
 
 	if (reverseOrder) {
 		for (auto it = testCases.rbegin(); it != testCases.rend(); ++it) {
