@@ -273,6 +273,30 @@ class INT {
 			return r;
 		}
 
+		// Prefix decrement operator.
+		INT& operator --() {
+			return *this -= one;
+		}
+
+		// Postfix decrement operator. 
+		INT operator --(int) {
+			INT tmp = *this;
+			subtract(tmp, one, *this);
+			return tmp;
+		}
+
+		// Prefix increment operator.
+		INT& operator ++() {
+			return *this += one;
+		}
+
+		// Postfix increment operator. 
+		INT operator ++(int) {
+			INT tmp = *this;
+			plus (tmp, one, *this);
+			return tmp;
+		}
+
 		INT& operator &= (const INT& v1);
 		INT& operator |= (const INT& v1);	
 		INT& operator ^= (const INT& v1);

@@ -815,6 +815,24 @@ void addIntTest() {
 		});
 
 	testCases.push_back([&] {
+		 INT x = INT("999999999999");
+		 INT y = x;
+		 std::cout << "x:" << x.toString() << std::endl;
+		 std::cout << "y:" << y.toString() << std::endl;
+
+		 assert(x++ == y);
+		 assert(x == y + 1);
+
+		 std::cout << "x:" << x.toString() << std::endl;
+		 std::cout << "y:" << y.toString() << std::endl;
+
+		 assert(--x == y);
+		 assert(x == y);
+
+		cout << "incrment and decrement test1 passed\n";
+		});
+
+	testCases.push_back([&] {
 		INT a = INT("343483463746736473467346736476");
 		INT b = INT("364826374736436476374676763746");
 		INT c = INT("342349384938483843874839");
@@ -1464,12 +1482,21 @@ void addPiTestWithFRAC() {
 int main()
 {
 //	addRealTest();
+
+	//the test case that calculates pi with REAL class
 //	addPiTestWithREAL();
+
+	//general test cases for INT class
 	addIntTest();
+
+	//general test cases for FRAC class
 	addFracTest();
-	//pi
-	addPiTestWithINT();
-	addPiTestWithFRAC();
+
+	//the test case that calculates pi with pure INT operation
+	//addPiTestWithINT();
+
+	//the test case that calulates pi with FRAC operation
+	//addPiTestWithFRAC();
 
 	bool reverseOrder = false;
 
