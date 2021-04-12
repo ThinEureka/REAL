@@ -47,9 +47,9 @@ class INT {
 		static const INT& one;
 
 	public:
-		INT();
-		INT(const INT& v);
-		INT(INT&& v) noexcept;
+		INT(){}
+		INT(const INT& v) :_chunks(v._chunks), _sign(v._sign){}
+		INT(INT&& v) noexcept :_chunks(std::move(v._chunks)), _sign(v._sign) {}
 
 		INT(INT::typeChunk v) {
 			*this = v;
