@@ -1249,6 +1249,7 @@ std::string& convertToDecimal(std::string& str,  INT& n, INT& d, int N) {
 		while (n < d) {
 			if (!hasAddDot) {
 				str += "0.";
+				hasAddDot = true;
 			}
 			else{
 				str += "0";
@@ -1467,6 +1468,58 @@ void calculatePiWithINT() {
 	}
 }
 
+void calculate_e_withINT() {
+	for (int k = 10; k <= 100; k += 1) {
+		const clock_t begin_time = clock();
+		int n = 1;
+		INT fac_n = INT::one;
+		INT fac_n_minus_one = INT::one;
+		INT* fac = &fac_n;
+		INT ten_p = INT::one;
+		INT c;
+		const INT ten = 10;
+		std::cout << "calculating 10 to power k + 1..." << std::endl;
+		for (int i = 0; i < k + 2; ++i) {
+			ten_p = multiply(ten_p, ten, c);
+		}
+
+		std::cout << "calculating n ..." << std::endl;
+		while (fac_n < ten_p) {
+			++n;
+			fac_n_minus_one = fac_n;
+			multiply(fac_n_minus_one, n, fac_n);
+			if (fac_n >= ten_p) {
+				multiply(fac_n_minus_one, n - 1, c);
+				if (c >= ten_p) {
+					fac = &fac_n_minus_one;
+					n--;
+				}
+				break;
+			}
+		}
+
+		std::cout << "calculating e ..." << std::endl;
+		INT u = INT::one;
+		INT s;
+		for (int i = n; i >= 2; --i) {
+			s = zju04nycs::plus(s, u, c);
+			if (i > 2) {
+				u = multiply(u, i, c);
+			}
+		}
+
+		std::cout << "converting e to decimal..." << std::endl;
+		std::string strE;
+		convertToDecimal(strE, s, *fac, k + 1);
+		if (strE[0] == '0') {
+			strE[0] = '2';
+		}
+		std::cout << "e(" << k <<"):" << strE  <<std::endl;
+
+		std::cout << "Using time(" << k << "):" << float(clock() - begin_time) / CLOCKS_PER_SEC << std::endl;
+	}
+}
+
 void addPiTestWithINT() {
 	testCases.push_back([&] {
 		calculatePiWithINT();
@@ -1478,7 +1531,11 @@ void addPiTestWithFRAC() {
 		calculatePiWithINT();
 		});
 }
-
+void addIntTest_calculate_e(){
+	testCases.push_back([&] {
+		calculate_e_withINT();
+		});
+}
 int main()
 {
 //	addRealTest();
@@ -1498,7 +1555,10 @@ int main()
 	//the test case that calulates pi with FRAC operation
 	//addPiTestWithFRAC();
 
-	bool reverseOrder = false;
+	//the test case that calculates e with INT operation
+	addIntTest_calculate_e();
+
+	bool reverseOrder = true;
 
 	if (reverseOrder) {
 		for (auto it = testCases.rbegin(); it != testCases.rend(); ++it) {
