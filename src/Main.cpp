@@ -1469,7 +1469,7 @@ void calculatePiWithINT() {
 }
 
 void calculate_e_withINT() {
-	for (int k = 10; k <= 100; k += 1) {
+	for (int k = 10000; k <= 100000; k += 10000) {
 		const clock_t begin_time = clock();
 		int n = 1;
 		INT fac_n = INT::one;
@@ -1478,7 +1478,8 @@ void calculate_e_withINT() {
 		INT ten_p = INT::one;
 		INT c;
 		const INT ten = 10;
-		std::cout << "calculating 10 to power k + 1..." << std::endl;
+		std::cout << "k:" << k << std::endl;
+		std::cout << "calculating 10 to power k + 2..." << std::endl;
 		for (int i = 0; i < k + 2; ++i) {
 			ten_p = multiply(ten_p, ten, c);
 		}
@@ -1497,6 +1498,7 @@ void calculate_e_withINT() {
 				break;
 			}
 		}
+		std::cout << "n:" << n << std::endl;
 
 		std::cout << "calculating e ..." << std::endl;
 		INT u = INT::one;
@@ -1508,9 +1510,13 @@ void calculate_e_withINT() {
 			}
 		}
 
+		FRAC e(s, *fac);
+		INT x = e.n();
+		INT y = e.d();
+
 		std::cout << "converting e to decimal..." << std::endl;
 		std::string strE;
-		convertToDecimal(strE, s, *fac, k + 1);
+		convertToDecimal(strE, x, y, k + 1);
 		if (strE[0] == '0') {
 			strE[0] = '2';
 		}
