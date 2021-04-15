@@ -1469,7 +1469,7 @@ void calculatePiWithINT() {
 }
 
 void calculate_e_withINT() {
-	for (int k = 10000; k <= 100000; k += 10000) {
+	for (int k = 200000; k <= 10000000; k += 100000) {
 		const clock_t begin_time = clock();
 		int n = 1;
 		INT fac_n = INT::one;
@@ -1510,6 +1510,7 @@ void calculate_e_withINT() {
 			}
 		}
 
+		std::cout << "converting e to frac..." << std::endl;
 		FRAC e(s, *fac);
 		INT x = e.n();
 		INT y = e.d();
