@@ -1558,13 +1558,13 @@ int main()
 	addFracTest();
 
 	//the test case that calculates pi with pure INT operation
-	//addPiTestWithINT();
+	addPiTestWithINT();
 
 	//the test case that calulates pi with FRAC operation
 	//addPiTestWithFRAC();
 
 	//the test case that calculates e with INT operation
-	addIntTest_calculate_e();
+	//addIntTest_calculate_e();
 
 	bool reverseOrder = true;
 
