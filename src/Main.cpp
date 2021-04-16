@@ -1392,6 +1392,7 @@ void getIntAn(INT& P, INT& Q, int n, int a, std::vector<const INT*>& facCache) {
 	INT U;
 	INT tmp;
 	INT tmp1;
+	P.setZero();
 
 	for (int i = 1; i <= n; ++i) {
 		//std::cout << "i:" << i << std::endl;
@@ -1420,7 +1421,7 @@ void calculatePiWithINT() {
 	INT c1, c2, c3, c4;
 	std::vector<const INT*> facCache;
 
-	for (int k = 100; k < 200; k += 10) {
+	for (int k = 20; k <= 30; k += 10) {
 		const clock_t begin_time = clock();
 		std::cout << "k:" << k << std::endl;
 		std::cout << "calculating n for 5..." << std::endl;
