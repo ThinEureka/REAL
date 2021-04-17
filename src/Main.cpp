@@ -113,7 +113,7 @@ void addIntTest() {
 		});
 
 	testCases.push_back([&] {
-		int p = -34324324234;
+		int p = static_cast<int>(-34324324234);
 		Int x = Int(p);
 		bool isOverflow = false;
 		assert(x.toInt(isOverflow) == p);
@@ -121,7 +121,7 @@ void addIntTest() {
 		});
 
 	testCases.push_back([&] {
-		int p = 34324324234;
+		int p = static_cast<int>(34324324234);
 		Int x = Int(-p);
 		bool isOverflow = false;
 		assert(x.toInt(isOverflow) == -p);
@@ -140,7 +140,7 @@ void addIntTest() {
 		std::string p = "101011010101010101010101101010101011";
 		Int x = Int(p, 2);
 		std::cout << "x:" << x.toString(2) << std::endl;
-		for (int i = 0; i < p.size(); ++i) {
+		for (size_t i = 0; i < p.size(); ++i) {
 			char bit = x.bit(i) ? '1' : '0';
 			assert(bit == p[p.size() - 1 -i]);
 		}
@@ -732,12 +732,12 @@ const Int& getPower(int a, int n, std::vector<const Int*>& cache) {
 	}
 
 	int index = n - 1;
-	if (index < cache.size()) {
+	if (index < static_cast<int>(cache.size())) {
 		return *cache[index];
 	}
 
 
-	for (int i = cache.size(); i < n; ++i) {
+	for (int i = static_cast<int>(cache.size()); i < n; ++i) {
 		Int* x = nullptr;
 		if (i == 0) {
 			x = new Int(a);
@@ -756,7 +756,7 @@ const Int& getPower(int a, int n, std::vector<const Int*>& cache) {
 
 const Int& getOddFac(int n, std::vector<const Int*>& cache) {
 	auto index = n - 1;
-	if (index < cache.size()) {
+	if (index < static_cast<int>(cache.size())) {
 		return *(cache[index]);
 	}
 	static Int c1;
@@ -765,7 +765,7 @@ const Int& getOddFac(int n, std::vector<const Int*>& cache) {
 		return Int::one;
 	}
 
-	for (int i = cache.size(); i <= index; ++i) {
+	for (int i = static_cast<int>(cache.size()); i <= index; ++i) {
 		if (i == 0) {
 			cache.push_back(&Int::one);
 		}

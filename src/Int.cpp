@@ -290,7 +290,7 @@ int Int::leadBit() const {
 		}
 	}
 
-	return leadBitInChunk + Int::s_numBitsOfChunk * (_chunks.size()-1);
+	return static_cast<int>(leadBitInChunk + Int::s_numBitsOfChunk * (_chunks.size() - 1));
 }
 
 int Int::tailBit() const {
@@ -320,7 +320,7 @@ int Int::tailBit() const {
 		}
 	}
 
-	return tailBitInChunk + Int::s_numBitsOfChunk * (chunkIndex - 1);;
+	return static_cast<int>(tailBitInChunk + Int::s_numBitsOfChunk * (chunkIndex - 1));
 }
 
 void Int::setBitWithoutNormalization(size_t bitPos, bool v) {
@@ -573,8 +573,8 @@ Int& real::divide (const Int& v1, const Int& v2, Int& q, Int& r) {
 }
 
 int chunksCompare(const std::vector<Int::typeChunk>& chunks1, const std::vector<Int::typeChunk>& chunks2) {
-	int size1 = chunks1.size();
-	int size2 = chunks2.size();
+	int size1 = static_cast<int>(chunks1.size());
+	int size2 = static_cast<int>(chunks2.size());
 	if (size1 != size2) {
 		return  size1 > size2 ? 1 : -1;
 	}
@@ -659,10 +659,10 @@ void Int::chunksShiftLeft(unsigned int pos) {
 	}
 
 	Int::typeChunk mask = ((1 << shiftBits) - 1) << crossShiftBits;
-	for (int i = _chunks.size() - 1 ; i >= static_cast<int>(shiftChunks); --i) {
+	for (int i = static_cast<int>(_chunks.size()) - 1 ; i >= static_cast<int>(shiftChunks); --i) {
 		Int::typeChunk shiftOutChunk = ((_chunks[i] & mask) >> crossShiftBits);
 		if (shiftOutChunk > 0) {
-			if (i < _chunks.size() - 1) {
+			if (i < static_cast<int>(_chunks.size()) - 1) {
 				_chunks[i + 1] |= shiftOutChunk;
 			}
 			else {
