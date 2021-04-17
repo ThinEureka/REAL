@@ -5,7 +5,7 @@
 
 #include <assert.h> 
 
-using namespace zju04nycs;
+using namespace real;
 
 std::string FRAC::toString(int base) const {
 	if (isZero()) {
@@ -46,7 +46,7 @@ FRAC& FRAC::set(const std::string& str, int base) {
 	return *this;
 }
 
-FRAC& zju04nycs::plus(const FRAC& v1, const FRAC& v2, FRAC& sum) {
+FRAC& real::plus(const FRAC& v1, const FRAC& v2, FRAC& sum) {
 	if (v1.isZero()) {
 		sum = v2;
 		return sum;
@@ -74,7 +74,7 @@ FRAC& zju04nycs::plus(const FRAC& v1, const FRAC& v2, FRAC& sum) {
 	return sum;
 }
 
-FRAC& zju04nycs::subtract(const FRAC& v1, const FRAC& v2, FRAC& sub) {
+FRAC& real::subtract(const FRAC& v1, const FRAC& v2, FRAC& sub) {
 	if (v2.isZero()) {
 		sub = v1;
 		return sub;
@@ -102,7 +102,7 @@ FRAC& zju04nycs::subtract(const FRAC& v1, const FRAC& v2, FRAC& sub) {
 	return sub;
 }
 
-FRAC& zju04nycs::multiply(const FRAC& v1, const FRAC& v2, FRAC& product) {
+FRAC& real::multiply(const FRAC& v1, const FRAC& v2, FRAC& product) {
 	if (v1.isZero() || v2.isZero()) {
 		product.setZero();
 		return product;
@@ -115,7 +115,7 @@ FRAC& zju04nycs::multiply(const FRAC& v1, const FRAC& v2, FRAC& product) {
 	return product;
 }
 
-FRAC& zju04nycs::divide(const FRAC& v1, const FRAC& v2, FRAC& q) {
+FRAC& real::divide(const FRAC& v1, const FRAC& v2, FRAC& q) {
 	assert(!v2.isZero());
 	if (v1.isZero()) {
 		q.setZero();
@@ -144,7 +144,7 @@ void FRAC::normalize() {
 		_d.negate();
 	}
 
-	zju04nycs::gcd(_n, _d, _c1, _c2, _c3, _c4);
+	real::gcd(_n, _d, _c1, _c2, _c3, _c4);
 	if (_c1 != INT::one) {
 		divide(_n, _c1, _c2, _c3);
 		_n = _c2;

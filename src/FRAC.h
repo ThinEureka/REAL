@@ -6,7 +6,7 @@
 #include "INT.h"
 #include <assert.h> 
 
-namespace zju04nycs {
+namespace real {
 
 	class FRAC;
 	FRAC operator +(const FRAC& v1, const FRAC& v2);

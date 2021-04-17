@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 
-namespace zju04nycs {
+namespace real {
 
 	class INT;
 	bool operator == (const INT& v1, const INT& v2);

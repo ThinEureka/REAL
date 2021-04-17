@@ -1,7 +1,7 @@
 #include "INT.h"
 #include <assert.h> 
 
-using namespace zju04nycs;
+using namespace real;
 
 int chunksCompare(const std::vector<INT::typeChunk>& chunks1, const std::vector<INT::typeChunk>& chunks2);
 int bitsCompare(const INT& v1, int leadBit1, const INT& v2, int leadBit2, int numberBits);
@@ -339,7 +339,7 @@ void INT::setBitWithoutNormalization(size_t bitPos, bool v) {
 	}
 }
 
-bool zju04nycs::operator == (const INT& v1, const INT& v2) {
+bool real::operator == (const INT& v1, const INT& v2) {
 	if (&v1 == &v2) {
 		return true;
 	}
@@ -360,7 +360,7 @@ bool zju04nycs::operator == (const INT& v1, const INT& v2) {
 	return true;
 }
 
-int zju04nycs::compare(const INT& v1, const INT& v2) {
+int real::compare(const INT& v1, const INT& v2) {
 	if (&v1 == &v2) {
 		return 0;
 	}
@@ -418,7 +418,7 @@ INT& INT::operator ^= (const INT& v1) {
 	return *this;
 }
 
-INT& zju04nycs::plus(const INT& v1, const INT& v2, INT& sum){
+INT& real::plus(const INT& v1, const INT& v2, INT& sum){
 	if (v1.isZero()) {
 		sum = v2;
 		return sum;
@@ -456,7 +456,7 @@ INT& zju04nycs::plus(const INT& v1, const INT& v2, INT& sum){
 	}
 }
 
-INT& zju04nycs::subtract(const INT& v1, const INT& v2, INT& sub) {
+INT& real::subtract(const INT& v1, const INT& v2, INT& sub) {
 	if (v1.isZero()) {
 		sub = v2;
 		sub.negate();
@@ -495,7 +495,7 @@ INT& zju04nycs::subtract(const INT& v1, const INT& v2, INT& sub) {
 	}
 }
 
-INT& zju04nycs::multiply(const INT & v1, const INT & v2, INT & product) {
+INT& real::multiply(const INT & v1, const INT & v2, INT & product) {
 	product.setZero();
 	if (v1.isZero() || v2.isZero()) {
 		return product;
@@ -521,7 +521,7 @@ INT& zju04nycs::multiply(const INT & v1, const INT & v2, INT & product) {
 	}
 }
 
-INT& zju04nycs::divide (const INT& v1, const INT& v2, INT& q, INT& r) {
+INT& real::divide (const INT& v1, const INT& v2, INT& q, INT& r) {
 	assert(!v2.isZero());
 	if (v1.isZero()) {
 		q.setZero();
@@ -734,7 +734,7 @@ int bitsCompare(const INT& v1, int leadBit1, const INT& v2, int leadBit2, int nu
 	return 0;
 }
 
- void zju04nycs::bitsSubtract(INT& v1, int leadBit1, int tailBit1, const INT& v2, int tailBit2, int numberBits){
+ void real::bitsSubtract(INT& v1, int leadBit1, int tailBit1, const INT& v2, int tailBit2, int numberBits){
 	int bitOffset = 0;
 	int borrow = 0;
 	while (tailBit1 + bitOffset <= leadBit1) {
