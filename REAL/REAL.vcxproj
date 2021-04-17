@@ -140,14 +140,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\algorithm.cpp" />
-    <ClCompile Include="..\src\FRAC.cpp" />
-    <ClCompile Include="..\src\INT.cpp" />
+    <ClCompile Include="..\src\Frac.cpp" />
+    <ClCompile Include="..\src\Int.cpp" />
     <ClCompile Include="..\src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\algorithm.h" />
-    <ClInclude Include="..\src\FRAC.h" />
-    <ClInclude Include="..\src\INT.h" />
+    <ClInclude Include="..\src\Frac.h" />
+    <ClInclude Include="..\src\Int.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

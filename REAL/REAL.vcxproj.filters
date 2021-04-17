@@ -18,21 +18,21 @@
     <ClCompile Include="..\src\Main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\FRAC.cpp">
+    <ClCompile Include="..\src\Frac.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\src\algorithm.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\INT.cpp">
+    <ClCompile Include="..\src\Int.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\INT.h">
+    <ClInclude Include="..\src\Int.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\FRAC.h">
+    <ClInclude Include="..\src\Frac.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\src\algorithm.h">

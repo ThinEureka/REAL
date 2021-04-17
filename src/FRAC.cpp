@@ -1,13 +1,13 @@
 
-#include "FRAC.h"
-#include "INT.h"
+#include "Frac.h"
+#include "Int.h"
 #include "algorithm.h"
 
 #include <assert.h> 
 
 using namespace real;
 
-std::string FRAC::toString(int base) const {
+std::string Frac::toString(int base) const {
 	if (isZero()) {
 		return "0";
 	}
@@ -17,7 +17,7 @@ std::string FRAC::toString(int base) const {
 			str += "-";
 		}
 		str += _n.toString(base);
-		if (_d != INT::one) {
+		if (_d != Int::one) {
 			str += '/';
 			str += _d.toString(base);
 		}
@@ -25,7 +25,7 @@ std::string FRAC::toString(int base) const {
 	}
 }
 
-FRAC& FRAC::set(const std::string& str, int base) {
+Frac& Frac::set(const std::string& str, int base) {
 	auto pos = str.find('/');
 	if (pos == std::string::npos) {
 		_sign = 1;
@@ -46,7 +46,7 @@ FRAC& FRAC::set(const std::string& str, int base) {
 	return *this;
 }
 
-FRAC& real::plus(const FRAC& v1, const FRAC& v2, FRAC& sum) {
+Frac& real::plus(const Frac& v1, const Frac& v2, Frac& sum) {
 	if (v1.isZero()) {
 		sum = v2;
 		return sum;
@@ -74,7 +74,7 @@ FRAC& real::plus(const FRAC& v1, const FRAC& v2, FRAC& sum) {
 	return sum;
 }
 
-FRAC& real::subtract(const FRAC& v1, const FRAC& v2, FRAC& sub) {
+Frac& real::subtract(const Frac& v1, const Frac& v2, Frac& sub) {
 	if (v2.isZero()) {
 		sub = v1;
 		return sub;
@@ -102,7 +102,7 @@ FRAC& real::subtract(const FRAC& v1, const FRAC& v2, FRAC& sub) {
 	return sub;
 }
 
-FRAC& real::multiply(const FRAC& v1, const FRAC& v2, FRAC& product) {
+Frac& real::multiply(const Frac& v1, const Frac& v2, Frac& product) {
 	if (v1.isZero() || v2.isZero()) {
 		product.setZero();
 		return product;
@@ -115,7 +115,7 @@ FRAC& real::multiply(const FRAC& v1, const FRAC& v2, FRAC& product) {
 	return product;
 }
 
-FRAC& real::divide(const FRAC& v1, const FRAC& v2, FRAC& q) {
+Frac& real::divide(const Frac& v1, const Frac& v2, Frac& q) {
 	assert(!v2.isZero());
 	if (v1.isZero()) {
 		q.setZero();
@@ -129,7 +129,7 @@ FRAC& real::divide(const FRAC& v1, const FRAC& v2, FRAC& q) {
 	return q;
 }
 
-void FRAC::normalize() {
+void Frac::normalize() {
 	if (_n.isZero()) {
 		clear();
 		return;
@@ -145,7 +145,7 @@ void FRAC::normalize() {
 	}
 
 	real::gcd(_n, _d, _c1, _c2, _c3, _c4);
-	if (_c1 != INT::one) {
+	if (_c1 != Int::one) {
 		divide(_n, _c1, _c2, _c3);
 		_n = _c2;
 

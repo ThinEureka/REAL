@@ -4,9 +4,9 @@
 #define ALGORITHM_H
 
 namespace real {
-	class INT;
+	class Int;
 	// m and n should be greater than zero
-	INT& gcd(const INT& m, const INT& n, INT& gcd, INT& c1, INT& c2, INT& c3);
+	Int& gcd(const Int& m, const Int& n, Int& gcd, Int& c1, Int& c2, Int& c3);
 }
 
 #endif

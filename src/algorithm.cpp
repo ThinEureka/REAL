@@ -1,16 +1,16 @@
 
 #include "algorithm.h"
-#include "INT.h"
+#include "Int.h"
 
 using namespace real;
 
-INT& real::gcd(const INT& m, const INT& n, INT& gcd,
-	INT& c1, INT& c2, INT& c3) {
-	if (m == INT::one){
+Int& real::gcd(const Int& m, const Int& n, Int& gcd,
+	Int& c1, Int& c2, Int& c3) {
+	if (m == Int::one){
 		return gcd.setOne();
 	}
 
-	if (n == INT::one) {
+	if (n == Int::one) {
 		return gcd.setOne();
 	}
 

@@ -1,15 +1,15 @@
-#include "INT.h"
+#include "Int.h"
 #include <assert.h> 
 
 using namespace real;
 
-int chunksCompare(const std::vector<INT::typeChunk>& chunks1, const std::vector<INT::typeChunk>& chunks2);
-int bitsCompare(const INT& v1, int leadBit1, const INT& v2, int leadBit2, int numberBits);
+int chunksCompare(const std::vector<Int::typeChunk>& chunks1, const std::vector<Int::typeChunk>& chunks2);
+int bitsCompare(const Int& v1, int leadBit1, const Int& v2, int leadBit2, int numberBits);
 
 bool isDigit(char c, int base, int& digitValue);
-char chunkToDigit(INT::typeChunk chunk, int base);
+char chunkToDigit(Int::typeChunk chunk, int base);
 
-const INT INT::s_smallInts[101] = {
+const Int Int::s_smallInts[101] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
 	10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
 	20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
@@ -23,10 +23,10 @@ const INT INT::s_smallInts[101] = {
 	100
 };
 
-const INT& INT::zero = INT::s_smallInts[0];
-const INT& INT::one = INT::s_smallInts[1];
+const Int& Int::zero = Int::s_smallInts[0];
+const Int& Int::one = Int::s_smallInts[1];
 
-INT& INT::operator = (const INT& v) {
+Int& Int::operator = (const Int& v) {
 	if (this == &v) {
 		return *this;
 	}
@@ -35,7 +35,7 @@ INT& INT::operator = (const INT& v) {
 	return *this;
 }
 
-INT& INT::operator = (INT&& v) noexcept {
+Int& Int::operator = (Int&& v) noexcept {
 	if (this == &v) {
 		return *this;
 	}
@@ -44,9 +44,9 @@ INT& INT::operator = (INT&& v) noexcept {
 	return *this;
 }
 
-INT::typeChunkSigned INT::toChunkSigned(bool& isOverFlow) const {
-	static const INT::typeChunk signMask = 1 << (INT::s_numBitsOfChunk - 1);
-	static const INT::typeChunk valueMask = ~signMask;
+Int::typeChunkSigned Int::toChunkSigned(bool& isOverFlow) const {
+	static const Int::typeChunk signMask = 1 << (Int::s_numBitsOfChunk - 1);
+	static const Int::typeChunk valueMask = ~signMask;
 
 	if (_chunks.size() == 0) {
 		isOverFlow = false;
@@ -54,7 +54,7 @@ INT::typeChunkSigned INT::toChunkSigned(bool& isOverFlow) const {
 	}
 
 	auto tailChunk = _chunks[0];
-	INT::typeChunkSigned  result = tailChunk & valueMask;
+	Int::typeChunkSigned  result = tailChunk & valueMask;
 
 	if (_chunks.size() == 1) {
 		if (_sign > 0) {
@@ -73,8 +73,8 @@ INT::typeChunkSigned INT::toChunkSigned(bool& isOverFlow) const {
 					return -result;
 				}
 				else {
-					INT::typeChunk limitValue = 1 << (s_numBitsOfChunk - 1);
-					return static_cast<INT::typeChunkSigned>(limitValue);
+					Int::typeChunk limitValue = 1 << (s_numBitsOfChunk - 1);
+					return static_cast<Int::typeChunkSigned>(limitValue);
 				}
 			}
 		}
@@ -87,9 +87,9 @@ INT::typeChunkSigned INT::toChunkSigned(bool& isOverFlow) const {
 	return result;
 }
 
-INT::typeLinkSigned INT::toLinkSigned(bool& isOverFlow) const {
-	static const INT::typeChunk signMask = 1 << (INT::s_numBitsOfChunk - 1);
-	static const INT::typeChunk valueMask = ~signMask;
+Int::typeLinkSigned Int::toLinkSigned(bool& isOverFlow) const {
+	static const Int::typeChunk signMask = 1 << (Int::s_numBitsOfChunk - 1);
+	static const Int::typeChunk valueMask = ~signMask;
 
 	if (_chunks.size() == 0) {
 		isOverFlow = false;
@@ -98,15 +98,15 @@ INT::typeLinkSigned INT::toLinkSigned(bool& isOverFlow) const {
 
 	if (_chunks.size() == 1) {
 		isOverFlow = false;
-		INT::typeLinkSigned result = _chunks[0];
+		Int::typeLinkSigned result = _chunks[0];
 		return _sign > 0 ? result : -result;
 	}
 
-	INT::typeLink lowChunk = _chunks[0];
-	INT::typeChunk highChunk = _chunks[1];
-	INT::typeLinkSigned highChunkMasked = highChunk & valueMask;
+	Int::typeLink lowChunk = _chunks[0];
+	Int::typeChunk highChunk = _chunks[1];
+	Int::typeLinkSigned highChunkMasked = highChunk & valueMask;
 
-	INT::typeLinkSigned result = highChunkMasked << INT::s_numBitsOfChunk;
+	Int::typeLinkSigned result = highChunkMasked << Int::s_numBitsOfChunk;
 	result += lowChunk;
 
 	if (_chunks.size() == 2) {
@@ -125,9 +125,9 @@ INT::typeLinkSigned INT::toLinkSigned(bool& isOverFlow) const {
 					return -result;
 				}
 				else {
-					INT::typeLink limitValue = 1;
+					Int::typeLink limitValue = 1;
 					limitValue <<= (s_numBitsOfChunk * 2 - 1);
-					return static_cast<INT::typeChunkSigned>(limitValue);
+					return static_cast<Int::typeChunkSigned>(limitValue);
 				}
 			}
 		}
@@ -140,7 +140,7 @@ INT::typeLinkSigned INT::toLinkSigned(bool& isOverFlow) const {
 	return result;
 }
 
-std::string INT::toString(int base) const {
+std::string Int::toString(int base) const {
 	assert(base >= 2 && base <= 35);
 	if (_sign == 0) {
 		return "0";
@@ -156,17 +156,17 @@ std::string INT::toString(int base) const {
 		return str;
 	}
 
-	if (_chunks.size() == 1 && _chunks[0] < static_cast<INT::typeChunk>(base)) {
+	if (_chunks.size() == 1 && _chunks[0] < static_cast<Int::typeChunk>(base)) {
 		//TODO:
 		//optimize when size == 1
 		str += chunkToDigit(_chunks[0], base);
 		return str;
 	}
 
-	INT r;
-	INT n = *this;
-	INT q;
-	const INT& d = s_smallInts[base];
+	Int r;
+	Int n = *this;
+	Int q;
+	const Int& d = s_smallInts[base];
 
 	while (chunksCompare(n._chunks, d._chunks) >= 0) {
 		n = divide(n, d, q, r);
@@ -201,7 +201,7 @@ std::string INT::toString(int base) const {
 	return str;
 }
 
-INT& INT::set(const std::string& str, int base) {
+Int& Int::set(const std::string& str, int base) {
 	assert(base >= 2 && base <= 35);
 
 	setZero();
@@ -261,26 +261,26 @@ INT& INT::set(const std::string& str, int base) {
 	return *this;
 }
 
-int INT::bit(size_t pos) const {
-	if (pos >= _chunks.size() * INT::s_numBitsOfChunk) {
+int Int::bit(size_t pos) const {
+	if (pos >= _chunks.size() * Int::s_numBitsOfChunk) {
 		return 0;
 	}
 
-	size_t chunkIndex = pos / INT::s_numBitsOfChunk;
-	size_t bitIndex = pos - chunkIndex * INT::s_numBitsOfChunk;
+	size_t chunkIndex = pos / Int::s_numBitsOfChunk;
+	size_t bitIndex = pos - chunkIndex * Int::s_numBitsOfChunk;
 
 	return (_chunks[chunkIndex] & (1 << bitIndex)) ? 1 : 0;
 }
 
-int INT::leadBit() const {
+int Int::leadBit() const {
 	if (_chunks.size() == 0) {
 		return -1;
 	}
 
 	auto leadChunk = _chunks[_chunks.size() - 1];
-	size_t leadBitInChunk = INT::s_numBitsOfChunk - 1;
+	size_t leadBitInChunk = Int::s_numBitsOfChunk - 1;
 	while (leadBitInChunk != 0) {
-		INT::typeChunk mask = 1;
+		Int::typeChunk mask = 1;
 		mask <<= leadBitInChunk;
 		if (leadChunk & mask) {
 			break;
@@ -290,16 +290,16 @@ int INT::leadBit() const {
 		}
 	}
 
-	return leadBitInChunk + INT::s_numBitsOfChunk * (_chunks.size()-1);
+	return leadBitInChunk + Int::s_numBitsOfChunk * (_chunks.size()-1);
 }
 
-int INT::tailBit() const {
+int Int::tailBit() const {
 	if (_chunks.size() == 0) {
 		return -1;
 	}
 
 	size_t chunkIndex = 0;
-	INT::typeChunk tailChunk = 0;
+	Int::typeChunk tailChunk = 0;
 	while (chunkIndex < _chunks.size() - 1) {
 		tailChunk = _chunks[chunkIndex];
 		if (tailChunk != 0) {
@@ -309,8 +309,8 @@ int INT::tailBit() const {
 	}
 
 	int tailBitInChunk = 0;
-	while (tailBitInChunk < INT::s_numBitsOfChunk - 1) {
-		INT::typeChunk mask = 1;
+	while (tailBitInChunk < Int::s_numBitsOfChunk - 1) {
+		Int::typeChunk mask = 1;
 		mask <<= tailBitInChunk;
 		if (tailChunk & mask) {
 			break;
@@ -320,10 +320,10 @@ int INT::tailBit() const {
 		}
 	}
 
-	return tailBitInChunk + INT::s_numBitsOfChunk * (chunkIndex - 1);;
+	return tailBitInChunk + Int::s_numBitsOfChunk * (chunkIndex - 1);;
 }
 
-void INT::setBitWithoutNormalization(size_t bitPos, bool v) {
+void Int::setBitWithoutNormalization(size_t bitPos, bool v) {
 	size_t chunkIndex = bitPos / s_numBitsOfChunk;
 	size_t bitIndex = bitPos - chunkIndex * s_numBitsOfChunk;
 
@@ -339,7 +339,7 @@ void INT::setBitWithoutNormalization(size_t bitPos, bool v) {
 	}
 }
 
-bool real::operator == (const INT& v1, const INT& v2) {
+bool real::operator == (const Int& v1, const Int& v2) {
 	if (&v1 == &v2) {
 		return true;
 	}
@@ -360,7 +360,7 @@ bool real::operator == (const INT& v1, const INT& v2) {
 	return true;
 }
 
-int real::compare(const INT& v1, const INT& v2) {
+int real::compare(const Int& v1, const Int& v2) {
 	if (&v1 == &v2) {
 		return 0;
 	}
@@ -373,7 +373,7 @@ int real::compare(const INT& v1, const INT& v2) {
 	return v1._sign > 0 ? chunksResult : -chunksResult;
 }
 
-INT& INT::operator &= (const INT& v1) {
+Int& Int::operator &= (const Int& v1) {
 	if (_chunks.size() > v1._chunks.size()) {
 		_chunks.resize(v1._chunks.size());
 	}
@@ -386,7 +386,7 @@ INT& INT::operator &= (const INT& v1) {
 	return *this;
 }
 
-INT& INT::operator |= (const INT& v1) {
+Int& Int::operator |= (const Int& v1) {
 	if (v1.isZero()) {
 		return *this;
 	}
@@ -407,7 +407,7 @@ INT& INT::operator |= (const INT& v1) {
 	return *this;
 }
 
-INT& INT::operator ^= (const INT& v1) {
+Int& Int::operator ^= (const Int& v1) {
 	if (v1._chunks.size() > _chunks.size()) {
 		_chunks.resize(v1._chunks.size());
 	}
@@ -418,7 +418,7 @@ INT& INT::operator ^= (const INT& v1) {
 	return *this;
 }
 
-INT& real::plus(const INT& v1, const INT& v2, INT& sum){
+Int& real::plus(const Int& v1, const Int& v2, Int& sum){
 	if (v1.isZero()) {
 		sum = v2;
 		return sum;
@@ -456,7 +456,7 @@ INT& real::plus(const INT& v1, const INT& v2, INT& sum){
 	}
 }
 
-INT& real::subtract(const INT& v1, const INT& v2, INT& sub) {
+Int& real::subtract(const Int& v1, const Int& v2, Int& sub) {
 	if (v1.isZero()) {
 		sub = v2;
 		sub.negate();
@@ -495,7 +495,7 @@ INT& real::subtract(const INT& v1, const INT& v2, INT& sub) {
 	}
 }
 
-INT& real::multiply(const INT & v1, const INT & v2, INT & product) {
+Int& real::multiply(const Int & v1, const Int & v2, Int & product) {
 	product.setZero();
 	if (v1.isZero() || v2.isZero()) {
 		return product;
@@ -503,12 +503,12 @@ INT& real::multiply(const INT & v1, const INT & v2, INT & product) {
 	else {
 		product._sign = v1._sign == v2._sign ? 1 : -1;
 		for (size_t i = 0; i < v2._chunks.size(); ++i) {
-			INT::typeChunk carry = 0;
+			Int::typeChunk carry = 0;
 			for (size_t j = 0; j < v1._chunks.size(); ++j) {
-				INT::typeLink partSum =
-					INT::typeLink(product.chunk(i + j)) + INT::typeLink(v1._chunks[j]) * INT::typeLink(v2._chunks[i]) + carry;
-				product.setChunk(i+j, static_cast<INT::typeChunk>(partSum));
-				carry = static_cast<INT::typeChunk>(partSum >> INT::s_numBitsOfChunk);
+				Int::typeLink partSum =
+					Int::typeLink(product.chunk(i + j)) + Int::typeLink(v1._chunks[j]) * Int::typeLink(v2._chunks[i]) + carry;
+				product.setChunk(i+j, static_cast<Int::typeChunk>(partSum));
+				carry = static_cast<Int::typeChunk>(partSum >> Int::s_numBitsOfChunk);
 				if (carry > 0) {
 					if (j == v1._chunks.size() - 1) {
 						product.setChunk(i + j + 1, carry);
@@ -521,7 +521,7 @@ INT& real::multiply(const INT & v1, const INT & v2, INT & product) {
 	}
 }
 
-INT& real::divide (const INT& v1, const INT& v2, INT& q, INT& r) {
+Int& real::divide (const Int& v1, const Int& v2, Int& q, Int& r) {
 	assert(!v2.isZero());
 	if (v1.isZero()) {
 		q.setZero();
@@ -544,7 +544,7 @@ INT& real::divide (const INT& v1, const INT& v2, INT& q, INT& r) {
 		r = v1;
 		int leadBitR = r.leadBit();
 
-		const INT& d = v2;
+		const Int& d = v2;
 		const int leadBitD = d.leadBit();
 
 		q.setZero();
@@ -572,7 +572,7 @@ INT& real::divide (const INT& v1, const INT& v2, INT& q, INT& r) {
 	}
 }
 
-int chunksCompare(const std::vector<INT::typeChunk>& chunks1, const std::vector<INT::typeChunk>& chunks2) {
+int chunksCompare(const std::vector<Int::typeChunk>& chunks1, const std::vector<Int::typeChunk>& chunks2) {
 	int size1 = chunks1.size();
 	int size2 = chunks2.size();
 	if (size1 != size2) {
@@ -593,7 +593,7 @@ int chunksCompare(const std::vector<INT::typeChunk>& chunks1, const std::vector<
 	return 0;
 }
 
-void INT::chunksShiftRight(unsigned int pos) {
+void Int::chunksShiftRight(unsigned int pos) {
 	if (pos == 0) {
 		return;
 	}
@@ -602,9 +602,9 @@ void INT::chunksShiftRight(unsigned int pos) {
 		return;
 	}
 
-	unsigned int shiftChunks = pos / INT::s_numBitsOfChunk;
-	unsigned int shiftBits = pos - shiftChunks * INT::s_numBitsOfChunk;
-	unsigned int crossShiftBits = INT::s_numBitsOfChunk - shiftBits;
+	unsigned int shiftChunks = pos / Int::s_numBitsOfChunk;
+	unsigned int shiftBits = pos - shiftChunks * Int::s_numBitsOfChunk;
+	unsigned int crossShiftBits = Int::s_numBitsOfChunk - shiftBits;
 
 	if (_chunks.size() <= shiftChunks) {
 		_chunks.clear();
@@ -620,7 +620,7 @@ void INT::chunksShiftRight(unsigned int pos) {
 		return;
 	}
 
-	INT::typeChunk mask = (1 << shiftBits) - 1;
+	Int::typeChunk mask = (1 << shiftBits) - 1;
 	for (size_t i = 0; i < _chunks.size(); ++i) {
 		_chunks[i] >>= shiftBits;
 		if (i < _chunks.size() - 1) {
@@ -629,7 +629,7 @@ void INT::chunksShiftRight(unsigned int pos) {
 	}
 }
 
-void INT::chunksShiftLeft(unsigned int pos) {
+void Int::chunksShiftLeft(unsigned int pos) {
 	if (pos == 0) {
 		return;
 	}
@@ -638,9 +638,9 @@ void INT::chunksShiftLeft(unsigned int pos) {
 		return;
 	}
 
-	unsigned int shiftChunks = pos / INT::s_numBitsOfChunk;
-	unsigned int shiftBits = pos - shiftChunks * INT::s_numBitsOfChunk;
-	unsigned int crossShiftBits = INT::s_numBitsOfChunk - shiftBits;
+	unsigned int shiftChunks = pos / Int::s_numBitsOfChunk;
+	unsigned int shiftBits = pos - shiftChunks * Int::s_numBitsOfChunk;
+	unsigned int crossShiftBits = Int::s_numBitsOfChunk - shiftBits;
 
 	auto oldSize = _chunks.size();
 	auto newSize = oldSize + shiftChunks;
@@ -658,9 +658,9 @@ void INT::chunksShiftLeft(unsigned int pos) {
 		return;
 	}
 
-	INT::typeChunk mask = ((1 << shiftBits) - 1) << crossShiftBits;
+	Int::typeChunk mask = ((1 << shiftBits) - 1) << crossShiftBits;
 	for (int i = _chunks.size() - 1 ; i >= static_cast<int>(shiftChunks); --i) {
-		INT::typeChunk shiftOutChunk = ((_chunks[i] & mask) >> crossShiftBits);
+		Int::typeChunk shiftOutChunk = ((_chunks[i] & mask) >> crossShiftBits);
 		if (shiftOutChunk > 0) {
 			if (i < _chunks.size() - 1) {
 				_chunks[i + 1] |= shiftOutChunk;
@@ -673,54 +673,54 @@ void INT::chunksShiftLeft(unsigned int pos) {
 	}
 }
 
-void INT::chunksPlus(const std::vector<INT::typeChunk>& chunks1, const std::vector<INT::typeChunk>& chunks2) {
+void Int::chunksPlus(const std::vector<Int::typeChunk>& chunks1, const std::vector<Int::typeChunk>& chunks2) {
 	auto pChunksLeft = &chunks1;
 	auto pChunksRight = &chunks2;
 	if (pChunksRight->size() > pChunksLeft->size()) {
 		std::swap(pChunksLeft, pChunksRight);
 	}
 
-	INT::typeLink carry = 0;
+	Int::typeLink carry = 0;
 	_chunks = *pChunksLeft;
 	for (size_t i = 0; i < _chunks.size(); ++i) {
-		INT::typeLink partSum = 0;
+		Int::typeLink partSum = 0;
 		if (i < pChunksRight->size()) {
-			partSum = INT::typeLink((*pChunksLeft)[i]) + INT::typeLink((*pChunksRight)[i]) + carry;
+			partSum = Int::typeLink((*pChunksLeft)[i]) + Int::typeLink((*pChunksRight)[i]) + carry;
 		}
 		else {
-			partSum = INT::typeLink((*pChunksLeft)[i]) + carry;
+			partSum = Int::typeLink((*pChunksLeft)[i]) + carry;
 		}
-		_chunks[i] = static_cast<INT::typeChunk>(partSum);
-		carry = partSum >> INT::s_numBitsOfChunk;
+		_chunks[i] = static_cast<Int::typeChunk>(partSum);
+		carry = partSum >> Int::s_numBitsOfChunk;
 	}
 
 	if (carry != 0) {
-		_chunks.push_back(static_cast<INT::typeChunk>(carry));
+		_chunks.push_back(static_cast<Int::typeChunk>(carry));
 	}
 }
 
-void INT::chunksSubtract(const std::vector<INT::typeChunk>& chunks1, const std::vector<INT::typeChunk>& chunks2) {
+void Int::chunksSubtract(const std::vector<Int::typeChunk>& chunks1, const std::vector<Int::typeChunk>& chunks2) {
 	_chunks.resize(chunks1.size());
-	INT::typeLink borrow = 0;
+	Int::typeLink borrow = 0;
 	for (size_t i = 0; i < chunks1.size(); ++i) {
-		INT::typeLink chunk1 = chunks1[i];
-		INT::typeLink chunk2 = 0;
+		Int::typeLink chunk1 = chunks1[i];
+		Int::typeLink chunk2 = 0;
 		if (i < chunks2.size()) {
 			chunk2 = chunks2[i];
 		}
 		if (chunk1 >= chunk2 + borrow) {
-			_chunks[i] = static_cast<INT::typeChunk>(chunk1 - chunk2 - borrow);
+			_chunks[i] = static_cast<Int::typeChunk>(chunk1 - chunk2 - borrow);
 			borrow = 0;
 		}
 		else {
-			_chunks[i] = static_cast<INT::typeChunk>(INT::s_borrowChunkValue + chunk1
+			_chunks[i] = static_cast<Int::typeChunk>(Int::s_borrowChunkValue + chunk1
 				- chunk2 - borrow);
 			borrow = 1;
 		}
 	}
 }
 
-int bitsCompare(const INT& v1, int leadBit1, const INT& v2, int leadBit2, int numberBits) {
+int bitsCompare(const Int& v1, int leadBit1, const Int& v2, int leadBit2, int numberBits) {
 	int leadOffset = 0;
 	while (leadOffset < numberBits) {
 		int bit1 = v1.bit(leadBit1 - leadOffset);
@@ -734,7 +734,7 @@ int bitsCompare(const INT& v1, int leadBit1, const INT& v2, int leadBit2, int nu
 	return 0;
 }
 
- void real::bitsSubtract(INT& v1, int leadBit1, int tailBit1, const INT& v2, int tailBit2, int numberBits){
+ void real::bitsSubtract(Int& v1, int leadBit1, int tailBit1, const Int& v2, int tailBit2, int numberBits){
 	int bitOffset = 0;
 	int borrow = 0;
 	while (tailBit1 + bitOffset <= leadBit1) {
@@ -777,7 +777,7 @@ int bitsCompare(const INT& v1, int leadBit1, const INT& v2, int leadBit2, int nu
 	 return false;
 }
 
-char chunkToDigit(INT::typeChunk chunk, int base) {
+char chunkToDigit(Int::typeChunk chunk, int base) {
 	if (chunk >= 0 && static_cast<int>(chunk) < base) {
 		if (chunk >= 0 && chunk < 10) {
 			return '0' + chunk;
