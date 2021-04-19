@@ -13,18 +13,13 @@ namespace real {
 	bool operator == (const Float& v1, const Float& v2);
 	bool operator != (const Float& v1, const Float& v2);
 
-	Float operator & (const Float& v1, const Float& v2);
-	Float operator | (const Float& v1, const Float& v2);
-	Float operator ^ (const Float& v1, const Float& v2);
+	const Float operator >> (const Float& v1, int pos);
+	const Float operator << (const Float& v1, int pos);
 
-	Float operator >> (const Float& v1, int pos);
-	Float operator << (const Float& v1, int pos);
-
-	Float operator +(const Float& v1, const Float& v2);
-	Float operator -(const Float& v1, const Float& v2);
-	Float operator *(const Float& v1, const Float& v2);
-	Float operator /(const Float& v1, const Float& v2);
-	Float operator %(const Float& v1, const Float& v2);
+	const Float operator +(const Float& v1, const Float& v2);
+	const Float operator -(const Float& v1, const Float& v2);
+	const Float operator *(const Float& v1, const Float& v2);
+	const Float operator /(const Float& v1, const Float& v2);
 
 	Float& plus(const Float& v1, const Float& v2, Float& sum);
 	Float& subtract(const Float& v1, const Float& v2, Float& sub);
@@ -54,8 +49,36 @@ namespace real {
 
 		explicit Float(const std::string& str, int base = 10) { set(str, base); }
 
-		Int floor() const;
-		Int ceil() const;
+		const Float floor() const {
+			Float f = *this;
+			return f.setFloor();
+		}
+
+		const Float ceil() const { 
+			auto f = *this;
+			f.setCeil();
+			return f;
+		}
+
+		const Float intValue() const {
+			Float f = *this;
+			return f.setInt();
+		}
+
+		Float& setFloor();
+		Float& setCeil();
+
+		Float& setInt();
+		const Int toInt() const {
+			Int n;
+			if (_baseBitPos <= 0) {
+				n.setZero();
+				return n;
+			}
+
+			n = _int;
+			return n <<= _baseBitPos;
+		}
 
 		std::string toString(int base = 10) const;
 		Float& set(const std::string& str, int base = 10);
@@ -64,43 +87,51 @@ namespace real {
 		Float& operator = (const Float& v) {
 			_int = v._int;
 			_baseBitPos = v._baseBitPos;
+			return *this;
 		}
 		Float& operator = (Float&& v) noexcept {
-			_int = v._int;
+			_int = std::move(v._int);
 			_baseBitPos = v._baseBitPos;
+			return *this;
 		}
 
 		Float& operator = (const Int& v) {
 			_int = v;
 			_baseBitPos = 0;
 			normalize();
+			return *this;
 		}
 		Float& operator = (Int&& v) noexcept {
 			_int = v;
 			_baseBitPos = 0;
 			normalize();
+			return *this;
 		}
 
 		Float& operator = (int v) {
 			_int = v;
 			_baseBitPos = 0;
 			normalize();
+			return *this;
 		}
 		Float& operator = (long long v) {
 			_int = v;
 			_baseBitPos = 0;
 			normalize();
+			return *this;
 		}
 
 		Float& operator = (unsigned int v) {
 			_int = v;
 			_baseBitPos = 0;
 			normalize();
+			return *this;
 		}
 		Float& operator = (unsigned long long v) {
 			_int = v;
 			_baseBitPos = 0;
 			normalize();
+			return *this;
 		}
 
 		bool isZero() const {
@@ -109,11 +140,13 @@ namespace real {
 		Float& clear() {
 			_int.setZero();
 			_baseBitPos = 0;
+			return *this;
 		}
 		Float& setZero() {
 			clear();
+			return *this;
 		}
-		Float& setOne() { _int.setOne(); _baseBitPos = 0; }
+		Float& setOne() { _int.setOne(); _baseBitPos = 0; return *this; }
 		bool isPositive() const { return _int.isPositive(); }
 		bool isNegative() const { return _int.isNegative(); }
 
@@ -145,7 +178,8 @@ namespace real {
 				return v1.sign() > v2.sign() ? 1 : -1;
 			}
 
-			return absCompare(v1, v2);
+			int result = absCompare(v1, v2);
+			return v1.sign() > 0 ? result : -result;
 		}
 		friend int absCompare(const Float& v1, const Float& v2);
 		Float& negate() { _int.negate(); return *this; }
@@ -176,41 +210,53 @@ namespace real {
 			return compare(v1, v2) >= 0;
 		}
 
-		friend Float operator >> (const Float& v1, int pos) {
+		friend const Float operator >> (const Float& v1, int pos) {
 			Float v = v1;
 			return v >>= pos;
 		}
 
-		friend Float operator << (const Float& v1, int pos) {
+		friend const Float operator << (const Float& v1, int pos) {
 			Float v = v1;
 			return v <<= pos;
 		}
 
-		friend Float operator +(const Float& v1, const Float& v2) {
+		friend const Float operator +(const Float& v1, const Float& v2) {
 			Float sum;
 			return plus(v1, v2, sum);
 		}
 
-		friend Float operator -(const Float& v1, const Float& v2) {
+		friend const Float operator -(const Float& v1, const Float& v2) {
 			Float sub;
 			return subtract(v1, v2, sub);
 		}
-		friend Float operator *(const Float& v1, const Float& v2) {
+		friend const Float operator *(const Float& v1, const Float& v2) {
 			Float product;
 			return multiply(v1, v2, product);
 		}
-		friend Float operator /(const Float& v1, const Float& v2) {
+		friend const Float operator /(const Float& v1, const Float& v2) {
 			Float q, r;
 			return divide(v1, v2, q, r);
 		}
-		friend Float operator %(const Float& v1, const Float& v2) {
+		friend const Float operator %(const Float& v1, const Float& v2) {
 			Float q, r;
 			divide(v1, v2, q, r);
 			return r;
 		}
 
-		Float& operator <<= (int pos);
-		Float& operator >>= (int pos);
+		Float& operator <<= (int pos) {
+			if (_int.isZero() || pos == 0) {
+				return *this;
+			}
+;
+			_baseBitPos += pos;
+		}
+		Float& operator >>= (int pos) {
+			if (_int.isZero() || pos == 0) {
+				return *this;
+			}
+;
+			_baseBitPos -= pos;
+		}
 
 		Float& operator += (const Float& v1) {
 			Float sum;
@@ -235,17 +281,18 @@ namespace real {
 		friend Float& divide(const Float& v1, const Float& v2, Float& q, Float& r);
 
 	private:
-		void normalize() {
+		Float& normalize() {
 			int tailBit = _int.tailBit();
 			if (tailBit > 0) {
 				_int >>= tailBit;
-				_baseBitPos -= tailBit;
+				_baseBitPos += tailBit;
 			}
 			else
 			{
 				_int.clear();
 				_baseBitPos = 0;
 			}
+			return *this;
 		}
 
 	private:

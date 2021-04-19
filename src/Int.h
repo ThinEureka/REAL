@@ -192,6 +192,7 @@ class Int {
 			}
 			return 0;
 		}
+		size_t numChunks() const { return _chunks.size(); }
 		void setBit(size_t bitPos, bool v) {
 			setBitWithoutNormalization(bitPos, v);
 			normalize();
