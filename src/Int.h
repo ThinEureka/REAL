@@ -201,6 +201,7 @@ class Int {
 		int tailBit() const;
 
 		friend int compare(const Int& v1, const Int& v2);
+		friend int absCompare(const Int& v1, const Int& v2);
 		Int& negate() {  _sign = -_sign;  return *this; };
 
 	public:

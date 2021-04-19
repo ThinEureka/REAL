@@ -373,6 +373,15 @@ int real::compare(const Int& v1, const Int& v2) {
 	return v1._sign > 0 ? chunksResult : -chunksResult;
 }
 
+int real::absCompare(const Int& v1, const Int& v2) {
+	if (&v1 == &v2) {
+		return 0;
+	}
+
+	auto chunksResult = chunksCompare(v1._chunks, v2._chunks);
+	return v1._sign > 0 ? chunksResult : -chunksResult;
+}
+
 Int& Int::operator &= (const Int& v1) {
 	if (_chunks.size() > v1._chunks.size()) {
 		_chunks.resize(v1._chunks.size());
