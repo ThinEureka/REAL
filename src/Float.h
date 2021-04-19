@@ -68,7 +68,7 @@ namespace real {
 		Float& setFloor();
 		Float& setCeil();
 
-		Float& setInt();
+		Float& setInt(bool* isInt = nullptr);
 		const Int toInt() const {
 			Int n;
 			if (_baseBitPos <= 0) {
@@ -298,6 +298,9 @@ namespace real {
 	private:
 		Int _int;
 		int _baseBitPos;
+
+		//caches
+		Int _c1;
 	};
 }
 
