@@ -68,13 +68,13 @@ int real::absCompare(const Float& v1, const Float& v2) {
 	return 0;
 }
 
-Float& Float::setFloor(bool* isModified) {
+Float& Float::setFloor(int bitPos, bool* isModified) {
 	if (_int.sign() >= 0) {
 		return this->setInt(isModified);
 	}
 	else{
 		bool isIntModified = false;
-		this->setInt(&isIntModified);
+		this->truncate(bitPos, &isIntModified);
 		if (isIntModified) {
 			*this -= one;
 		}
@@ -86,10 +86,10 @@ Float& Float::setFloor(bool* isModified) {
 	}
 }
 
-Float& Float::setCeil(bool* isModified) {
+Float& Float::setCeil(int bitPos, bool* isModified) {
 	if (_int.sign() > 0) {
 		bool isIntModified = false;
-		this->setInt(&isIntModified);
+		this->truncate(bitPos, &isIntModified);
 		if (isIntModified) {
 			*this += one;
 		}
@@ -134,7 +134,6 @@ Float& Float::truncate(int bitPos, bool* isModified) {
 	if (isModified) {
 		*isModified = true;
 	}
-
 	return this->normalize();
 }
 
@@ -206,9 +205,56 @@ Float& real::divide(const Float& v1, const Float& v2, Float& q, int precision) {
 
 	int leadBit1 = v1.leadBit();
 	int leadBit2 = v2.leadBit();
-	int tailBit1 = v1.tailBit();
-	int tailBit2 = v2.tailBit();
-
-	q.set(Int::one, leadBit1 - leadBit2);
+	v2.calculateInverse(q, precision - leadBit1 - 1);
+	multiply(v1, q, q.f1());
+	return q;
 	//Float::one - v2*q;
+}
+
+Float& Float::calculateInverse(Float& q, int precision) const {
+	assert(!isZero());
+
+	int leadBit = this->leadBit();
+	int tailBit = this->tailBit();
+
+	if (leadBit == tailBit) {
+		q.set(Int::one, -leadBit);
+		if (isNegative()) {
+			q.negate();
+		}
+		return q;
+	}
+
+	q.set(Int::one, -leadBit - 1);
+	if (isNegative()) {
+		q.negate();
+	}
+
+	const int N = leadBit;
+	while (true) {
+		multiply(q, *this, q.f1());
+		subtract(Float::one, q.f1(), q.f2());
+
+		if (q.f2().isZero()) {
+			q.truncate(precision);
+			return q;
+		}
+		else
+		{
+			int P = q.f2().leadBit();
+			int Q1 = P - N - 1;
+			int Q2 = P + 1 - N;
+
+			if (Q2 < precision - 1) {
+				q.setCeil(precision - 1);
+				return q;
+			}
+			else {
+				plus(q.f2(), Float::one, q.f1());
+				multiply(q.f1(), q, q.f2());
+				q = q.f2();
+				q.extend(Q1);
+			}
+		}
+	}
 }

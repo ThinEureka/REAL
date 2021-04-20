@@ -34,7 +34,7 @@ namespace real {
 	public:
 		Float() : _baseBitPos(0) {}
 		Float(const Float& v) : _int(v._int), _baseBitPos(v._baseBitPos) {}
-		Float(Float&& v) noexcept : _int(std::move(v._int)), _baseBitPos(v._baseBitPos), _c1(v._c1) {}
+		Float(Float&& v) noexcept : _int(std::move(v._int)), _baseBitPos(v._baseBitPos), _c1(v._c1), _f1(v._f1), _f2(v._f2) {}
 
 		Float(const Int& v, int baseBitPos = 0) : _int(v), _baseBitPos(baseBitPos) {
 			normalize();
@@ -60,29 +60,43 @@ namespace real {
 			cleanCache();
 		}
 
-		const Float floor() const {
+		const Float floor(int bitPos = 0, bool* isModified = nullptr) const {
 			Float f = *this;
-			return f.setFloor();
+			return f.setFloor(bitPos = 0, isModified);
 		}
 
-		const Float ceil() const { 
+		const Float ceil(int bitPos = 0, bool* isModified = nullptr) const { 
 			auto f = *this;
-			f.setCeil();
+			f.setCeil(bitPos, isModified);
 			return f;
 		}
 
-		const Float intValue() const {
+		const Float intValue(bool * isModified = nullptr) const {
 			Float f = *this;
-			return f.setInt();
+			return f.setInt(isModified);
 		}
 
-		Float& setFloor(bool* isModified = nullptr);
-		Float& setCeil(bool* isModified = nullptr);
+		Float& setFloor(int bitPos = 0, bool* isModified = nullptr);
+		Float& setCeil(int bitPos = 0, bool* isModified = nullptr);
 
 		Float& setInt(bool* isModified = nullptr) {
 			return this->truncate(0, isModified);
 		}
-		Float& truncate(int bitPos, bool* isModified);
+		Float& truncate(int bitPos, bool* isModified = nullptr);
+		Float& extend(int bitPos, bool* isModified = nullptr) {
+			if (isZero()) {
+				if (isModified) {
+					*isModified = false;
+				}
+				return *this;
+			}
+			else if (isPositive()) {
+				return setCeil(bitPos, isModified);
+			}
+			else {
+				return setFloor(bitPos, isModified);
+			}
+		}
 
 		const Int toInt() const {
 			Int n;
@@ -210,7 +224,9 @@ namespace real {
 		}
 		friend int absCompare(const Float& v1, const Float& v2);
 		Float& negate() { _int.negate(); return *this; }
+		Float& inverse(int precision);
 
+		Float& calculateInverse(Float& q, int precision) const;
 	public:
 		const Float operator - () const {
 			Float v = *this;
@@ -314,6 +330,16 @@ namespace real {
 				delete _c1;
 				_c1 = nullptr;
 			}
+
+			if (_f1) {
+				delete _f1;
+				_f1 = nullptr;
+			}
+
+			if (_f2) {
+				delete _f2;
+				_f2 = nullptr;
+			}
 		}
 
 	private:
@@ -337,6 +363,20 @@ namespace real {
 			}
 			return *_c1;
 		}
+		
+		Float& f1() {
+			if (!_f1) {
+				_f1 = new Float();
+			}
+			return *_f1;
+		}
+		
+		Float& f2() {
+			if (!_f2) {
+				_f2 = new Float();
+			}
+			return *_f2;
+		}
 
 	private:
 		Int _int;
@@ -344,6 +384,8 @@ namespace real {
 
 		//caches
 		Int* _c1{ nullptr };
+		Float* _f1{ nullptr };
+		Float* _f2{ nullptr };
 	};
 }
 
