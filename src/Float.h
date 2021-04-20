@@ -34,20 +34,31 @@ namespace real {
 	public:
 		Float() : _baseBitPos(0) {}
 		Float(const Float& v) : _int(v._int), _baseBitPos(v._baseBitPos) {}
-		Float(Float&& v) noexcept : _int(std::move(v._int)), _baseBitPos(v._baseBitPos) {}
+		Float(Float&& v) noexcept : _int(std::move(v._int)), _baseBitPos(v._baseBitPos), _c1(v._c1) {}
 
-		Float(Int v) : _int(v), _baseBitPos(0) { normalize(); }
-		Float(Int&& v) noexcept : _int(v), _baseBitPos(0) { normalize(); }
+		Float(const Int& v, int baseBitPos = 0) : _int(v), _baseBitPos(baseBitPos) {
+			normalize();
+		}
 
-		Float(int v) : _int(v), _baseBitPos(0) { normalize(); }
+		Float(Int&& v, int baseBitPos = 0) noexcept : _int(v), _baseBitPos(baseBitPos) {
+			normalize();
+		}
 
-		Float(long long v) : _int(v), _baseBitPos(0) { normalize(); }
+		Float(int v, int baseBitPos = 0) : _int(v), _baseBitPos(baseBitPos) { normalize(); }
 
-		Float(unsigned int v) : _int(v), _baseBitPos(0) { normalize(); }
+		Float(long long v, int baseBitPos = 0) : _int(v), _baseBitPos(baseBitPos) { normalize(); }
 
-		Float(unsigned long long v) : _int(v), _baseBitPos(0) { normalize(); }
+		Float(unsigned int v, int baseBitPos = 0) : _int(v), _baseBitPos(baseBitPos) { normalize(); }
+
+		Float(unsigned long long v, int baseBitPos = 0) : _int(v), _baseBitPos(baseBitPos) { normalize(); }
 
 		explicit Float(const std::string& str, int base = 10) { set(str, base); }
+
+		//the destructor is not virtual such that this class
+		//is not meant to be inherited
+		~Float() {
+			cleanCache();
+		}
 
 		const Float floor() const {
 			Float f = *this;
@@ -65,10 +76,14 @@ namespace real {
 			return f.setInt();
 		}
 
-		Float& setFloor();
-		Float& setCeil();
+		Float& setFloor(bool* isModified = nullptr);
+		Float& setCeil(bool* isModified = nullptr);
 
-		Float& setInt(bool* isInt = nullptr);
+		Float& setInt(bool* isModified = nullptr) {
+			return this->truncate(0, isModified);
+		}
+		Float& truncate(int bitPos, bool* isModified);
+
 		const Int toInt() const {
 			Int n;
 			if (_baseBitPos <= 0) {
@@ -80,8 +95,20 @@ namespace real {
 			return n <<= _baseBitPos;
 		}
 
-		std::string toString(int base = 10) const;
+		const std::string toString(int base = 10) const;
 		Float& set(const std::string& str, int base = 10);
+
+		Float& set(const Int& n, int baseBitPos) {
+			_int = n;
+			_baseBitPos = baseBitPos;
+			return this->normalize();
+		}
+
+		Float& set(Int&& n, int baseBitPos) {
+			_int = n;
+			_baseBitPos = baseBitPos;
+			return this->normalize();
+		}
 
 	public:
 		Float& operator = (const Float& v) {
@@ -249,6 +276,7 @@ namespace real {
 			}
 ;
 			_baseBitPos += pos;
+			return *this;
 		}
 		Float& operator >>= (int pos) {
 			if (_int.isZero() || pos == 0) {
@@ -256,6 +284,7 @@ namespace real {
 			}
 ;
 			_baseBitPos -= pos;
+			return *this;
 		}
 
 		Float& operator += (const Float& v1) {
@@ -280,6 +309,13 @@ namespace real {
 		friend Float& multiply(const Float& v1, const Float& v2, Float& product);
 		friend Float& divide(const Float& v1, const Float& v2, Float& q, Float& r);
 
+		void cleanCache() {
+			if (_c1) {
+				delete _c1;
+				_c1 = nullptr;
+			}
+		}
+
 	private:
 		Float& normalize() {
 			int tailBit = _int.tailBit();
@@ -295,12 +331,19 @@ namespace real {
 			return *this;
 		}
 
+		Int& c1() {
+			if (!_c1) {
+				_c1 = new Int();
+			}
+			return *_c1;
+		}
+
 	private:
 		Int _int;
 		int _baseBitPos;
 
 		//caches
-		Int _c1;
+		Int* _c1{ nullptr };
 	};
 }
 

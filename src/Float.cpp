@@ -67,61 +67,72 @@ int real::absCompare(const Float& v1, const Float& v2) {
 	return 0;
 }
 
-Float& Float::setFloor() {
+Float& Float::setFloor(bool* isModified) {
 	if (_int.sign() >= 0) {
-		return this->setInt();
+		return this->setInt(isModified);
 	}
 	else{
-		bool isInt = true;
-		this->setInt(&isInt);
-		if (!isInt) {
+		bool isIntModified = false;
+		this->setInt(&isIntModified);
+		if (isIntModified) {
 			*this -= one;
 		}
+
+		if (isModified) {
+			*isModified = isIntModified;
+		}
 		return *this;
 	}
 }
 
-Float& Float::setCeil() {
+Float& Float::setCeil(bool* isModified) {
 	if (_int.sign() > 0) {
-		bool isInt = true;
-		this->setInt(&isInt);
-		if (!isInt) {
+		bool isIntModified = false;
+		this->setInt(&isIntModified);
+		if (isIntModified) {
 			*this += one;
+		}
+
+		if (isModified) {
+			*isModified = isIntModified;
 		}
 		return *this;
 	}
 	else{
-		return this->setInt();
+		return this->setInt(isModified);
 	}
 }
 
-Float& Float::setInt(bool* isInt) {
+Float& Float::truncate(int bitPos, bool* isModified) {
 	if (isZero()) {
-		if (isInt) {
-			*isInt = true;
+		if (isModified) {
+			*isModified = false;
 		}
 		return *this;
 	}
 
 	int tailBit = this->tailBit();
-	if (tailBit >= 0) {
-		if (isInt) {
-			*isInt = true;
+	if (tailBit >= bitPos) {
+		if (isModified) {
+			*isModified = false;
 		}
 		return *this;
 	}
 
 	int leadBit = this->leadBit();
-	if (leadBit < 0) {
-		if (isInt) {
-			*isInt = false;
+	if (leadBit < bitPos) {
+		if (isModified) {
+			*isModified = true;
 		}
 		return this->setZero();
 	}
 
-	*isInt = false;
-	_int >>= -tailBit;
-	_baseBitPos -= tailBit;
+	int bitDiff = bitPos - tailBit;
+	_int >>= bitDiff;
+	_baseBitPos += bitDiff;
+	if (isModified) {
+		*isModified = true;
+	}
 
 	return this->normalize();
 }
@@ -147,9 +158,9 @@ Float& real::plus(const Float& v1, const Float& v2, Float& sum) {
 
 	//we ensure that pV1 is the one with larger tailBit
 	sum._baseBitPos = tailBit2;
-	sum._c1 = pV1->_int;
-	sum._c1 <<= (tailBit1 - tailBit2);
-	plus(sum._c1, pV2->_int, sum._int);
+	sum.c1() = pV1->_int;
+	sum.c1() <<= (tailBit1 - tailBit2);
+	plus(sum.c1(), pV2->_int, sum._int);
 	return sum.normalize();
 }
 
