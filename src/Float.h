@@ -307,7 +307,7 @@ namespace real {
 		friend Float& plus(const Float& v1, const Float& v2, Float& sum);
 		friend Float& subtract(const Float& v1, const Float& v2, Float& sub);
 		friend Float& multiply(const Float& v1, const Float& v2, Float& product);
-		friend Float& divide(const Float& v1, const Float& v2, Float& q, Float& r);
+		friend Float& divide(const Float& v1, const Float& v2, Float& q, int precision);
 
 		void cleanCache() {
 			if (_c1) {

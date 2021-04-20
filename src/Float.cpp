@@ -1,4 +1,5 @@
 #include "Float.h"
+#include "assert.h"
 
 using namespace real;
 
@@ -185,9 +186,9 @@ Float& real::subtract(const Float& v1, const Float& v2, Float& sub) {
 
 	//we ensure that pV1 is the one with larger tailBit
 	sub._baseBitPos = tailBit2;
-	sub._c1 = pV1->_int;
-	sub._c1 <<= (tailBit1 - tailBit2);
-	subtract(sub._c1, pV2->_int, sub._int);
+	sub.c1() = pV1->_int;
+	sub.c1() <<= (tailBit1 - tailBit2);
+	subtract(sub.c1(), pV2->_int, sub._int);
 	return sub.normalize();
 }
 
@@ -195,4 +196,19 @@ Float& real::multiply(const Float& v1, const Float& v2, Float& product) {
 	multiply(v1._int, v2._int, product._int);
 	product._baseBitPos = v1._baseBitPos + v2._baseBitPos;
 	return product.normalize();
+}
+
+Float& real::divide(const Float& v1, const Float& v2, Float& q, int precision) {
+	assert(!v2.isZero());
+	if (v1.isZero()) {
+		return q.setZero();
+	}
+
+	int leadBit1 = v1.leadBit();
+	int leadBit2 = v2.leadBit();
+	int tailBit1 = v1.tailBit();
+	int tailBit2 = v2.tailBit();
+
+	q.set(Int::one, leadBit1 - leadBit2);
+	//Float::one - v2*q;
 }
