@@ -34,7 +34,7 @@ namespace real {
 	public:
 		Float() : _baseBitPos(0) {}
 		Float(const Float& v) : _int(v._int), _baseBitPos(v._baseBitPos) {}
-		Float(Float&& v) noexcept : _int(std::move(v._int)), _baseBitPos(v._baseBitPos), _c1(v._c1), _f1(v._f1), _f2(v._f2) {}
+		Float(Float&& v) noexcept : _int(std::move(v._int)), _baseBitPos(v._baseBitPos), _f1(v._f1), _f2(v._f2), _f3(v._f3) {}
 
 		Float(const Int& v, int baseBitPos = 0) : _int(v), _baseBitPos(baseBitPos) {
 			normalize();
@@ -224,7 +224,13 @@ namespace real {
 		}
 		friend int absCompare(const Float& v1, const Float& v2);
 		Float& negate() { _int.negate(); return *this; }
-		Float& inverse(int precision);
+		Float& inverse(int precision) {
+			f3() = *this;
+			//the calculateInverse only use f1, f2,
+			//so it's safe to do the following call
+			f3().calculateInverse(*this, precision);
+			return *this;
+		}
 
 		Float& calculateInverse(Float& q, int precision) const;
 	public:
@@ -326,11 +332,6 @@ namespace real {
 		friend Float& divide(const Float& v1, const Float& v2, Float& q, int precision);
 
 		void cleanCache() {
-			if (_c1) {
-				delete _c1;
-				_c1 = nullptr;
-			}
-
 			if (_f1) {
 				delete _f1;
 				_f1 = nullptr;
@@ -339,6 +340,11 @@ namespace real {
 			if (_f2) {
 				delete _f2;
 				_f2 = nullptr;
+			}
+
+			if (_f3) {
+				delete _f3;
+				_f3 = nullptr;
 			}
 		}
 
@@ -356,13 +362,6 @@ namespace real {
 			}
 			return *this;
 		}
-
-		Int& c1() {
-			if (!_c1) {
-				_c1 = new Int();
-			}
-			return *_c1;
-		}
 		
 		Float& f1() {
 			if (!_f1) {
@@ -377,15 +376,22 @@ namespace real {
 			}
 			return *_f2;
 		}
+		
+		Float& f3() {
+			if (!_f3) {
+				_f3 = new Float();
+			}
+			return *_f3;
+		}
 
 	private:
 		Int _int;
 		int _baseBitPos;
 
 		//caches
-		Int* _c1{ nullptr };
 		Float* _f1{ nullptr };
 		Float* _f2{ nullptr };
+		Float* _f3{ nullptr };
 	};
 }
 

@@ -158,9 +158,10 @@ Float& real::plus(const Float& v1, const Float& v2, Float& sum) {
 
 	//we ensure that pV1 is the one with larger tailBit
 	sum._baseBitPos = tailBit2;
-	sum.c1() = pV1->_int;
-	sum.c1() <<= (tailBit1 - tailBit2);
-	plus(sum.c1(), pV2->_int, sum._int);
+	sum.f1()._int = pV1->_int;
+	sum.f1()._int <<= (tailBit1 - tailBit2);
+	plus(sum.f1()._int, pV2->_int, sum._int);
+	sum.f1().setZero();
 	return sum.normalize();
 }
 
@@ -185,9 +186,9 @@ Float& real::subtract(const Float& v1, const Float& v2, Float& sub) {
 
 	//we ensure that pV1 is the one with larger tailBit
 	sub._baseBitPos = tailBit2;
-	sub.c1() = pV1->_int;
-	sub.c1() <<= (tailBit1 - tailBit2);
-	subtract(sub.c1(), pV2->_int, sub._int);
+	sub.f1()._int = pV1->_int;
+	sub.f1()._int <<= (tailBit1 - tailBit2);
+	subtract(sub.f1()._int, pV2->_int, sub._int);
 	return sub.normalize();
 }
 
@@ -208,7 +209,6 @@ Float& real::divide(const Float& v1, const Float& v2, Float& q, int precision) {
 	v2.calculateInverse(q, precision - leadBit1 - 1);
 	multiply(v1, q, q.f1());
 	return q;
-	//Float::one - v2*q;
 }
 
 Float& Float::calculateInverse(Float& q, int precision) const {
