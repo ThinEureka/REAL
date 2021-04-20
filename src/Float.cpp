@@ -246,7 +246,7 @@ Float& Float::calculateInverse(Float& q, int precision) const {
 			int Q2 = P + 1 - N;
 
 			if (Q2 < precision - 1) {
-				q.setCeil(precision - 1);
+				q.truncate(precision - 1);
 				return q;
 			}
 			else {
