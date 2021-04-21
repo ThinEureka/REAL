@@ -10,22 +10,6 @@
 namespace real {
 	class Float;
 
-	bool operator == (const Float& v1, const Float& v2);
-	bool operator != (const Float& v1, const Float& v2);
-
-	const Float operator >> (const Float& v1, int pos);
-	const Float operator << (const Float& v1, int pos);
-
-	const Float operator +(const Float& v1, const Float& v2);
-	const Float operator -(const Float& v1, const Float& v2);
-	const Float operator *(const Float& v1, const Float& v2);
-	const Float operator /(const Float& v1, const Float& v2);
-
-	Float& plus(const Float& v1, const Float& v2, Float& sum);
-	Float& subtract(const Float& v1, const Float& v2, Float& sub);
-	Float& multiply(const Float& v1, const Float& v2, Float& product);
-	Float& divide(const Float& v1, const Float& v2, Float& q, const int* pPrecison = nullptr);
-
 	class Float {
 	public:
 		static const Float zero;
@@ -99,8 +83,8 @@ namespace real {
 			return n <<= _baseBitPos;
 		}
 
-		const std::string toString(int base = 10) const;
-		Float& set(const std::string& str, int base = 10);
+		const std::string toString(int base = 10, const int* pPrecision = nullptr) const;
+		Float& set(const std::string& str, int base = 10, int* pPrecision = nullptr);
 
 		Float& set(const Int& n, int baseBitPos) {
 			_int = n;
@@ -306,8 +290,7 @@ namespace real {
 		}
 
 		Float& operator /= (const Float& v1) {
-			int precision = v1.tailBit() + s_defaultRelativePrecision;
-			divide(*this, v1, f1(), precision);
+			divide(*this, v1, f1(), nullptr);
 			return this->swap(f1());
 		}
 

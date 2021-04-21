@@ -138,7 +138,7 @@ Float& Float::truncate(int bitPos, bool* isModified) {
 	return this->normalize();
 }
 
-Float& Float::extend(int bitPos, bool* isModified = nullptr) {
+Float& Float::extend(int bitPos, bool* isModified) {
 	if (isZero()) {
 		if (isModified) {
 			*isModified = false;
