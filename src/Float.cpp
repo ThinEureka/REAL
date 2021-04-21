@@ -214,7 +214,7 @@ Float& real::multiply(const Float& v1, const Float& v2, Float& product) {
 	return product.normalize();
 }
 
-Float& real::divide(const Float& v1, const Float& v2, Float& q, int precision) {
+Float& real::divide(const Float& v1, const Float& v2, Float& q, const int* pPrecison){
 	assert(!v2.isZero());
 	if (v1.isZero()) {
 		return q.setZero();
@@ -222,12 +222,21 @@ Float& real::divide(const Float& v1, const Float& v2, Float& q, int precision) {
 
 	int leadBit1 = v1.leadBit();
 	int leadBit2 = v2.leadBit();
-	v2.calculateInverse(q, precision - leadBit1 - 1);
+	int inversePrecison = 0;
+	if (pPrecison) {
+		inversePrecison = *pPrecison - leadBit1 - 1;
+	}
+	else {
+		int tailBit2 = v2.tailBit();
+		inversePrecison = - tailBit2 - 1 + Float::defaultRelativePrecision();
+	}
+
+	v2.calculateInverse(q, &inversePrecison);
 	multiply(v1, q, q.f1());
 	return q;
 }
 
-Float& Float::calculateInverse(Float& q, int precision) const {
+Float& Float::calculateInverse(Float& q, const int* pPrecision) const {
 	assert(!isZero());
 
 	int leadBit = this->leadBit();
@@ -239,6 +248,14 @@ Float& Float::calculateInverse(Float& q, int precision) const {
 			q.negate();
 		}
 		return q;
+	}
+
+	int precision = 0;
+	if (pPrecision) {
+		precision = *pPrecision;
+	}
+	else {
+		precision = -tailBit - 1 + defaultRelativePrecision();
 	}
 
 	q.set(Int::one, -leadBit - 1);

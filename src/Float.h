@@ -24,7 +24,7 @@ namespace real {
 	Float& plus(const Float& v1, const Float& v2, Float& sum);
 	Float& subtract(const Float& v1, const Float& v2, Float& sub);
 	Float& multiply(const Float& v1, const Float& v2, Float& product);
-	Float& divide(const Float& v1, const Float& v2, Float& q, int precision);
+	Float& divide(const Float& v1, const Float& v2, Float& q, const int* pPrecison = nullptr);
 
 	class Float {
 	public:
@@ -213,12 +213,12 @@ namespace real {
 		}
 		friend int absCompare(const Float& v1, const Float& v2);
 		Float& negate() { _int.negate(); return *this; }
-		Float& inverse(int precision) {
-			this->calculateInverse(f1(), precision);
+		Float& inverse(const int* pPrecision = nullptr) {
+			this->calculateInverse(f1(), pPrecision);
 			return this->swap(f1());
 		}
 
-		Float& calculateInverse(Float& q, int precision) const;
+		Float& calculateInverse(Float& q, const int* pPrecision) const;
 	public:
 		const Float operator - () const {
 			Float v = *this;
@@ -270,8 +270,7 @@ namespace real {
 		}
 		friend const Float operator /(const Float& v1, const Float& v2) {
 			Float q;
-			int precision = v2.tailBit() + s_defaultRelativePrecision;
-			return divide(v1, v2, q, precision);
+			return divide(v1, v2, q, nullptr);
 		}
 
 		Float& operator <<= (int pos) {
@@ -315,7 +314,7 @@ namespace real {
 		friend Float& plus(const Float& v1, const Float& v2, Float& sum);
 		friend Float& subtract(const Float& v1, const Float& v2, Float& sub);
 		friend Float& multiply(const Float& v1, const Float& v2, Float& product);
-		friend Float& divide(const Float& v1, const Float& v2, Float& q, int precision);
+		friend Float& divide(const Float& v1, const Float& v2, Float& q, const int* pPrecison = nullptr);
 
 		void cleanCache() {
 			if (_f1) {
