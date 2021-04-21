@@ -24,17 +24,20 @@ namespace real {
 	Float& plus(const Float& v1, const Float& v2, Float& sum);
 	Float& subtract(const Float& v1, const Float& v2, Float& sub);
 	Float& multiply(const Float& v1, const Float& v2, Float& product);
-	Float& divide(const Float& v1, const Float& v2, int precision);
+	Float& divide(const Float& v1, const Float& v2, Float& q, int precision);
 
 	class Float {
 	public:
 		static const Float zero;
 		static const Float one;
 
+		static int defaultRelativePrecision() { return s_defaultRelativePrecision; }
+		static int setDefaultRelativePrecision(int relativeProcision) { return s_defaultRelativePrecision = relativeProcision; }
+
 	public:
 		Float() : _baseBitPos(0) {}
 		Float(const Float& v) : _int(v._int), _baseBitPos(v._baseBitPos) {}
-		Float(Float&& v) noexcept : _int(std::move(v._int)), _baseBitPos(v._baseBitPos), _f1(v._f1), _f2(v._f2), _f3(v._f3) {}
+		Float(Float&& v) noexcept : _int(std::move(v._int)), _baseBitPos(v._baseBitPos), _f1(v._f1), _f2(v._f2) {}
 
 		Float(const Int& v, int baseBitPos = 0) : _int(v), _baseBitPos(baseBitPos) {
 			normalize();
@@ -83,20 +86,7 @@ namespace real {
 			return this->truncate(0, isModified);
 		}
 		Float& truncate(int bitPos, bool* isModified = nullptr);
-		Float& extend(int bitPos, bool* isModified = nullptr) {
-			if (isZero()) {
-				if (isModified) {
-					*isModified = false;
-				}
-				return *this;
-			}
-			else if (isPositive()) {
-				return setCeil(bitPos, isModified);
-			}
-			else {
-				return setFloor(bitPos, isModified);
-			}
-		}
+		Float& extend(int bitPos, bool* isModified = nullptr);
 
 		const Int toInt() const {
 			Int n;
@@ -184,8 +174,7 @@ namespace real {
 			return *this;
 		}
 		Float& setZero() {
-			clear();
-			return *this;
+			return this->clear();
 		}
 		Float& setOne() { _int.setOne(); _baseBitPos = 0; return *this; }
 		bool isPositive() const { return _int.isPositive(); }
@@ -225,11 +214,8 @@ namespace real {
 		friend int absCompare(const Float& v1, const Float& v2);
 		Float& negate() { _int.negate(); return *this; }
 		Float& inverse(int precision) {
-			f3() = *this;
-			//the calculateInverse only use f1, f2,
-			//so it's safe to do the following call
-			f3().calculateInverse(*this, precision);
-			return *this;
+			this->calculateInverse(f1(), precision);
+			return this->swap(f1());
 		}
 
 		Float& calculateInverse(Float& q, int precision) const;
@@ -283,13 +269,9 @@ namespace real {
 			return multiply(v1, v2, product);
 		}
 		friend const Float operator /(const Float& v1, const Float& v2) {
-			Float q, r;
-			return divide(v1, v2, q, r);
-		}
-		friend const Float operator %(const Float& v1, const Float& v2) {
-			Float q, r;
-			divide(v1, v2, q, r);
-			return r;
+			Float q;
+			int precision = v2.tailBit() + s_defaultRelativePrecision;
+			return divide(v1, v2, q, precision);
 		}
 
 		Float& operator <<= (int pos) {
@@ -310,20 +292,24 @@ namespace real {
 		}
 
 		Float& operator += (const Float& v1) {
-			Float sum;
-			return *this = plus(*this, v1, sum);
+			plus(*this, v1, f1());
+			return this->swap(f1());
 		}
+
 		Float& operator -= (const Float& v1) {
-			Float sub;
-			return *this = subtract(*this, v1, sub);
+			subtract(*this, v1, f1());
+			return this->swap(f1());
 		}
+
 		Float& operator *= (const Float& v1) {
-			Float product;
-			return *this = multiply(*this, v1, product);
+			multiply(*this, v1, f1());
+			return this->swap(f1());
 		}
+
 		Float& operator /= (const Float& v1) {
-			Float q, r;
-			return *this = divide(*this, v1, q, r);
+			int precision = v1.tailBit() + s_defaultRelativePrecision;
+			divide(*this, v1, f1(), precision);
+			return this->swap(f1());
 		}
 
 		friend Float& plus(const Float& v1, const Float& v2, Float& sum);
@@ -341,11 +327,12 @@ namespace real {
 				delete _f2;
 				_f2 = nullptr;
 			}
+		}
 
-			if (_f3) {
-				delete _f3;
-				_f3 = nullptr;
-			}
+		Float& swap(Float& v) {
+			std::swap(_int, v._int);
+			std::swap(_baseBitPos, v._baseBitPos);
+			return *this;
 		}
 
 	private:
@@ -376,13 +363,6 @@ namespace real {
 			}
 			return *_f2;
 		}
-		
-		Float& f3() {
-			if (!_f3) {
-				_f3 = new Float();
-			}
-			return *_f3;
-		}
 
 	private:
 		Int _int;
@@ -391,7 +371,9 @@ namespace real {
 		//caches
 		Float* _f1{ nullptr };
 		Float* _f2{ nullptr };
-		Float* _f3{ nullptr };
+
+	private:
+		static int s_defaultRelativePrecision;
 	};
 }
 

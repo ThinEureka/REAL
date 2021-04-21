@@ -5,6 +5,7 @@ using namespace real;
 
 const Float Float::zero = 0;
 const Float Float::one = 1;
+int Float::s_defaultRelativePrecision = -128;
 
 Float& Float::setBit(int bitPos, bool v) {
 	if (_int.isZero()) {
@@ -135,6 +136,21 @@ Float& Float::truncate(int bitPos, bool* isModified) {
 		*isModified = true;
 	}
 	return this->normalize();
+}
+
+Float& Float::extend(int bitPos, bool* isModified = nullptr) {
+	if (isZero()) {
+		if (isModified) {
+			*isModified = false;
+		}
+		return *this;
+	}
+	else if (isPositive()) {
+		return setCeil(bitPos, isModified);
+	}
+	else {
+		return setFloor(bitPos, isModified);
+	}
 }
 
 Float& real::plus(const Float& v1, const Float& v2, Float& sum) {
