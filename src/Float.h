@@ -10,6 +10,22 @@
 namespace real {
 	class Float;
 
+	bool operator == (const Float& v1, const Float& v2);
+	bool operator != (const Float& v1, const Float& v2);
+
+	const Float operator >> (const Float& v1, int pos);
+	const Float operator << (const Float& v1, int pos);
+
+	const Float operator +(const Float& v1, const Float& v2);
+	const Float operator -(const Float& v1, const Float& v2);
+	const Float operator *(const Float& v1, const Float& v2);
+	const Float operator /(const Float& v1, const Float& v2);
+
+	Float& plus(const Float& v1, const Float& v2, Float& sum);
+	Float& subtract(const Float& v1, const Float& v2, Float& sub);
+	Float& multiply(const Float& v1, const Float& v2, Float& product);
+	Float& divide(const Float& v1, const Float& v2, Float& q, const int* pPrecison = nullptr);
+
 	class Float {
 	public:
 		static const Float zero;
