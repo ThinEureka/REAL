@@ -5,7 +5,7 @@ using namespace real;
 
 const Float Float::zero = 0;
 const Float Float::one = 1;
-int Float::s_defaultRelativePrecision = -128;
+int Float::s_defaultPrecision = -128;
 
 Float& Float::setBit(int bitPos, bool v) {
 	if (_int.isZero()) {
@@ -214,7 +214,7 @@ Float& real::multiply(const Float& v1, const Float& v2, Float& product) {
 	return product.normalize();
 }
 
-Float& real::divide(const Float& v1, const Float& v2, Float& q, const int* pPrecison){
+Float& real::divide(const Float& v1, const Float& v2, Float& q, const int* pPrecison, bool isRelativePrecision){
 	assert(!v2.isZero());
 	if (v1.isZero()) {
 		return q.setZero();
@@ -228,15 +228,15 @@ Float& real::divide(const Float& v1, const Float& v2, Float& q, const int* pPrec
 	}
 	else {
 		int tailBit2 = v2.tailBit();
-		inversePrecison = - tailBit2 - 1 + Float::defaultRelativePrecision();
+		inversePrecison = - tailBit2 - 1 + Float::defaultPrecision();
 	}
 
-	v2.calculateInverse(q, &inversePrecison);
+	v2.calculateInverse(q, &inversePrecison, false);
 	multiply(v1, q, q.f1());
 	return q;
 }
 
-Float& Float::calculateInverse(Float& q, const int* pPrecision) const {
+Float& Float::calculateInverse(Float& q, const int* pPrecision, bool isRelativePrecision) const {
 	assert(!isZero());
 
 	int leadBit = this->leadBit();
@@ -250,12 +250,9 @@ Float& Float::calculateInverse(Float& q, const int* pPrecision) const {
 		return q;
 	}
 
-	int precision = 0;
-	if (pPrecision) {
-		precision = *pPrecision;
-	}
-	else {
-		precision = -tailBit - 1 + defaultRelativePrecision();
+	int precision = pPrecision ? *pPrecision : defaultPrecision();
+	if (!isRelativePrecision) {
+		precision += (-leadBit - 1);
 	}
 
 	q.set(Int::one, -leadBit - 1);

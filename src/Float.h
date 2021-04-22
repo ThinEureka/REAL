@@ -24,15 +24,15 @@ namespace real {
 	Float& plus(const Float& v1, const Float& v2, Float& sum);
 	Float& subtract(const Float& v1, const Float& v2, Float& sub);
 	Float& multiply(const Float& v1, const Float& v2, Float& product);
-	Float& divide(const Float& v1, const Float& v2, Float& q, const int* pPrecison = nullptr);
+	Float& divide(const Float& v1, const Float& v2, Float& q, const int* pPrecison = nullptr, bool isRelativePrecison = true);
 
 	class Float {
 	public:
 		static const Float zero;
 		static const Float one;
 
-		static int defaultRelativePrecision() { return s_defaultRelativePrecision; }
-		static int setDefaultRelativePrecision(int relativeProcision) { return s_defaultRelativePrecision = relativeProcision; }
+		static int defaultPrecision() { return s_defaultPrecision; }
+		static int setRelativePrecision(int relativeProcision) { return s_defaultPrecision = relativeProcision; }
 
 	public:
 		Float() : _baseBitPos(0) {}
@@ -100,7 +100,7 @@ namespace real {
 		}
 
 		const std::string toString(int base = 10, const int* pPrecision = nullptr) const;
-		Float& set(const std::string& str, int base = 10, int* pPrecision = nullptr);
+		Float& set(const std::string& str, int base = 10, const int* pPrecision = nullptr, bool isRelativePrecision = true);
 
 		Float& set(const Int& n, int baseBitPos) {
 			_int = n;
@@ -213,12 +213,12 @@ namespace real {
 		}
 		friend int absCompare(const Float& v1, const Float& v2);
 		Float& negate() { _int.negate(); return *this; }
-		Float& inverse(const int* pPrecision = nullptr) {
-			this->calculateInverse(f1(), pPrecision);
+		Float& inverse(const int* pPrecision = nullptr, bool isRelativePrecison = true) {
+			this->calculateInverse(f1(), pPrecision, isRelativePrecison);
 			return this->swap(f1());
 		}
 
-		Float& calculateInverse(Float& q, const int* pPrecision) const;
+		Float& calculateInverse(Float& q, const int* pPrecision, bool isRelativePrecision) const;
 	public:
 		const Float operator - () const {
 			Float v = *this;
@@ -313,7 +313,7 @@ namespace real {
 		friend Float& plus(const Float& v1, const Float& v2, Float& sum);
 		friend Float& subtract(const Float& v1, const Float& v2, Float& sub);
 		friend Float& multiply(const Float& v1, const Float& v2, Float& product);
-		friend Float& divide(const Float& v1, const Float& v2, Float& q, const int* pPrecison);
+		friend Float& divide(const Float& v1, const Float& v2, Float& q, const int* pPrecison, bool isRelativePrecisione);
 
 		void cleanCache() {
 			if (_f1) {
@@ -371,7 +371,7 @@ namespace real {
 		Float* _f2{ nullptr };
 
 	private:
-		static int s_defaultRelativePrecision;
+		static int s_defaultPrecision;
 	};
 }
 
