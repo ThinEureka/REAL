@@ -99,7 +99,8 @@ namespace real {
 			return n <<= _baseBitPos;
 		}
 
-		const std::string toString(int base = 10, const int* pPrecision = nullptr) const;
+		//currently we only support one notation
+		const std::string toString(const int* pDigit = nullptr, int base = 10, Int* cacheP = nullptr, Int* cacheQ = nullptr, Int* cacheR = nullptr, Int* cacheS = nullptr) const;
 		Float& set(const std::string& str, int base = 10, const int* pPrecision = nullptr, bool isRelativePrecision = true);
 
 		Float& set(const Int& n, int baseBitPos) {

@@ -46,6 +46,18 @@ class Int {
 		static const Int& zero;
 		static const Int& one;
 
+public:
+		static bool isDigit(char c, int base, int& digitValue);
+		static char chunkToDigit(Int::typeChunk chunk, int base);
+		static bool isExponentSeprator(char c, int base) {
+			if (base < 10) {
+				return c == 'e' || c == 'E' || c == '^';
+			}
+			else {
+				return c == '^';
+			}
+		}
+
 	public:
 		Int(){}
 		Int(const Int& v) :_chunks(v._chunks), _sign(v._sign){}

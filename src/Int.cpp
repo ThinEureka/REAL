@@ -6,9 +6,6 @@ using namespace real;
 int chunksCompare(const std::vector<Int::typeChunk>& chunks1, const std::vector<Int::typeChunk>& chunks2);
 int bitsCompare(const Int& v1, int leadBit1, const Int& v2, int leadBit2, int numberBits);
 
-bool isDigit(char c, int base, int& digitValue);
-char chunkToDigit(Int::typeChunk chunk, int base);
-
 const Int Int::s_smallInts[101] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
 	10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
@@ -234,7 +231,7 @@ Int& Int::set(const std::string& str, int base) {
 			else if (c == ' ' || c == '\t' || c == '\n') {
 				continue;
 			}
-			else if (isDigit(c, base, digitValue))
+			else if (Int::isDigit(c, base, digitValue))
 			{
 				*this *= s_smallInts[base];
 				*this += s_smallInts[digitValue];
@@ -242,7 +239,7 @@ Int& Int::set(const std::string& str, int base) {
 			}
 			break;
 		case set_digit:
-			if (!isDigit(c, base, digitValue)) {
+			if (!Int::isDigit(c, base, digitValue)) {
 				_sign = sign;
 				normalize();
 				return *this;
@@ -762,7 +759,7 @@ int bitsCompare(const Int& v1, int leadBit1, const Int& v2, int leadBit2, int nu
 	}
 }
 
- bool isDigit(char c, int base, int& digitValue) {
+ bool Int::isDigit(char c, int base, int& digitValue) {
 	 digitValue = 0;
 	 if (c >= '0' && c <= '9') {
 		 digitValue = c - '0';
@@ -786,7 +783,7 @@ int bitsCompare(const Int& v1, int leadBit1, const Int& v2, int leadBit2, int nu
 	 return false;
 }
 
-char chunkToDigit(Int::typeChunk chunk, int base) {
+char Int::chunkToDigit(Int::typeChunk chunk, int base) {
 	if (chunk >= 0 && static_cast<int>(chunk) < base) {
 		if (chunk >= 0 && chunk < 10) {
 			return '0' + chunk;
@@ -798,4 +795,6 @@ char chunkToDigit(Int::typeChunk chunk, int base) {
 	}
 	return '#';
 }
+
+
 

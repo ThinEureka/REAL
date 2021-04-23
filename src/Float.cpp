@@ -288,3 +288,287 @@ Float& Float::calculateInverse(Float& q, const int* pPrecision, bool isRelativeP
 		}
 	}
 }
+
+const std::string Float::toString(const int* pDigit, int base, Int * cacheP, Int * cacheQ, Int* cacheR, Int* cacheS) const{
+	std::string str;
+
+	Int& p = cacheP ? *cacheP : *(new Int);
+	Int& q = cacheQ ? *cacheQ : *(new Int);
+	Int& r = cacheR ? *cacheR : *(new Int);
+	Int& s = cacheS ? *cacheS : *(new Int);
+	p = _int;
+	q.setOne();
+
+	if (isNegative()) {
+		p.negate();
+		str += '-';
+	}
+
+	if (_baseBitPos > 0) {
+		p <<= _baseBitPos;
+	}
+	else if (_baseBitPos < 0) {
+		q <<= -_baseBitPos;
+	}
+
+	int digit = pDigit ? *pDigit : -s_defaultPrecision;
+	if (p >= q) {
+		divide(p, q, r, s);
+		str += r.toString();
+		if (s.isZero()) {
+			if (cacheP) {
+				delete& p;
+			}
+
+			if (cacheQ) {
+				delete& q;
+			}
+
+			if (cacheR) {
+				delete& r;
+			}
+
+			if (cacheS) {
+				delete& s;
+			}
+			return str;
+		}
+		else
+		{
+			std::swap(p, s);
+			str += '.';
+		}
+	}
+	else
+	{
+		str += "0.";
+	}
+
+	while (digit-- > 0 && p < q) {
+		p *= Int::s_smallInts[base];
+		str += '0';
+		divide(p, q, r, s);
+		str += Int::chunkToDigit(r.chunk(0), base);
+		std::swap(p, s);
+	}
+
+	if (cacheP) {
+		delete &p;
+	}
+
+	if (cacheQ) {
+		delete &q;
+	}
+
+	if (cacheR) {
+		delete& r;
+	}
+
+	if (cacheS) {
+		delete& s;
+	}
+
+	return str;
+}
+
+Float& Float::set(const std::string& str, int base, const int* pPrecision, bool isRelativePrecision) {
+	assert(base >= 2 && base <= 35);
+	enum state{
+		begin,
+		mantissaBegin,
+		mantissaDigit,
+		fracBegin,
+		fracDigit,
+		exponentBegin,
+		exponentDigit,
+		end,
+	};
+	const char* pos = str.c_str();
+	const char* endPos = str.c_str() + str.size();
+	if (pos == endPos) {
+		return setZero();
+	}
+
+	int digitValue = 0;
+	state s = begin;
+
+	int sign = 1;
+	Int& mantissa = _int;
+	mantissa.setZero();
+	int exponent = 0;
+	int pointPos = 0;
+	int exponentSign = 1;
+
+	bool fallThrough = false;
+	while (s != end && pos != endPos) {
+		char c = *pos;
+		switch (s) {
+		case begin:
+		{
+			if (c == '-') {
+				sign = -1;
+				s = mantissaDigit;
+				pos++;
+				break;
+			}
+			else if (c == '.') {
+				s = fracBegin;
+				pos++;
+				break;
+			}
+			else if (Int::isDigit(c, base, digitValue)) {
+				//do not increase pos
+				//fall down to intBegin
+				s = mantissaDigit;
+				fallThrough = true;
+			}
+			else {
+				s = end;
+				break;
+			}
+		}
+		case mantissaDigit:
+		{
+			if (fallThrough || Int::isDigit(c, base, digitValue)) {
+				mantissa *= Int::s_smallInts[base];
+				mantissa += Int::s_smallInts[digitValue];
+				break;
+			}
+			else if (c == '.') {
+				pos++;
+				s = fracDigit;
+				break;
+			}
+			else if (Int::isExponentSeprator(c, base)) {
+				pos++;
+				s = exponentBegin;
+				break;
+			}
+			else {
+				s = end;
+				break;
+			}
+		}
+		case fracBegin: {
+			if (Int::isDigit(c, base, digitValue)) {
+				fallThrough = true;
+				s = fracDigit;
+			}
+			else if (Int::isExponentSeprator(c, base)) {
+				pos++;
+				s = exponentBegin;
+				break;
+			}
+			else {
+				s = end;
+				break;
+			}
+		}
+		case fracDigit: {
+			if (fallThrough || Int::isDigit(c, base, digitValue)) {
+				mantissa *= Int::s_smallInts[base];
+				mantissa += Int::s_smallInts[digitValue];
+				pointPos++;
+				pos++;
+				break;
+			}
+			else if (Int::isExponentSeprator(c, base)) {
+				pos++;
+				s = exponentBegin;
+				break;
+			}
+			else {
+				s = end;
+				break;
+			}
+		}
+		case exponentBegin:
+		{
+			if (c == '-') {
+				exponentSign = -1;
+				s = exponentDigit;
+				pos++;
+				break;
+			}
+			else if (Int::isDigit(c, base, digitValue)) {
+				//do not increase pos
+				//fall down to intBegin
+				s = exponentDigit;
+				fallThrough = true;
+			}
+			else {
+				s = end;
+				break;
+			}
+		}
+		case exponentDigit:
+		{
+			if (fallThrough || Int::isDigit(c, base, digitValue)) {
+				exponent = exponent * base + digitValue;
+			}
+			else {
+				s = end;
+				break;
+			}
+		}
+		}
+	}
+
+	if (exponentSign < 0) {
+		exponent = -exponent;
+	}
+
+	exponent -= pointPos;
+
+	//exponent >= 0
+	if (exponent >= 0) {
+		while (exponent-- > 0) {
+			mantissa *= Int::s_smallInts[base];
+		}
+		_baseBitPos = 0;
+		this->normalize();
+		if (sign < 0) {
+			this->negate();
+		}
+
+		//in this case precision is relative to bit 0,
+		//so precision is the same whether isRelativePrecision is true or not
+		//it means tht unless precison is greather than zero, the result is 
+		//precise
+		int precision = 0;
+		if (pPrecision) {
+			precision = *pPrecision;
+		}
+		else
+		{
+			precision = s_defaultPrecision;
+		}
+
+		return this->truncate(precision);
+	}
+
+	//exponent < 0
+	Int& exp = f2()._int;
+	while (exponent++ < 0) {
+		exp *= Int::s_smallInts[base];
+	}
+	f2()._baseBitPos = 0;
+
+	int precision = 0;
+	if (pPrecision) {
+		precision = *pPrecision;
+	}
+	else
+	{
+		precision =  s_defaultPrecision;
+	}
+
+	if (isRelativePrecision) {
+		precision -= (f2().leadBit() + 1);
+	}
+
+	divide(*this, f2(), f1(), &precision, false);
+
+	return this->swap(f1());
+}
+
