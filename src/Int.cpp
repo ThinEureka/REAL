@@ -424,7 +424,7 @@ Int& Int::operator ^= (const Int& v1) {
 	return *this;
 }
 
-Int& real::plus(const Int& v1, const Int& v2, Int& sum){
+Int& real::add(const Int& v1, const Int& v2, Int& sum){
 	if (v1.isZero()) {
 		sum = v2;
 		return sum;

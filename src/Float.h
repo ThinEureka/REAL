@@ -21,7 +21,7 @@ namespace real {
 	const Float operator *(const Float& v1, const Float& v2);
 	const Float operator /(const Float& v1, const Float& v2);
 
-	Float& plus(const Float& v1, const Float& v2, Float& sum);
+	Float& add(const Float& v1, const Float& v2, Float& sum);
 	Float& subtract(const Float& v1, const Float& v2, Float& sub);
 	Float& multiply(const Float& v1, const Float& v2, Float& product);
 	Float& divide(const Float& v1, const Float& v2, Float& q, const int* pPrecison = nullptr, bool isRelativePrecison = true);
@@ -258,7 +258,7 @@ namespace real {
 
 		friend const Float operator +(const Float& v1, const Float& v2) {
 			Float sum;
-			return plus(v1, v2, sum);
+			return add(v1, v2, sum);
 		}
 
 		friend const Float operator -(const Float& v1, const Float& v2) {
@@ -292,7 +292,7 @@ namespace real {
 		}
 
 		Float& operator += (const Float& v1) {
-			plus(*this, v1, f1());
+			add(*this, v1, f1());
 			return this->swap(f1());
 		}
 
@@ -311,7 +311,7 @@ namespace real {
 			return this->swap(f1());
 		}
 
-		friend Float& plus(const Float& v1, const Float& v2, Float& sum);
+		friend Float& add(const Float& v1, const Float& v2, Float& sum);
 		friend Float& subtract(const Float& v1, const Float& v2, Float& sub);
 		friend Float& multiply(const Float& v1, const Float& v2, Float& product);
 		friend Float& divide(const Float& v1, const Float& v2, Float& q, const int* pPrecison, bool isRelativePrecisione);

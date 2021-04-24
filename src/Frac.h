@@ -14,7 +14,7 @@ namespace real {
 	Frac operator *(const Frac& v1, const Frac& v2);
 	Frac operator /(const Frac& v1, const Frac& v2);
 
-	Frac& plus(const Frac& v1, const Frac& v2, Frac& sum);
+	Frac& add(const Frac& v1, const Frac& v2, Frac& sum);
 	Frac& subtract(const Frac& v1, const Frac& v2, Frac& sub);
 	Frac& multiply(const Frac& v1, const Frac& v2, Frac& product);
 	Frac& divide(const Frac& v1, const Frac& v2, Frac& q);
@@ -163,7 +163,7 @@ class Frac {
 
 		friend Frac operator +(const Frac& v1, const Frac& v2) {
 			Frac sum;
-			return plus(v1, v2, sum);
+			return add(v1, v2, sum);
 		}
 
 		friend Frac operator -(const Frac& v1, const Frac& v2) {
@@ -181,7 +181,7 @@ class Frac {
 		
 		Frac& operator += (const Frac& v1) {
 			Frac sum; 
-			return *this = plus(*this, v1, sum);
+			return *this = add(*this, v1, sum);
 		}
 		Frac& operator -= (const Frac& v1) {
 			Frac sub;
@@ -196,7 +196,7 @@ class Frac {
 			return *this = divide(*this, v1, q);
 		}
 
-		friend Frac& plus(const Frac& v1, const Frac& v2, Frac& sum);
+		friend Frac& add(const Frac& v1, const Frac& v2, Frac& sum);
 		friend Frac& subtract(const Frac& v1, const Frac& v2, Frac& sub);
 		friend Frac& multiply(const Frac& v1, const Frac& v2, Frac& product);
 		friend Frac& divide(const Frac& v1, const Frac& v2, Frac& q);

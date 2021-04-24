@@ -27,7 +27,7 @@ namespace real {
 	Int operator /(const Int& v1, const Int& v2);
 	Int operator %(const Int& v1, const Int& v2);
 
-	Int& plus(const Int& v1, const Int& v2, Int& sum);
+	Int& add(const Int& v1, const Int& v2, Int& sum);
 	Int& subtract(const Int& v1, const Int& v2, Int& sub);
 	Int& multiply(const Int& v1, const Int& v2, Int& product);
 	Int& divide(const Int& v1, const Int& v2, Int& q, Int& r);
@@ -266,7 +266,7 @@ public:
 
 		friend Int operator +(const Int& v1, const Int& v2) {
 			Int sum;
-			return plus(v1, v2, sum);
+			return add(v1, v2, sum);
 		}
 
 		friend Int operator -(const Int& v1, const Int& v2) {
@@ -307,7 +307,7 @@ public:
 		// Postfix increment operator. 
 		Int operator ++(int) {
 			Int tmp = *this;
-			plus (tmp, one, *this);
+			add (tmp, one, *this);
 			return tmp;
 		}
 
@@ -344,7 +344,7 @@ public:
 		
 		Int& operator += (const Int& v1) {
 			Int sum; 
-			return *this = plus(*this, v1, sum);
+			return *this = add(*this, v1, sum);
 		}
 		Int& operator -= (const Int& v1) {
 			Int sub;
@@ -364,7 +364,7 @@ public:
 			return *this = r;
 		}
 
-		friend Int& plus(const Int& v1, const Int& v2, Int& sum);
+		friend Int& add(const Int& v1, const Int& v2, Int& sum);
 		friend Int& subtract(const Int& v1, const Int& v2, Int& sub);
 		friend Int& multiply(const Int& v1, const Int& v2, Int& product);
 		friend Int& divide(const Int& v1, const Int& v2, Int& q, Int& r);

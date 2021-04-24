@@ -259,7 +259,7 @@ void addIntTest() {
 		std::cout << "m2:" << m2.toString() << std::endl;
 
 		assert(m1 == m2);
-		std::cout << "basic plus and multiplcation law test 1 passed" << endl;
+		std::cout << "basic add and multiplcation law test 1 passed" << endl;
 		});
 
 	testCases.push_back([&] {
@@ -576,7 +576,7 @@ void addFracTest() {
 		auto x = Frac(1, 2) + Frac(1, 3);
 		std::cout << "x:" << x.toString() << std::endl;
 		assert(x == Frac("5/6"));
-		std::cout << "Frac plus test1 passe" << std::endl;
+		std::cout << "Frac add test1 passe" << std::endl;
 		});
 
 }
@@ -600,7 +600,7 @@ void getAn(Frac& A, int n, int a) {
 				u.negate();
 			}
 		}
-		A = real::plus(A, u, tmp);
+		A = real::add(A, u, tmp);
 	}
 }
 
@@ -801,7 +801,7 @@ void getIntAn(Int& P, Int& Q, int n, int a, std::vector<const Int*>& facCache) {
 			tmp.negate();
 		}
 		multiply(qn, tmp, tmp1);
-		P = real::plus(P, tmp1, tmp);
+		P = real::add(P, tmp1, tmp);
 	}
 
 	multiply(Pn, Qn, Q);
@@ -903,7 +903,7 @@ void calculate_e_withInt() {
 		Int u = Int::one;
 		Int s;
 		for (int i = n; i >= 2; --i) {
-			s = real::plus(s, u, c);
+			s = real::add(s, u, c);
 			if (i > 2) {
 				u = multiply(u, i, c);
 			}
@@ -1104,7 +1104,7 @@ void addFloatTest() {
 		std::cout << "m2:" << m2.toString() << std::endl;
 
 		assert(m1 == m2);
-		std::cout << "basic plus and multiplcation law test 1 passed" << endl;
+		std::cout << "basic add and multiplcation law test 1 passed" << endl;
 		});
 
 	testCases.push_back([&] {

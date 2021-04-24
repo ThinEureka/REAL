@@ -46,7 +46,7 @@ Frac& Frac::set(const std::string& str, int base) {
 	return *this;
 }
 
-Frac& real::plus(const Frac& v1, const Frac& v2, Frac& sum) {
+Frac& real::add(const Frac& v1, const Frac& v2, Frac& sum) {
 	if (v1.isZero()) {
 		sum = v2;
 		return sum;
@@ -67,7 +67,7 @@ Frac& real::plus(const Frac& v1, const Frac& v2, Frac& sum) {
 	if (v2._sign < 0) {
 		sum._c2.negate();
 	}
-	plus(sum._c1, sum._c2, sum._n);
+	add(sum._c1, sum._c2, sum._n);
 	multiply(v1._d, v2._d, sum._d);
 	sum._sign = 1;
 	sum.normalize();
@@ -95,7 +95,7 @@ Frac& real::subtract(const Frac& v1, const Frac& v2, Frac& sub) {
 	if (v2._sign > 0) {
 		sub._c2.negate();
 	}
-	plus(sub._c1, sub._c2, sub._n);
+	add(sub._c1, sub._c2, sub._n);
 	multiply(v1._d, v2._d, sub._d);
 	sub._sign = 1;
 	sub.normalize();

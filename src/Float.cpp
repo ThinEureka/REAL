@@ -155,7 +155,7 @@ Float& Float::extend(int bitPos, bool* isModified) {
 	}
 }
 
-Float& real::plus(const Float& v1, const Float& v2, Float& sum) {
+Float& real::add(const Float& v1, const Float& v2, Float& sum) {
 	if (v1.isZero()) {
 		return sum = v2;
 	}
@@ -178,7 +178,7 @@ Float& real::plus(const Float& v1, const Float& v2, Float& sum) {
 	sum._baseBitPos = tailBit2;
 	sum.f1()._int = pV1->_int;
 	sum.f1()._int <<= (tailBit1 - tailBit2);
-	plus(sum.f1()._int, pV2->_int, sum._int);
+	add(sum.f1()._int, pV2->_int, sum._int);
 	sum.f1().setZero();
 	return sum.normalize();
 }
@@ -282,7 +282,7 @@ Float& Float::calculateInverse(Float& q, const int* pPrecision, bool isRelativeP
 				return q;
 			}
 			else {
-				plus(q.f2(), Float::one, q.f1());
+				add(q.f2(), Float::one, q.f1());
 				multiply(q.f1(), q, q.f2());
 				q.swap(q.f2());
 				q.extend(Q1);
