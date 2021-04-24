@@ -297,7 +297,7 @@ int Int::tailBit() const {
 
 	size_t chunkIndex = 0;
 	Int::typeChunk tailChunk = 0;
-	while (chunkIndex < _chunks.size() - 1) {
+	while (chunkIndex < _chunks.size()) {
 		tailChunk = _chunks[chunkIndex];
 		if (tailChunk != 0) {
 			break;
@@ -317,7 +317,7 @@ int Int::tailBit() const {
 		}
 	}
 
-	return static_cast<int>(tailBitInChunk + Int::s_numBitsOfChunk * (chunkIndex - 1));
+	return static_cast<int>(tailBitInChunk + Int::s_numBitsOfChunk * chunkIndex);
 }
 
 void Int::setBitWithoutNormalization(size_t bitPos, bool v) {
