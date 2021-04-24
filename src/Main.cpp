@@ -968,6 +968,15 @@ void addFloatTest() {
 		assert(x1_s == s1);
 		std::cout << "simple string constructor test1 passed" << std::endl;
 		});
+
+	testCases.push_back([&] {
+		std::string s1 = "12345.25";
+		Float x1 = Float(s1);
+		std::string x1_s = x1.toString();
+		std::cout << "x1:" << x1_s << std::endl;
+		assert(x1_s.find(s1) == 0);
+		std::cout << "simple string constructor test2 passed" << std::endl;
+		});
 	return;
 
 	testCases.push_back([&] {
@@ -1294,7 +1303,7 @@ int main()
 
 	addFloatTest();
 
-	bool reverseOrder = false;
+	bool reverseOrder = true;
 
 	if (reverseOrder) {
 		for (auto it = testCases.rbegin(); it != testCases.rend(); ++it) {

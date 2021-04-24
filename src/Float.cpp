@@ -77,6 +77,7 @@ Float& Float::setFloor(int bitPos, bool* isModified) {
 		bool isIntModified = false;
 		this->truncate(bitPos, &isIntModified);
 		if (isIntModified) {
+			Float& one = this->f2().set(Int::one, bitPos);
 			*this -= one;
 		}
 
@@ -92,6 +93,7 @@ Float& Float::setCeil(int bitPos, bool* isModified) {
 		bool isIntModified = false;
 		this->truncate(bitPos, &isIntModified);
 		if (isIntModified) {
+			Float& one = this->f2().set(Int::one, bitPos);
 			*this += one;
 		}
 
@@ -233,7 +235,7 @@ Float& real::divide(const Float& v1, const Float& v2, Float& q, const int* pPrec
 
 	v2.calculateInverse(q, &inversePrecison, false);
 	multiply(v1, q, q.f1());
-	return q;
+	return q.swap(q.f1());
 }
 
 Float& Float::calculateInverse(Float& q, const int* pPrecision, bool isRelativePrecision) const {
@@ -251,7 +253,7 @@ Float& Float::calculateInverse(Float& q, const int* pPrecision, bool isRelativeP
 	}
 
 	int precision = pPrecision ? *pPrecision : defaultPrecision();
-	if (!isRelativePrecision) {
+	if (isRelativePrecision) {
 		precision += (-leadBit - 1);
 	}
 
@@ -282,7 +284,7 @@ Float& Float::calculateInverse(Float& q, const int* pPrecision, bool isRelativeP
 			else {
 				plus(q.f2(), Float::one, q.f1());
 				multiply(q.f1(), q, q.f2());
-				q = q.f2();
+				q.swap(q.f2());
 				q.extend(Q1);
 			}
 		}
@@ -352,7 +354,6 @@ const std::string Float::toString(const int* pDigit, int base, Int * cacheP, Int
 
 	while (digit-- > 0 && p < q) {
 		p *= Int::s_smallInts[base];
-		str += '0';
 		divide(p, q, r, s);
 		str += Int::chunkToDigit(r.chunk(0), base);
 		std::swap(p, s);
@@ -556,6 +557,7 @@ Float& Float::set(const std::string& str, int base, const int* pPrecision, bool 
 
 	//exponent < 0
 	Int& exp = f2()._int;
+	exp.setOne();
 	while (exponent++ < 0) {
 		exp *= Int::s_smallInts[base];
 	}
