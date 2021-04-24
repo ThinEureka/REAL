@@ -292,12 +292,18 @@ Float& Float::calculateInverse(Float& q, const int* pPrecision, bool isRelativeP
 const std::string Float::toString(const int* pDigit, int base, Int * cacheP, Int * cacheQ, Int* cacheR, Int* cacheS) const{
 	std::string str;
 
+	if (isZero()) {
+		str += '0';
+		return str;
+	}
+
 	Int& p = cacheP ? *cacheP : *(new Int);
 	Int& q = cacheQ ? *cacheQ : *(new Int);
 	Int& r = cacheR ? *cacheR : *(new Int);
 	Int& s = cacheS ? *cacheS : *(new Int);
 	p = _int;
 	q.setOne();
+
 
 	if (isNegative()) {
 		p.negate();
@@ -399,8 +405,8 @@ Float& Float::set(const std::string& str, int base, const int* pPrecision, bool 
 	int pointPos = 0;
 	int exponentSign = 1;
 
-	bool fallThrough = false;
 	while (s != end && pos != endPos) {
+		bool fallThrough = false;
 		char c = *pos;
 		switch (s) {
 		case begin:
@@ -432,6 +438,7 @@ Float& Float::set(const std::string& str, int base, const int* pPrecision, bool 
 			if (fallThrough || Int::isDigit(c, base, digitValue)) {
 				mantissa *= Int::s_smallInts[base];
 				mantissa += Int::s_smallInts[digitValue];
+				pos++;
 				break;
 			}
 			else if (c == '.') {

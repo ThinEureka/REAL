@@ -1,5 +1,6 @@
 #include "Int.h"
 #include "Frac.h"
+#include "Float.h"
 #include "algorithm"
 #include <iostream>
 #include <functional>
@@ -941,6 +942,339 @@ void addIntTest_calculate_e(){
 		calculate_e_withInt();
 		});
 }
+
+void addFloatTest() {
+	testCases.push_back([&] {
+		Float f;
+		assert(f.isZero());
+		assert(!f.isPositive());
+		assert(!f.isNegative());
+		std::cout << "zero test passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		Float one = 1;
+		Float one_ = Int("1");
+		assert(one == one_);
+		assert(!(one != one_));
+		std::cout << "one test passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		std::string s1 = "12345";
+		Float x1 = Float(s1);
+		std::string x1_s = x1.toString();
+		std::cout << "x1:" << x1_s << std::endl;
+		assert(x1_s == s1);
+		std::cout << "simple string constructor test1 passed" << std::endl;
+		});
+	return;
+
+	testCases.push_back([&] {
+		Float x = 342343434343;
+		Float y = x;
+		assert(x == y);
+		assert(!(x != y));
+		std::cout << "simple string constructor test2 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		Float x = Float("-342343434343432434234324234");
+		assert(x.isNegative());
+		assert(!x.isPositive());
+		assert(!x.isZero());
+
+		x = -x;
+		assert(!x.isNegative());
+		assert(x.isPositive());
+		assert(!x.isZero());
+
+		auto y = x + (-x);
+		assert(y.isZero());
+		std::cout << "minus test1 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		Float x = -3423434343434324343LL;
+		assert(x.isNegative());
+		assert(!x.isPositive());
+		assert(!x.isZero());
+
+		x = -x;
+		assert(!x.isNegative());
+		assert(x.isPositive());
+		assert(!x.isZero());
+
+		auto y = x + (-x);
+		assert(y.isZero());
+		std::cout << "minus test2 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		std::string p = "101011010101010101010101101010101011";
+		Float x = Float(p, 2);
+		std::cout << "x:" << x.toString(nullptr, 2) << std::endl;
+		Float y = x - 1;
+		std::cout << "y:" << x.toString(nullptr, 2) << std::endl;
+		assert(x > y);
+		assert(x >= y);
+		assert(y < x);
+		assert(y <= x);
+		assert(x == x);
+		assert(!(x == y));
+		assert(x != y);
+		std::cout << "compare test 1 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		std::string s1 = "12345";
+		Float x1 = Float(s1);
+		std::string x1_s = x1.toString();
+		std::cout << "x1:" << x1_s << std::endl;
+		assert(x1_s == s1);
+		std::cout << "simple string constructor test passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		std::string s6 = "400412878166003164546735534092609172319140330852536603355429981136254443797343719815103359446869847213482227876740797726949481901457564006563326790056796257840594244649848624543981509868730249924";
+		Float x6 = Float(s6);
+		auto x6_s = x6.toString();
+		cout << "x6:" << x6_s << endl;
+		assert(x6_s == s6);
+		cout << "long string constructor test 6 passed" << endl;
+		});
+
+	testCases.push_back([&] {
+		Float N = Float("100");
+		Float sum;
+		for (Float i = 0; i <= N; i = i + 1) {
+			sum += i;
+		}
+		auto sum_s = sum.toString();
+		std::cout << "sum:" << sum_s << std::endl;
+		assert(sum == N * (N + 1) / 2);
+		cout << "sum test 1 passed" << endl;
+		});
+
+	testCases.push_back([&] {
+		Float N2 = Int("200000");
+		Float sum2;
+		for (Float i = 0; i <= N2; i = i + 1) {
+			sum2 += i;
+		}
+		auto sum2_s = sum2.toString();
+		std::cout << "sum2:" << sum2_s << std::endl;
+		assert(sum2 == N2 * (N2 + 1) / 2);
+		cout << "sum test 2 passed" << endl;
+		});
+
+	testCases.push_back([&] {
+		Float a = Float("343483463746736473467346736476");
+		Float b = Float("364826374736436476374676763746");
+		Float c = Float("342349384938483843874839");
+
+		std::cout << "a:" << a.toString() << std::endl;
+		std::cout << "b:" << b.toString() << std::endl;
+		std::cout << "c:" << c.toString() << std::endl;
+
+		auto s1 = a + (b + c);
+		auto s2 = (a + b) + c;
+		std::cout << "s1:" << s1.toString() << std::endl;
+		std::cout << "s2:" << s2.toString() << std::endl;
+		assert(s1 == s2);
+
+		auto p1 = a * (b * c);
+		auto p2 = (a * b) * c;
+		std::cout << "p1:" << p1.toString() << std::endl;
+		std::cout << "p2:" << p2.toString() << std::endl;
+		assert(p1 == p2);
+
+		auto m1 = a * (b + c);
+		auto m2 = a * b + a * c;
+		std::cout << "m1:" << m1.toString() << std::endl;
+		std::cout << "m2:" << m2.toString() << std::endl;
+
+		assert(m1 == m2);
+		std::cout << "basic plus and multiplcation law test 1 passed" << endl;
+		});
+
+	testCases.push_back([&] {
+		std::string s7 = "101010101010101101010010101";
+		Float x7 = Float(s7, 2);
+		auto x7_s = x7.toString(nullptr, 2);
+		cout << "x7:" << x7_s << std::endl;
+		assert(x7_s == s7);
+		cout << "base 2 string construtor test passed\n";
+		});
+
+	testCases.push_back([&] {
+		long long p2 = 123456789012345333LL;
+		Float x2 = Float(p2);
+		auto x2_s = x2.toString();
+		std::cout << "x2:" << x2_s << std::endl;
+		std::cout << "p2:" << p2 << std::endl;
+		assert(std::to_string(p2) == x2_s);
+		std::cout << "long long constructor test passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		Float x3 = Float("123456789012345333");
+		std::cout << "x3:" << x3.toString() << std::endl;
+
+		std::string s4 = "12345678901234";
+		Float x4 = Float(s4);
+		auto x4_s = x4.toString();
+		std::cout << "x4:" << x4_s << std::endl;
+		assert(x4_s == s4);
+		cout << "string constructor test4 passed" << std::endl;
+
+		std::string s5 = "32433443423434783432432423423423423423423423423423423423472364723647236476274623764723674623746764237647264723476767236472364782374827384723478324324324243343243243242342432423432434";
+		Float x5 = Float(s5);
+		std::cout << "x5:" << x5.toString() << std::endl;
+		assert(x5.toString() == s5);
+		cout << "long string constructor test5 passed" << std::endl;
+
+		std::cout << "x4*x5:" << (x4 * x5).toString() << std::endl;
+		std::cout << "x5*x4:" << (x5 * x4).toString() << std::endl;
+
+		assert(x4 * x5 == x5 * x4);
+		assert((x4 * x5).toString() == (x5 * x4).toString());
+		cout << "multiplication communication law test passed" << std::endl;
+		});
+	
+	testCases.push_back([&] {
+		Float a = Float("342343243647264736476374673647364736476");
+		Float b = Float("3434343434334343434343434");
+
+		std::cout << "a:" << a.toString() << std::endl;
+		std::cout << "b:" << b.toString() << std::endl;
+
+		Float q, r;
+		int precision = 0;
+		divide(a, b, q, &precision, false);
+		std::cout << "q:" << q.toString() << std::endl;
+		auto c = b * q;
+		std::cout << "c:" << c.toString() << std::endl;
+		assert(b * q <= c && b * (q+1) > c);
+		std::cout << "/ % test 1 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		Float a = Float("5489548657467564756744343434346");
+		std::cout << "a:" << a.toString() << std::endl;
+
+		Float b = a << 343;
+		std::cout << "b:" << b.toString() << std::endl;
+		a <<= 343;
+		assert(a == b);
+		std::cout << "a:" << a.toString() << std::endl;
+
+		b = a >> 249;
+		a >>= 249;
+		std::cout << "a:" << a.toString() << std::endl;
+		std::cout << "b:" << b.toString() << std::endl;
+		assert(a == b);
+
+		std::cout << "shift assign test1  passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		Float a = Float("5489548657467564756744343434346");
+		Float b = Float("53423434343343489548657467564756744343434346");
+		std::cout << "a:" << a.toString() << std::endl;
+		std::cout << "b:" << b.toString() << std::endl;
+
+		Float c = a;
+		c += b;
+		std::cout << "c:" << c.toString() << std::endl;
+		assert(c == a + b);
+
+		c = a;
+		c -= b;
+		std::cout << "c:" << c.toString() << std::endl;
+		assert(c == a - b);
+		assert(c + b == a);
+
+		c = a;
+		c *= b;
+		std::cout << "c:" << c.toString() << std::endl;
+		assert(c == a * b);
+
+		c = a;
+		c /= b;
+		std::cout << "c:" << c.toString() << std::endl;
+		//assert(c == a / b);
+
+		std::cout << "assignment test2  passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		Float x = Float("433847982374873847387483478374837438748347837482434243324234234");
+		for (int i = 2; i <= 35; ++i) {
+			auto str = x.toString(nullptr, i);
+			std::cout << "base" << i << ":" << str << std::endl;
+			assert(Float(str, i) == x);
+		}
+		std::cout << "any base test1  passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		Float x = Float("432434243324234234");
+		Float y = x;
+		int N = 1000;
+		for (int i = 0; i < 1000; ++i) {
+			auto x_i = x << i;
+			assert(x_i == y);
+			y *= 2;
+		}
+		std::cout << "shift left test1 passed" << std::endl;
+
+		x = y;
+		for (int i = 0; i < N; ++i) {
+			auto x_i = x >> i;
+			assert(x_i == y);
+			y /= 2;
+		}
+		std::cout << "shift right test1 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		Float x;
+		Float y;
+		Float a = Float("1334247873434343434343434892374873423423432434343443243434343423423423424334");
+		Float b = Float("23423434343434343434343434343434");
+		Float q, r;
+		divide(a, b, q, nullptr, true);
+		std::cout << "q:" << q.toString() << std::endl;
+		std::cout << "r:" << r.toString() << std::endl;
+		Float c = b * q + r;
+		std::cout << "a:" << a.toString() << std::endl;
+		std::cout << "c:" << c.toString() << std::endl;
+		assert(a == c);
+		std::cout << "big number * and / test1 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		Float x;
+		Float y;
+		Float a = Float("1334247873434343434343434892374873423423432434343443243434343423423423424334");
+		Float b = Float("9343243424343424324234234343243234343434343434343434343423432423432423443243434");
+		for (int i = 0; i < 1; ++i) {
+			Float x = (a + i) * b;
+			auto x0 = x;
+			for (int i = 0; i < 5; ++i) {
+				x *= x;
+			}
+
+			for (int i = 0; i < 32; ++i) {
+				x /= x0;
+			}
+			cout << "x:" << x.toString() << endl;
+			//assert(x == 1);
+		}
+		std::cout << "big number * and / test2 passed" << std::endl;
+		});
+}
 int main()
 {
 	//general test cases for Int class
@@ -958,7 +1292,9 @@ int main()
 	//the test case that calculates e with Int operation
 	//addIntTest_calculate_e();
 
-	bool reverseOrder = true;
+	addFloatTest();
+
+	bool reverseOrder = false;
 
 	if (reverseOrder) {
 		for (auto it = testCases.rbegin(); it != testCases.rend(); ++it) {

@@ -336,16 +336,13 @@ namespace real {
 
 	private:
 		Float& normalize() {
+			if (_int.isZero()) {
+				return this->setZero();
+			}
+
 			int tailBit = _int.tailBit();
-			if (tailBit > 0) {
-				_int >>= tailBit;
-				_baseBitPos += tailBit;
-			}
-			else
-			{
-				_int.clear();
-				_baseBitPos = 0;
-			}
+			_int >>= tailBit;
+			_baseBitPos += tailBit;
 			return *this;
 		}
 		
