@@ -578,6 +578,10 @@ Float& Float::set(const std::string& str, int base, const int* pPrecision, bool 
 
 	divide(*this, f2(), f1(), &precision, false);
 
-	return this->swap(f1());
+	this->swap(f1());
+	if (sign < 0) {
+		this->negate();
+	}
+	return *this;
 }
 
