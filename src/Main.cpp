@@ -1000,6 +1000,19 @@ void addFloatTest() {
 		assert(x3.isZero());
 		std::cout << "simple string constructor test4 passed" << std::endl;
 		});
+	
+	testCases.push_back([&] {
+		std::string a = "3434343434";
+		std::string b = "29343223434";
+		std::string s1 = a + '.' + b;
+		std::string s2 = a + b + "e-" + std::to_string(b.size());
+		Float x1 = Float(s1);
+		Float x2 = Float(s2);
+		std::cout << "x1:" << x1.toString() << std::endl;
+		std::cout << "x2:" << x2.toString() << std::endl;
+		assert(x1 == x2);
+		std::cout << "simple string constructor test5 passed" << std::endl;
+		});
 	return;
 
 	testCases.push_back([&] {

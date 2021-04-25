@@ -513,6 +513,8 @@ Float& Float::set(const std::string& str, int base, const int* pPrecision, bool 
 		{
 			if (fallThrough || Int::isDigit(c, base, digitValue)) {
 				exponent = exponent * base + digitValue;
+				pos++;
+				break;
 			}
 			else {
 				s = end;
