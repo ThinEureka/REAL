@@ -520,14 +520,7 @@ Float& Float::set(const std::string& str, int base, const int* pPrecision, bool 
 		//so precision is the same whether isRelativePrecision is true or not
 		//it means tht unless precison is greather than zero, the result is 
 		//precise
-		int precision = 0;
-		if (pPrecision) {
-			precision = *pPrecision;
-		}
-		else
-		{
-			precision = s_defaultPrecision;
-		}
+		int precision = pPrecision ? *pPrecision : Float::defaultPrecision();
 
 		return this->truncate(precision);
 	}
