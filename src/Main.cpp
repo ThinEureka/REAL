@@ -1013,47 +1013,49 @@ void addFloatTest() {
 		assert(x1 == x2);
 		std::cout << "simple string constructor test5 passed" << std::endl;
 		});
-	return;
+
+	testCases.push_back([&] {
+		std::string a = "0.0000000";
+		std::string b = "3434343434";
+		std::string s1 = a + b + 'e' + std::to_string(a.size() - 2);
+		std::string s2 = "0." + b;
+		Float x1 = Float(s1);
+		Float x2 = Float(s2);
+		std::cout << "x1:" << x1.toString() << std::endl;
+		std::cout << "x2:" << x2.toString() << std::endl;
+		assert(x1 == x2);
+		std::cout << "simple string constructor test6 passed" << std::endl;
+		});
 
 	testCases.push_back([&] {
 		Float x = 342343434343;
 		Float y = x;
 		assert(x == y);
 		assert(!(x != y));
-		std::cout << "simple string constructor test2 passed" << std::endl;
+		std::cout << "x:" << x.toString() << std::endl;
+		std::cout << "simple int constructor test1 passed" << std::endl;
 		});
 
 	testCases.push_back([&] {
 		Float x = Float("-342343434343432434234324234");
+		std::cout << "x:" << x.toString() << std::endl;
+
 		assert(x.isNegative());
 		assert(!x.isPositive());
 		assert(!x.isZero());
 
 		x = -x;
+		std::cout << "x:" << x.toString() << std::endl;
 		assert(!x.isNegative());
 		assert(x.isPositive());
 		assert(!x.isZero());
 
 		auto y = x + (-x);
+		std::cout << "y:" << y.toString() << std::endl;
 		assert(y.isZero());
 		std::cout << "minus test1 passed" << std::endl;
 		});
-
-	testCases.push_back([&] {
-		Float x = -3423434343434324343LL;
-		assert(x.isNegative());
-		assert(!x.isPositive());
-		assert(!x.isZero());
-
-		x = -x;
-		assert(!x.isNegative());
-		assert(x.isPositive());
-		assert(!x.isZero());
-
-		auto y = x + (-x);
-		assert(y.isZero());
-		std::cout << "minus test2 passed" << std::endl;
-		});
+	return;
 
 	testCases.push_back([&] {
 		std::string p = "101011010101010101010101101010101011";
