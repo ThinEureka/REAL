@@ -269,8 +269,8 @@ Float& Float::calculateInverse(Float& q, const int* pPrecision, bool isRelativeP
 		else
 		{
 			const int P = q.f2().leadBit();
-			const int Q1 = P - N - 1;
-			const int Q2 = P + 1 - N;
+			const int Q1 = 2*P - N - 1;
+			const int Q2 = 2*P + 2 - N;
 
 			if (Q2 < precision - 1) {
 				q.truncate(precision - 1);
