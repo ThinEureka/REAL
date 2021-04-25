@@ -970,20 +970,24 @@ void addFloatTest() {
 		});
 
 	testCases.push_back([&] {
-		std::string s1 = "12345.25";
+		std::string a = "12345.2";
+		std::string b = "4999999999999999999";
+		std::string s1 = a + "5";
 		Float x1 = Float(s1);
 		std::string x1_s = x1.toString();
 		std::cout << "x1:" << x1_s << std::endl;
-		//assert(x1_s.find(s1) == 0);
+		assert(x1_s.find(a + b) == 0);
 		std::cout << "simple string constructor test2 passed" << std::endl;
 		});
 	
 	testCases.push_back([&] {
-		std::string s1 = "12345.253434378347837483748374837487384783478347384734874837483478374837483748374837483748347";
+		std::string a = "12345.253434378347837483748374837487384783478347384734874837483478374837483748374837483748347";
+		std::string s1 = a + "6";
+		std::string s2 = a + "5999999999999999999999999999";
 		Float x1 = Float(s1);
 		std::string x1_s = x1.toString();
 		std::cout << "x1:" << x1_s << std::endl;
-		//assert(x1_s.find(s1) == 0);
+		assert(x1_s.find(s2) == 0);
 		std::cout << "simple string constructor test3 passed" << std::endl;
 		});
 
