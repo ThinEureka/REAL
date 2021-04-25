@@ -223,17 +223,12 @@ Float& real::divide(const Float& v1, const Float& v2, Float& q, const int* pPrec
 	}
 
 	int leadBit1 = v1.leadBit();
-	int leadBit2 = v2.leadBit();
-	int inversePrecison = 0;
-	if (pPrecison) {
-		inversePrecison = *pPrecison - leadBit1 - 1;
-	}
-	else {
-		int tailBit2 = v2.tailBit();
-		inversePrecison = - tailBit2 - 1 + Float::defaultPrecision();
+	int inversePrecison = pPrecison ? *pPrecison : Float::defaultPrecision();
+	if (!isRelativePrecision) {
+		inversePrecison -= (leadBit1 + 1);
 	}
 
-	v2.calculateInverse(q, &inversePrecison, false);
+	v2.calculateInverse(q, &inversePrecison, isRelativePrecision);
 	multiply(v1, q, q.f1());
 	return q.swap(q.f1());
 }
@@ -273,9 +268,9 @@ Float& Float::calculateInverse(Float& q, const int* pPrecision, bool isRelativeP
 		}
 		else
 		{
-			int P = q.f2().leadBit();
-			int Q1 = P - N - 1;
-			int Q2 = P + 1 - N;
+			const int P = q.f2().leadBit();
+			const int Q1 = P - N - 1;
+			const int Q2 = P + 1 - N;
 
 			if (Q2 < precision - 1) {
 				q.truncate(precision - 1);
@@ -324,21 +319,10 @@ const std::string Float::toString(const int* pDigit, int base, Int * cacheP, Int
 		divide(p, q, r, s);
 		str += r.toString();
 		if (s.isZero()) {
-			if (cacheP) {
-				delete& p;
-			}
-
-			if (cacheQ) {
-				delete& q;
-			}
-
-			if (cacheR) {
-				delete& r;
-			}
-
-			if (cacheS) {
-				delete& s;
-			}
+			if (cacheP) delete &p;
+			if (cacheQ) delete &q;
+			if (cacheR) delete &r;
+			if (cacheS) delete &s;
 			return str;
 		}
 		else
@@ -359,21 +343,10 @@ const std::string Float::toString(const int* pDigit, int base, Int * cacheP, Int
 		std::swap(p, s);
 	}
 
-	if (cacheP) {
-		delete &p;
-	}
-
-	if (cacheQ) {
-		delete &q;
-	}
-
-	if (cacheR) {
-		delete& r;
-	}
-
-	if (cacheS) {
-		delete& s;
-	}
+	if (cacheP) delete& p;
+	if (cacheQ) delete& q;
+	if (cacheR) delete& r;
+	if (cacheS) delete& s;
 
 	return str;
 }
@@ -565,14 +538,7 @@ Float& Float::set(const std::string& str, int base, const int* pPrecision, bool 
 	}
 	f2()._baseBitPos = 0;
 
-	int precision = 0;
-	if (pPrecision) {
-		precision = *pPrecision;
-	}
-	else
-	{
-		precision =  s_defaultPrecision;
-	}
+	int precision = pPrecision ? *pPrecision : Float::defaultPrecision();
 
 	if (isRelativePrecision) {
 		precision -= (f2().leadBit() + 1);
