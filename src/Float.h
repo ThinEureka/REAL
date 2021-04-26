@@ -32,7 +32,7 @@ namespace real {
 		static const Float one;
 
 		static int defaultPrecision() { return s_defaultPrecision; }
-		static int setRelativePrecision(int relativeProcision) { return s_defaultPrecision = relativeProcision; }
+		static int setDefaultPrecision(int precision) { return s_defaultPrecision = precision; }
 
 	public:
 		Float() : _baseBitPos(0) {}

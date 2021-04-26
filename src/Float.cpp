@@ -73,7 +73,7 @@ Float& Float::setFloor(int bitPos, bool* isModified) {
 	if (_int.sign() >= 0) {
 		return this->setInt(isModified);
 	}
-	else{
+	else {
 		bool isIntModified = false;
 		this->truncate(bitPos, &isIntModified);
 		if (isIntModified) {
@@ -266,8 +266,7 @@ Float& Float::calculateInverse(Float& q, const int* pPrecision, bool isRelativeP
 			q.truncate(precision);
 			return q;
 		}
-		else
-		{
+		else {
 			const int P = q.f2().leadBit();
 			const int Q1 = 2*P - N - 1;
 			const int Q2 = 2*P + 2 - N;
@@ -301,7 +300,6 @@ const std::string Float::toString(const int* pDigit, int base, Int * cacheP, Int
 	p = _int;
 	q.setOne();
 
-
 	if (isNegative()) {
 		p.negate();
 		str += '-';
@@ -317,7 +315,7 @@ const std::string Float::toString(const int* pDigit, int base, Int * cacheP, Int
 	int digit = pDigit ? *pDigit : -s_defaultPrecision;
 	if (p >= q) {
 		divide(p, q, r, s);
-		str += r.toString();
+		str += r.toString(base);
 		if (s.isZero()) {
 			if (cacheP) delete &p;
 			if (cacheQ) delete &q;
@@ -325,14 +323,12 @@ const std::string Float::toString(const int* pDigit, int base, Int * cacheP, Int
 			if (cacheS) delete &s;
 			return str;
 		}
-		else
-		{
+		else {
 			std::swap(p, s);
 			str += '.';
 		}
 	}
-	else
-	{
+	else {
 		str += "0.";
 	}
 
