@@ -1182,25 +1182,6 @@ void addFloatTest() {
 		assert(x != y);
 		std::cout << "compare test 1 passed" << std::endl;
 		});
-	return;
-
-	testCases.push_back([&] {
-		std::string s1 = "12345";
-		Float x1 = Float(s1);
-		std::string x1_s = x1.toString();
-		std::cout << "x1:" << x1_s << std::endl;
-		assert(x1_s == s1);
-		std::cout << "simple string constructor test passed" << std::endl;
-		});
-
-	testCases.push_back([&] {
-		std::string s6 = "400412878166003164546735534092609172319140330852536603355429981136254443797343719815103359446869847213482227876740797726949481901457564006563326790056796257840594244649848624543981509868730249924";
-		Float x6 = Float(s6);
-		auto x6_s = x6.toString();
-		cout << "x6:" << x6_s << endl;
-		assert(x6_s == s6);
-		cout << "long string constructor test 6 passed" << endl;
-		});
 
 	testCases.push_back([&] {
 		Float N = Float("100");
@@ -1260,10 +1241,21 @@ void addFloatTest() {
 		std::string s7 = "101010101010101101010010101";
 		Float x7 = Float(s7, 2);
 		auto x7_s = x7.toString(nullptr, 2);
-		cout << "x7:" << x7_s << std::endl;
+		std::cout << "x7:" << x7_s << std::endl;
 		assert(x7_s == s7);
-		cout << "base 2 string construtor test passed\n";
+		std::cout << "base 2 string construtor test passed\n";
 		});
+
+	testCases.push_back([&] {
+		Float x = Float("433847982374873847387483478374837438748347837482434243324234234");
+		for (int i = 2; i <= 35; ++i) {
+			auto str = x.toString(nullptr, i);
+			std::cout << "base" << i << ":" << str << std::endl;
+			assert(Float(str, i) == x);
+		}
+		std::cout << "any base test1  passed" << std::endl;
+		});
+
 
 	testCases.push_back([&] {
 		long long p2 = 123456789012345333LL;
@@ -1273,67 +1265,6 @@ void addFloatTest() {
 		std::cout << "p2:" << p2 << std::endl;
 		assert(std::to_string(p2) == x2_s);
 		std::cout << "long long constructor test passed" << std::endl;
-		});
-
-	testCases.push_back([&] {
-		Float x3 = Float("123456789012345333");
-		std::cout << "x3:" << x3.toString() << std::endl;
-
-		std::string s4 = "12345678901234";
-		Float x4 = Float(s4);
-		auto x4_s = x4.toString();
-		std::cout << "x4:" << x4_s << std::endl;
-		assert(x4_s == s4);
-		cout << "string constructor test4 passed" << std::endl;
-
-		std::string s5 = "32433443423434783432432423423423423423423423423423423423472364723647236476274623764723674623746764237647264723476767236472364782374827384723478324324324243343243243242342432423432434";
-		Float x5 = Float(s5);
-		std::cout << "x5:" << x5.toString() << std::endl;
-		assert(x5.toString() == s5);
-		cout << "long string constructor test5 passed" << std::endl;
-
-		std::cout << "x4*x5:" << (x4 * x5).toString() << std::endl;
-		std::cout << "x5*x4:" << (x5 * x4).toString() << std::endl;
-
-		assert(x4 * x5 == x5 * x4);
-		assert((x4 * x5).toString() == (x5 * x4).toString());
-		cout << "multiplication communication law test passed" << std::endl;
-		});
-	
-	testCases.push_back([&] {
-		Float a = Float("342343243647264736476374673647364736476");
-		Float b = Float("3434343434334343434343434");
-
-		std::cout << "a:" << a.toString() << std::endl;
-		std::cout << "b:" << b.toString() << std::endl;
-
-		Float q, r;
-		int precision = 0;
-		divide(a, b, q, &precision, false);
-		std::cout << "q:" << q.toString() << std::endl;
-		auto c = b * q;
-		std::cout << "c:" << c.toString() << std::endl;
-		assert(b * q <= c && b * (q+1) > c);
-		std::cout << "/ % test 1 passed" << std::endl;
-		});
-
-	testCases.push_back([&] {
-		Float a = Float("5489548657467564756744343434346");
-		std::cout << "a:" << a.toString() << std::endl;
-
-		Float b = a << 343;
-		std::cout << "b:" << b.toString() << std::endl;
-		a <<= 343;
-		assert(a == b);
-		std::cout << "a:" << a.toString() << std::endl;
-
-		b = a >> 249;
-		a >>= 249;
-		std::cout << "a:" << a.toString() << std::endl;
-		std::cout << "b:" << b.toString() << std::endl;
-		assert(a == b);
-
-		std::cout << "shift assign test1  passed" << std::endl;
 		});
 
 	testCases.push_back([&] {
@@ -1365,16 +1296,8 @@ void addFloatTest() {
 
 		std::cout << "assignment test2  passed" << std::endl;
 		});
+	return;
 
-	testCases.push_back([&] {
-		Float x = Float("433847982374873847387483478374837438748347837482434243324234234");
-		for (int i = 2; i <= 35; ++i) {
-			auto str = x.toString(nullptr, i);
-			std::cout << "base" << i << ":" << str << std::endl;
-			assert(Float(str, i) == x);
-		}
-		std::cout << "any base test1  passed" << std::endl;
-		});
 
 	testCases.push_back([&] {
 		Float x = Float("432434243324234234");
