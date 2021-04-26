@@ -1029,6 +1029,50 @@ void addFloatTest() {
 		std::cout << "simple string constructor test5 passed" << std::endl;
 		});
 
+	testCases.push_back([&] {
+		int digit = 3;
+		std::string a = "0.34324432423423423443244";
+		std::string c = "e-";
+		int exp = 123;
+		std::string s1 = a + std::to_string(digit +1) + c + std::to_string(exp);
+		std::string s2 = a + std::to_string(digit) + N9();
+		Float x1 = Float(s1);
+		int numDigit = 200;
+		std::string x1_s = x1.toString(&numDigit);
+		std::cout << "N9(size):" << N9().size() << std::endl;
+		std::cout << "x1:" << x1_s << std::endl;
+		s2 = s2.substr(2, s2.size() - 2);
+		assert(x1_s.find(s2) != 0);
+		std::cout << "simple string constructor test5 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		int digit = 8;
+		std::string a = "19384384738748374837483748374873483748734.343434433432838748348738457822874837483748334793748375835783743847385783343487384783748375873857385578253478347834738473847343434378347837483748374837487384783478347384734874837483478374837483748374837483748347";
+		std::string s1 = a + std::to_string(digit + 1);
+		std::string s2 = a + std::to_string(digit) + N9();
+		Float x1 = Float(s1);
+		int numDigit = a.size() + N9().size();
+		std::string x1_s = x1.toString(&numDigit);
+		std::cout << "N9(size):" << N9().size() << std::endl;
+		std::cout << "x1:" << x1_s << std::endl;
+		assert(x1_s.find(s2) == 0);
+		std::cout << "simple string constructor test6 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		int digit = 7;
+		std::string a = "193843434343434384738748374837483748374873483748734.343434433432838748348738457822874837483748334793748375835783743847385783343487384783748375873857385578253478347834738473847343434378347837483748374837487384783478347384734874837483478374837483748374837483748347";
+		std::string s1 = a + std::to_string(digit + 1);
+		std::string s2 = a + std::to_string(digit) + N9();
+		Float x1 = Float(s1);
+		int numDigit = a.size() + N9().size();
+		std::string x1_s = x1.toString(&numDigit);
+		std::cout << "N9(size):" << N9().size() << std::endl;
+		std::cout << "x1:" << x1_s << std::endl;
+		assert(x1_s.find(s2) == 0);
+		std::cout << "simple string constructor test7 passed" << std::endl;
+		});
 
 	return;
 
