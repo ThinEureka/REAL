@@ -5,6 +5,7 @@
 #include <iostream>
 #include <functional>
 #include <vector>
+#include <cmath>
 
 using namespace real;
 using namespace std;
@@ -943,6 +944,15 @@ void addIntTest_calculate_e(){
 		});
 }
 
+std::string N9() {
+	int t = static_cast<int>(-Float::defaultPrecision() * std::log(2.0) / std::log(10.0));
+	std::string s;
+	for (int i = 0; i < t; ++i) {
+		s += '9';
+	}
+	return s;
+}
+
 void addFloatTest() {
 	testCases.push_back([&] {
 		Float f;
@@ -990,6 +1000,35 @@ void addFloatTest() {
 		assert(x1_s.find(s2) == 0);
 		std::cout << "simple string constructor test3 passed" << std::endl;
 		});
+
+	testCases.push_back([&] {
+		int digit = 5;
+		std::string a = "34793748375835783743847385783343487384783748375873857385578.253478347834738473847343434378347837483748374837487384783478347384734874837483478374837483748374837483748347";
+		std::string s1 = a + std::to_string(digit + 1);
+		std::string s2 = a + std::to_string(digit) + N9();
+		Float x1 = Float(s1);
+		int numDigit = a.size() + N9().size();
+		std::string x1_s = x1.toString(&numDigit);
+		std::cout << "N9(size):" << N9().size() << std::endl;
+		std::cout << "x1:" << x1_s << std::endl;
+		assert(x1_s.find(s2) == 0);
+		std::cout << "simple string constructor test4 passed" << std::endl;
+		});
+	
+	testCases.push_back([&] {
+		int digit = 3;
+		std::string a = "0.343434433432838748348738457822874837483748334793748375835783743847385783343487384783748375873857385578253478347834738473847343434378347837483748374837487384783478347384734874837483478374837483748374837483748347";
+		std::string s1 = a + std::to_string(digit + 1);
+		std::string s2 = a + std::to_string(digit) + N9();
+		Float x1 = Float(s1);
+		int numDigit = a.size() + N9().size();
+		std::string x1_s = x1.toString(&numDigit);
+		std::cout << "N9(size):" << N9().size() << std::endl;
+		std::cout << "x1:" << x1_s << std::endl;
+		assert(x1_s.find(s2) == 0);
+		std::cout << "simple string constructor test5 passed" << std::endl;
+		});
+
 
 	return;
 

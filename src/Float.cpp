@@ -222,11 +222,9 @@ Float& real::divide(const Float& v1, const Float& v2, Float& q, const int* pPrec
 		return q.setZero();
 	}
 
-	int leadBit1 = v1.leadBit();
 	int inversePrecison = pPrecison ? *pPrecison : Float::defaultPrecision();
-	inversePrecison -= (leadBit1 + 1);
 	if (!isRelativePrecision) {
-		inversePrecison -= (v2.leadBit() + 1);
+		inversePrecison -= (v1.leadBit() + 1);
 	}
 
 	v2.calculateInverse(q, &inversePrecison, isRelativePrecision);
@@ -274,7 +272,7 @@ Float& Float::calculateInverse(Float& q, const int* pPrecision, bool isRelativeP
 			const int Q1 = 2*P - N - 1;
 			const int Q2 = 2*P + 2 - N;
 
-			if (Q2 < precision - 1) {
+			if (P + 1 - N < precision - 1) {
 				q.truncate(precision - 1);
 				return q;
 			}
