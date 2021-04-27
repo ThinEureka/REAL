@@ -1,7 +1,6 @@
 #include "Int.h"
 #include <assert.h> 
 
-#include <iostream>
 using namespace real;
 
 int chunksCompare(const std::vector<Int::typeChunk>& chunks1, const std::vector<Int::typeChunk>& chunks2);
@@ -25,34 +24,37 @@ const Int& Int::zero = Int::s_smallInts[0];
 const Int& Int::one = Int::s_smallInts[1];
 
 Int::Int(){
-	std::cout << "Init default constructor " << std::endl;
 }
 
 Int::Int(const Int& v) :_chunks(v._chunks), _sign(v._sign) {
-	std::cout << "Init copy constructor" << std::endl;
 }
 
-Int::Int(Int&& v) noexcept :_chunks(std::move(v._chunks)), _sign(v._sign) {
-	std::cout << "Init move constructor" << std::endl;
+Int::Int(Int&& v) noexcept :_chunks(std::move(v._chunks)), _sign(v._sign), _n1(v._n1), _n2(v._n2) {
+	v._n1 = nullptr;
+	v._n2 = nullptr;
 }
 
 Int& Int::operator = (const Int& v) {
 	if (this == &v) {
 		return *this;
 	}
-	std::cout << "Int operator = copy" << std::endl;
 	_chunks = v._chunks;
 	_sign = v._sign;
 	return *this;
 }
 
 Int& Int::operator = (Int&& v) noexcept {
-	std::cout << "Int operator = move" << std::endl;
 	if (this == &v) {
 		return *this;
 	}
 	_chunks = std::move(v._chunks);
 	_sign = v._sign;
+	_n1 = v._n1;
+	_n2 = v._n2;
+
+	v._n1 = nullptr;
+	v._n2 = nullptr;
+
 	return *this;
 }
 
@@ -152,7 +154,7 @@ Int::typeLinkSigned Int::toLinkSigned(bool& isOverFlow) const {
 	return result;
 }
 
-std::string Int::toString(int base) const {
+std::string Int::toString(int base, Int* cacheR, Int* cacheN, Int* cacheQ) const {
 	assert(base >= 2 && base <= 35);
 	if (_sign == 0) {
 		return "0";
@@ -175,9 +177,9 @@ std::string Int::toString(int base) const {
 		return str;
 	}
 
-	Int r;
-	Int n = *this;
-	Int q;
+	Int& r = cacheR ? *cacheR : *(new Int);
+	Int& n = cacheR ? *cacheN : *(new Int(*this));
+	Int& q = cacheR ? *cacheQ : *(new Int());
 	const Int& d = s_smallInts[base];
 
 	while (chunksCompare(n._chunks, d._chunks) >= 0) {
@@ -209,6 +211,10 @@ std::string Int::toString(int base) const {
 			break;
 		}
 	} while (true);
+
+	if (!cacheN) delete& n;
+	if (!cacheR) delete& r;
+	if (!cacheQ) delete& q;
 
 	return str;
 }

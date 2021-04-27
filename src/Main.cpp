@@ -1375,25 +1375,41 @@ void addMoveOperationTest(){
 		std::cout << ">>>>>>>>>>>>>move assign test end<<<<<<<<<<<<<<<<<<<<<<" << std::endl;
 		});
 
+	testCases.push_back([&] {
+		Float a = Float("84738482365762375627567657627567");
+		Float b = Float("3434347384637673463756784738482365762375627567657627567");
+		std::cout << "<<<<<<<<<<<<<float custom  swap test begin>>>>>>>>>>>>>>>>>>>>" << std::endl;
+		a.swap(b);
+		std::cout << ">>>>>>>>>>>>>float custom swap test end<<<<<<<<<<<<<<<<<<<<<<" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		Int a = Int("84738482365762375627567657627567");
+		Int b = Int("3434347384637673463756784738482365762375627567657627567");
+		std::cout << "<<<<<<<<<<<<<int custom  swap test begin>>>>>>>>>>>>>>>>>>>>" << std::endl;
+		a.swap(b);
+		std::cout << ">>>>>>>>>>>>>int custom swap test end<<<<<<<<<<<<<<<<<<<<<<" << std::endl;
+		});
+
 }
 int main()
 {
 	//general test cases for Int class
-	//addIntTest();
+	addIntTest();
 
 	//general test cases for Frac class
-	//addFracTest();
+	addFracTest();
 
 	//the test case that calculates pi with pure Int operation
-	//addPiTestWithInt();
+	addPiTestWithInt();
 
 	//the test case that calulates pi with Frac operation
-	//addPiTestWithFrac();
+	addPiTestWithFrac();
 
 	//the test case that calculates e with Int operation
-	//addIntTest_calculate_e();
+	addIntTest_calculate_e();
 
-	//addFloatTest();
+	addFloatTest();
 
 	addMoveOperationTest();
 

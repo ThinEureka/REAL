@@ -1,7 +1,6 @@
 #include "Float.h"
 #include "assert.h"
 
-#include <iostream>
 using namespace real;
 
 const Float Float::zero = 0;
@@ -9,14 +8,13 @@ const Float Float::one = 1;
 int Float::s_defaultPrecision = -128;
 
 Float::Float() : _baseBitPos(0) {
-	std::cout << "Float default contructor" << std::endl;
 }
 Float::Float(const Float& v) : _int(v._int), _baseBitPos(v._baseBitPos) {
-	std::cout << "Float copy contructor" << std::endl;
 }
 		
 Float::Float(Float&& v) noexcept : _int(std::move(v._int)), _baseBitPos(v._baseBitPos), _f1(v._f1), _f2(v._f2) {
-	std::cout << "Float move contructor" << std::endl;
+	v._f1 = nullptr;
+	v._f2 = nullptr;
 }
 
 Float& Float::setBit(int bitPos, bool v) {

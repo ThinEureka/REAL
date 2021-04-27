@@ -91,13 +91,19 @@ public:
 			normalize();
 		};
 
+		//the destructor is not virtual such that this class
+		//is not meant to be inherited
+		~Int() {
+			cleanCache();
+		}
+
 		int toInt(bool& isOverFlow) const { return toChunkSigned(isOverFlow); }
 		int toUint(bool& isOverFlow) const { return toChunk(isOverFlow); }
 
 		long long toLongLong(bool& isOverFlow) const { return toLinkSigned(isOverFlow); }
 		unsigned long long toUlonglong(bool& isOverFlow) const { return toLink(isOverFlow); }
 
-		std::string toString(int base = 10) const;
+		std::string toString(int base = 10, Int* cacheR = nullptr, Int* cacheN = nullptr, Int* cacheQ = nullptr ) const;
 		Int& set(const std::string& str, int base = 10);
 
 		Int& set (int sign, const std::vector<typeChunk>& chunks){
@@ -278,13 +284,14 @@ public:
 			return multiply(v1, v2, product);
 		}
 		friend Int operator /(const Int& v1, const Int& v2) {
-			Int q, r;
-			return divide(v1, v2, q, r);
+			Int q;
+			divide(v1, v2, q, q.n1());
+			return q;
 		}
 		friend Int operator %(const Int& v1, const Int& v2) {
-			Int q, r;
-			divide(v1, v2, q, r);
-			return r;
+			Int q;
+			divide(v1, v2, q, q.n1());
+			return q;
 		}
 
 		// Prefix decrement operator.
@@ -294,7 +301,8 @@ public:
 
 		// Postfix decrement operator. 
 		Int operator --(int) {
-			Int tmp = *this;
+			Int tmp; 
+			tmp.swap(*this);
 			subtract(tmp, one, *this);
 			return tmp;
 		}
@@ -306,7 +314,8 @@ public:
 
 		// Postfix increment operator. 
 		Int operator ++(int) {
-			Int tmp = *this;
+			Int tmp;
+			tmp.swap(*this);
 			add (tmp, one, *this);
 			return tmp;
 		}
@@ -343,31 +352,48 @@ public:
 		}
 		
 		Int& operator += (const Int& v1) {
-			Int sum; 
-			return *this = add(*this, v1, sum);
+			 add(*this, v1, n1());
+			 return this->swap(n1());
 		}
 		Int& operator -= (const Int& v1) {
-			Int sub;
-			return *this = subtract(*this, v1, sub);
+			subtract(*this, v1, n1());
+			return this->swap(n1());
 		}
 		Int& operator *= (const Int& v1) {
-			Int product;
-			return *this = multiply(*this, v1, product);
+			multiply(*this, v1, n1());
+			return this->swap(n1());
 		}
 		Int& operator /= (const Int& v1) {
-			Int q,r;
-			return *this = divide(*this, v1, q, r);
+			divide(*this, v1, n1(), n2());
+			return this->swap(n1());
 		}
 		Int& operator %= (const Int& v1) {
-			Int q,r;
-			divide(*this, v1, q, r);
-			return *this = r;
+			divide(*this, v1, n1(), n2());
+			return this->swap(n2());
 		}
 
 		friend Int& add(const Int& v1, const Int& v2, Int& sum);
 		friend Int& subtract(const Int& v1, const Int& v2, Int& sub);
 		friend Int& multiply(const Int& v1, const Int& v2, Int& product);
 		friend Int& divide(const Int& v1, const Int& v2, Int& q, Int& r);
+
+		void cleanCache() {
+			if (_n1) {
+				delete _n1;
+				_n1 = nullptr;
+			}
+
+			if (_n2) {
+				delete _n2;
+				_n2 = nullptr;
+			}
+		}
+
+		Int& swap(Int& v) {
+			std::swap(_chunks, v._chunks);
+			std::swap(_sign, v._sign);
+			return *this;
+		}
 
 	private:
 		void normalize() {
@@ -400,9 +426,26 @@ public:
 		void chunksShiftRight(unsigned int pos);
 		void chunksShiftLeft(unsigned int pos);
 
+		Int& n1() {
+			if (!_n1) {
+				_n1 = new Int();
+			}
+			return *_n1;
+		}
+		
+		Int& n2() {
+			if (!_n2) {
+				_n2 = new Int();
+			}
+			return *_n2;
+		}
+
 	private:
 		int _sign{ 0 };
 		std::vector<typeChunk> _chunks;
+
+		Int* _n1{ nullptr };
+		Int* _n2{ nullptr };
 	};
 }
 

@@ -123,6 +123,10 @@ namespace real {
 		}
 		Float& operator = (Float&& v) noexcept {
 			_int = std::move(v._int);
+			_f1 = v._f1;
+			_f2 = v._f2;
+			v._f1 = nullptr;
+			v._f2 = nullptr;
 			_baseBitPos = v._baseBitPos;
 			return *this;
 		}
@@ -329,7 +333,7 @@ namespace real {
 		}
 
 		Float& swap(Float& v) {
-			std::swap(_int, v._int);
+			_int.swap(v._int);
 			std::swap(_baseBitPos, v._baseBitPos);
 			return *this;
 		}
