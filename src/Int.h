@@ -226,7 +226,8 @@ public:
 	public:
 		const Int operator - () const {
 			Int v = *this;
-			return v.negate();
+			v.negate();
+			return v;
 		}
 
 		friend bool operator == (const Int& v1, const Int& v2);
@@ -249,39 +250,47 @@ public:
 
 		friend Int operator & (const Int& v1, const Int& v2) {
 			Int v = v1;
-			return v &= v2;
+			v &= v2;
+			return v;
 		}
 		friend Int operator | (const Int& v1, const Int& v2) {
 			Int v = v1;
-			return v |= v2;
+			v |= v2;
+			return v;
 		}
 		friend Int operator ^ (const Int& v1, const Int& v2) {
 			Int v = v1;
-			return v ^= v2;
+			v ^= v2;
+			return v;
 		}
 
 		friend Int operator >> (const Int& v1, int pos) {
 			Int v = v1;
-			return v >>= pos;
+			v >>= pos;
+			return v;
 		}
 
 		friend Int operator << (const Int& v1, int pos) {
 			Int v = v1;
-			return v <<= pos;
+			v <<= pos;
+			return v;
 		}
 
 		friend Int operator +(const Int& v1, const Int& v2) {
 			Int sum;
-			return add(v1, v2, sum);
+			add(v1, v2, sum);
+			return sum;
 		}
 
 		friend Int operator -(const Int& v1, const Int& v2) {
 			Int sub;
-			return subtract(v1, v2, sub);
+			subtract(v1, v2, sub);
+			return sub;
 		}
 		friend Int operator *(const Int& v1, const Int& v2) {
 			Int product;
-			return multiply(v1, v2, product);
+			multiply(v1, v2, product);
+			return product;
 		}
 		friend Int operator /(const Int& v1, const Int& v2) {
 			Int q;
@@ -291,6 +300,7 @@ public:
 		friend Int operator %(const Int& v1, const Int& v2) {
 			Int q;
 			divide(v1, v2, q, q.n1());
+			q.swap(q.n1());
 			return q;
 		}
 

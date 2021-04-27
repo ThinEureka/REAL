@@ -395,6 +395,7 @@ void addIntTest() {
 		c = a;
 		c %= b;
 		std::cout << "c:" << c.toString() << std::endl;
+		std::cout << "a % b:" << (a % b).toString() << std::endl;
 		assert(c == a % b);
 
 		std::cout << "assignment test2  passed" << std::endl;
@@ -1404,10 +1405,10 @@ int main()
 	addPiTestWithInt();
 
 	//the test case that calulates pi with Frac operation
-	addPiTestWithFrac();
+	//addPiTestWithFrac();
 
 	//the test case that calculates e with Int operation
-	addIntTest_calculate_e();
+	//addIntTest_calculate_e();
 
 	addFloatTest();
 
