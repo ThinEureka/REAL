@@ -59,9 +59,9 @@ public:
 		}
 
 	public:
-		Int(){}
-		Int(const Int& v) :_chunks(v._chunks), _sign(v._sign){}
-		Int(Int&& v) noexcept :_chunks(std::move(v._chunks)), _sign(v._sign) {}
+		Int();
+		Int(const Int& v);
+		Int(Int&& v) noexcept;
 
 		Int(Int::typeChunk v) {
 			*this = v;

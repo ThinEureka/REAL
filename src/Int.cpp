@@ -1,6 +1,7 @@
 #include "Int.h"
 #include <assert.h> 
 
+#include <iostream>
 using namespace real;
 
 int chunksCompare(const std::vector<Int::typeChunk>& chunks1, const std::vector<Int::typeChunk>& chunks2);
@@ -23,16 +24,30 @@ const Int Int::s_smallInts[101] = {
 const Int& Int::zero = Int::s_smallInts[0];
 const Int& Int::one = Int::s_smallInts[1];
 
+Int::Int(){
+	std::cout << "Init default constructor " << std::endl;
+}
+
+Int::Int(const Int& v) :_chunks(v._chunks), _sign(v._sign) {
+	std::cout << "Init copy constructor" << std::endl;
+}
+
+Int::Int(Int&& v) noexcept :_chunks(std::move(v._chunks)), _sign(v._sign) {
+	std::cout << "Init move constructor" << std::endl;
+}
+
 Int& Int::operator = (const Int& v) {
 	if (this == &v) {
 		return *this;
 	}
+	std::cout << "Int operator = copy" << std::endl;
 	_chunks = v._chunks;
 	_sign = v._sign;
 	return *this;
 }
 
 Int& Int::operator = (Int&& v) noexcept {
+	std::cout << "Int operator = move" << std::endl;
 	if (this == &v) {
 		return *this;
 	}
