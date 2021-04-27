@@ -1340,16 +1340,52 @@ void addFloatTest() {
 		std::cout << "big number * and / test2 passed" << std::endl;
 		});
 }
+
+void addMoveOperationTest(){
+	testCases.push_back([&] {
+		Int a = Int("84738482365762375627567657627567");
+		Int b = Int("3434347384637673463756784738482365762375627567657627567");
+		std::cout << "<<<<<<<<<<<<<swap int test begin>>>>>>>>>>>>>>>>>>>>" << std::endl;
+		std::swap(a, b);
+		std::cout << ">>>>>>>>>>>>>swap int test end<<<<<<<<<<<<<<<<<<<<<<" << std::endl;
+
+		});
+
+	testCases.push_back([&] {
+		Int a = Int("84738482365762375627567657627567");
+		Int b = Int("3434347384637673463756784738482365762375627567657627567");
+		std::cout << "<<<<<<<<<<<<<move assign test begin>>>>>>>>>>>>>>>>>>>>" << std::endl;
+		a = std::move(b);
+		std::cout << ">>>>>>>>>>>>>move assign test end<<<<<<<<<<<<<<<<<<<<<<" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		Float a = Float("84738482365762375627567657627567");
+		Float b = Float("3434347384637673463756784738482365762375627567657627567");
+		std::cout << "<<<<<<<<<<<<<swap float test begin>>>>>>>>>>>>>>>>>>>>" << std::endl;
+		std::swap(a, b);
+		std::cout << ">>>>>>>>>>>>>swap float test end<<<<<<<<<<<<<<<<<<<<<<" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		Float a = Float("84738482365762375627567657627567");
+		Float b = Float("3434347384637673463756784738482365762375627567657627567");
+		std::cout << "<<<<<<<<<<<<<move assign test begin>>>>>>>>>>>>>>>>>>>>" << std::endl;
+		a = std::move(b);
+		std::cout << ">>>>>>>>>>>>>move assign test end<<<<<<<<<<<<<<<<<<<<<<" << std::endl;
+		});
+
+}
 int main()
 {
 	//general test cases for Int class
-	addIntTest();
+	//addIntTest();
 
 	//general test cases for Frac class
-	addFracTest();
+	//addFracTest();
 
 	//the test case that calculates pi with pure Int operation
-	addPiTestWithInt();
+	//addPiTestWithInt();
 
 	//the test case that calulates pi with Frac operation
 	//addPiTestWithFrac();
@@ -1357,7 +1393,9 @@ int main()
 	//the test case that calculates e with Int operation
 	//addIntTest_calculate_e();
 
-	addFloatTest();
+	//addFloatTest();
+
+	addMoveOperationTest();
 
 	bool reverseOrder = true;
 
