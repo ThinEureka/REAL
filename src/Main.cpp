@@ -1296,8 +1296,6 @@ void addFloatTest() {
 
 		std::cout << "assignment test2  passed" << std::endl;
 		});
-	return;
-
 
 	testCases.push_back([&] {
 		Float x = Float("432434243324234234");
@@ -1315,24 +1313,9 @@ void addFloatTest() {
 			auto x_i = x >> i;
 			assert(x_i == y);
 			y /= 2;
+			y.setCeil();
 		}
 		std::cout << "shift right test1 passed" << std::endl;
-		});
-
-	testCases.push_back([&] {
-		Float x;
-		Float y;
-		Float a = Float("1334247873434343434343434892374873423423432434343443243434343423423423424334");
-		Float b = Float("23423434343434343434343434343434");
-		Float q, r;
-		divide(a, b, q, nullptr, true);
-		std::cout << "q:" << q.toString() << std::endl;
-		std::cout << "r:" << r.toString() << std::endl;
-		Float c = b * q + r;
-		std::cout << "a:" << a.toString() << std::endl;
-		std::cout << "c:" << c.toString() << std::endl;
-		assert(a == c);
-		std::cout << "big number * and / test1 passed" << std::endl;
 		});
 
 	testCases.push_back([&] {
@@ -1349,9 +1332,10 @@ void addFloatTest() {
 
 			for (int i = 0; i < 32; ++i) {
 				x /= x0;
+				x.setCeil();
 			}
 			cout << "x:" << x.toString() << endl;
-			//assert(x == 1);
+			assert(x == 1);
 		}
 		std::cout << "big number * and / test2 passed" << std::endl;
 		});
