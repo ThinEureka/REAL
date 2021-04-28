@@ -1128,6 +1128,77 @@ void addFloatTest() {
 		assert(x1 == x2);
 		std::cout << "simple string constructor test10 passed" << std::endl;
 		});
+
+	testCases.push_back([&] {
+		Float x1 = Float(1, -1);
+		std::cout << "x1:" << x1.toString() << std::endl;
+		assert(x1.toString() == "0.5");
+		
+		Float x2 = Float(1, -2);
+		std::cout << "x2:" << x2.toString() << std::endl;
+		assert(x2.toString() == "0.25");
+
+		Float x3 = Float(1, -3);
+		std::cout << "x3:" << x3.toString() << std::endl;
+		assert(x3.toString() == "0.125");
+
+		Float x4 = Float(1, -4);
+		std::cout << "x4:" << x4.toString() << std::endl;
+		assert(x4.toString() == "0.0625");
+
+		std::cout << "constructor for bin test1 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		std::string s = "10101010101010101010101010101010110011010010101010101101.1011001010101010010101";
+		Float x = Float(s, 2);
+		std::cout << "s:" << s << std::endl;
+		std::cout << "x:" << x.toString(nullptr, 2) << std::endl;
+		assert(x.toString(nullptr, 2) == s);
+
+		std::cout << "constructor for bin test2 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		std::string s = "123213122123113221311211310101010101010101010101010101010110011010010101010101101.1013122112213131112131312121211312112211001010101010010101";
+		Float x = Float(s, 4);
+		std::cout << "s:" << s << std::endl;
+		std::cout << "x:" << x.toString(nullptr, 4) << std::endl;
+		assert(x.toString(nullptr, 4) == s);
+
+		std::cout << "constructor for bin test3 passed" << std::endl;
+		});
+	
+	testCases.push_back([&] {
+		std::string s = "7354243656235264362635265362536253625323023213122123113221311211310101010101010101010101010101010110011010010101010101101.1042534625656242642476274254252645213122112213131112131312121211312112211001010101010010101";
+		Float x = Float(s, 8);
+		std::cout << "s:" << s << std::endl;
+		std::cout << "x:" << x.toString(nullptr, 8) << std::endl;
+		assert(x.toString(nullptr, 8) == s);
+
+		std::cout << "constructor for bin test4 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		std::string s = "AB637467329348329434358395374637483743483748BAEFADDCAB7354243656235264362635265362536253625323023213122123113221311211310101010101010101010101010101010110011010010101010101101.FACDB986656771042534625656242642476274254252645213122112213131112131312121211312112211001010101010010101";
+		Float x = Float(s, 16);
+		std::cout << "s:" << s << std::endl;
+		std::cout << "x:" << x.toString(nullptr, 16) << std::endl;
+		assert(x.toString(nullptr, 16) == s);
+
+		std::cout << "constructor for bin test5 passed" << std::endl;
+		});
+
+	testCases.push_back([&] {
+		std::string s = "AB637467329348329434358LHAVST395374637483743483748BAEFADDCAB7354243656235264362635265362536253625323023213122123113221311211310101010101010101010101010101010110011010010101010101101.FAGHIOPSERCDB986656771042534625656242642476274254252645213122112213131112131312121211312112211001010101010010101";
+		Float x = Float(s, 32);
+		std::cout << "s:" << s << std::endl;
+		std::cout << "x:" << x.toString(nullptr, 32) << std::endl;
+		assert(x.toString(nullptr, 32) == s);
+
+		std::cout << "constructor for bin test6 passed" << std::endl;
+		});
+
 	testCases.push_back([&] {
 		Float x = Float("-342343434343432434234324234");
 		std::cout << "x:" << x.toString() << std::endl;

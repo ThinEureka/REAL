@@ -346,6 +346,9 @@ const std::string Float::toString(const int* pDigit, int base, Int * cacheP, Int
 		p *= Int::s_smallInts[base];
 		divide(p, q, r, s);
 		str += Int::chunkToDigit(r.chunk(0), base);
+		if (s.isZero()) {
+			break;
+		}
 		std::swap(p, s);
 	}
 
@@ -536,6 +539,7 @@ Float& Float::set(const std::string& str, int base, const int* pPrecision, bool 
 		exp *= Int::s_smallInts[base];
 	}
 	f2()._baseBitPos = 0;
+	f2().normalize();
 
 	int precision = pPrecision ? *pPrecision : Float::defaultPrecision();
 
