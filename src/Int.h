@@ -109,13 +109,13 @@ public:
 		Int& set (int sign, const std::vector<typeChunk>& chunks){
 			_sign = sign;
 			_chunks = chunks;
-			normalize();
+			return normalize();
 		};
 
 		Int& set (int sign, std::vector<typeChunk>&& chunks) {
 			_sign = sign;
 			_chunks = std::move(chunks);
-			normalize();
+			return normalize();
 		};
 
 		Int::typeChunk toChunk(bool& isOverFlow) const {
@@ -406,16 +406,17 @@ public:
 		}
 
 	private:
-		void normalize() {
+		Int& normalize() {
 			while (_chunks.size() > 0) {
 				if (_chunks[_chunks.size() - 1] != 0) {
-					return;
+					return *this;
 				}
 				_chunks.pop_back();
 			}
 			if (_chunks.size() == 0) {
 				_sign = 0;
 			}
+			return *this;
 		}
 
 		void setBitWithoutNormalization(size_t bitPos, bool v);
@@ -430,7 +431,7 @@ public:
 			_chunks[chunkIndex] = chunk;
 		}
 
-		void chunksPlus(const std::vector<Int::typeChunk>& chunks1, const std::vector<Int::typeChunk>& chunks2);
+		void chunksAdd(const std::vector<Int::typeChunk>& chunks1, const std::vector<Int::typeChunk>& chunks2);
 		void chunksSubtract(const std::vector<Int::typeChunk>& chunks1, const std::vector<Int::typeChunk>& chunks2);
 
 		void chunksShiftRight(unsigned int pos);

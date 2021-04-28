@@ -65,7 +65,8 @@ namespace real {
 
 		const Float floor(int bitPos = 0, bool* isModified = nullptr) const {
 			Float f = *this;
-			return f.setFloor(bitPos = 0, isModified);
+			f.setFloor(bitPos = 0, isModified);
+			return f;
 		}
 
 		const Float ceil(int bitPos = 0, bool* isModified = nullptr) const { 
@@ -76,7 +77,8 @@ namespace real {
 
 		const Float intValue(bool * isModified = nullptr) const {
 			Float f = *this;
-			return f.setInt(isModified);
+			f.setInt(isModified);
+			return f;
 		}
 
 		Float& setFloor(int bitPos = 0, bool* isModified = nullptr);
@@ -96,7 +98,8 @@ namespace real {
 			}
 
 			n = _int;
-			return n <<= _baseBitPos;
+			n <<= _baseBitPos;
+			return n;
 		}
 
 		//currently we only support one notation
@@ -227,7 +230,8 @@ namespace real {
 	public:
 		const Float operator - () const {
 			Float v = *this;
-			return v.negate();
+			v.negate();
+			return v;
 		}
 
 		friend bool operator == (const Float& v1, const Float& v2) {
@@ -252,30 +256,36 @@ namespace real {
 
 		friend const Float operator >> (const Float& v1, int pos) {
 			Float v = v1;
-			return v >>= pos;
+			v >>= pos;
+			return v;
 		}
 
 		friend const Float operator << (const Float& v1, int pos) {
 			Float v = v1;
-			return v <<= pos;
+			v <<= pos;
+			return v;
 		}
 
 		friend const Float operator +(const Float& v1, const Float& v2) {
 			Float sum;
-			return add(v1, v2, sum);
+			add(v1, v2, sum);
+			return sum;
 		}
 
 		friend const Float operator -(const Float& v1, const Float& v2) {
 			Float sub;
-			return subtract(v1, v2, sub);
+			subtract(v1, v2, sub);
+			return sub;
 		}
 		friend const Float operator *(const Float& v1, const Float& v2) {
 			Float product;
-			return multiply(v1, v2, product);
+			multiply(v1, v2, product);
+			return product;
 		}
 		friend const Float operator /(const Float& v1, const Float& v2) {
 			Float q;
-			return divide(v1, v2, q, nullptr);
+			divide(v1, v2, q, nullptr);
+			return q;
 		}
 
 		Float& operator <<= (int pos) {

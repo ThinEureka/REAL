@@ -408,9 +408,7 @@ Int& Int::operator &= (const Int& v1) {
 	for (size_t i = 0; i < _chunks.size(); ++i) {
 		_chunks[i] = _chunks[i] & v1._chunks[i];
 	}
-	normalize();
-
-	return *this;
+	return this->normalize();
 }
 
 Int& Int::operator |= (const Int& v1) {
@@ -441,8 +439,7 @@ Int& Int::operator ^= (const Int& v1) {
 	for (size_t i = 0; i < _chunks.size(); ++i) {
 		_chunks[i] ^= v1.chunk(i);
 	}
-	normalize();
-	return *this;
+	return this->normalize();
 }
 
 Int& real::add(const Int& v1, const Int& v2, Int& sum){
@@ -457,7 +454,7 @@ Int& real::add(const Int& v1, const Int& v2, Int& sum){
 	}
 
 	if (v1._sign == v2._sign) {
-		sum.chunksPlus(v1._chunks, v2._chunks);
+		sum.chunksAdd(v1._chunks, v2._chunks);
 		sum._sign = v1._sign;
 		sum.normalize();
 		return sum;
@@ -498,7 +495,7 @@ Int& real::subtract(const Int& v1, const Int& v2, Int& sub) {
 	sub.setZero();
 	if (v1._sign == -v2._sign) {
 		sub._sign = v1._sign;
-		sub.chunksPlus(v1._chunks, v2._chunks);
+		sub.chunksAdd(v1._chunks, v2._chunks);
 		sub.normalize();
 		return sub;
 	}
@@ -700,7 +697,7 @@ void Int::chunksShiftLeft(unsigned int pos) {
 	}
 }
 
-void Int::chunksPlus(const std::vector<Int::typeChunk>& chunks1, const std::vector<Int::typeChunk>& chunks2) {
+void Int::chunksAdd(const std::vector<Int::typeChunk>& chunks1, const std::vector<Int::typeChunk>& chunks2) {
 	auto pChunksLeft = &chunks1;
 	auto pChunksRight = &chunks2;
 	if (pChunksRight->size() > pChunksLeft->size()) {
