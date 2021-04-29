@@ -46,7 +46,7 @@ class Int {
 		static const Int& zero;
 		static const Int& one;
 
-public:
+	public:
 		static bool isDigit(char c, int base, int& digitValue);
 		static char chunkToDigit(Int::typeChunk chunk, int base);
 		static bool isExponentSeprator(char c, int base) {

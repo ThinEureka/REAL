@@ -70,7 +70,7 @@ namespace real {
 		}
 
 		const Float ceil(int bitPos = 0, bool* isModified = nullptr) const { 
-			auto f = *this;
+			Float f = *this;
 			f.setCeil(bitPos, isModified);
 			return f;
 		}
