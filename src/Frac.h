@@ -37,6 +37,14 @@ class Frac {
 			*this = n;
 		}
 
+		Frac(long n) {
+			*this = n;
+		}
+
+		Frac(unsigned long n) {
+			*this = n;
+		}
+
 		Frac(long long n) {
 			*this = n;
 		}
@@ -85,7 +93,7 @@ class Frac {
 			return *this;
 		}
 
-		Frac& operator = (long long n) {
+		Frac& operator = (unsigned int n) {
 			_sign = 1;
 			_n = n;
 			_d.setOne();
@@ -93,7 +101,15 @@ class Frac {
 			return *this;
 		}
 
-		Frac& operator = (unsigned int n) {
+		Frac& operator = (long n) {
+			return *this = static_cast<long long>(n);
+		}
+
+		Frac& operator = (unsigned long n) {
+			return *this = static_cast<unsigned long long>(n);
+		}
+
+		Frac& operator = (long long n) {
 			_sign = 1;
 			_n = n;
 			_d.setOne();

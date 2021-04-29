@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <string>
+#include <cstdint>
 
 namespace real {
 
@@ -34,10 +35,10 @@ namespace real {
 
 class Int {
 	public:
-		typedef unsigned __int64 typeLink;
-		typedef unsigned __int32 typeChunk;
-		typedef __int64 typeLinkSigned;
-		typedef __int32 typeChunkSigned;
+		typedef std::uint64_t typeLink;
+		typedef std::uint32_t typeChunk;
+		typedef std::int64_t typeLinkSigned;
+		typedef std::int32_t typeChunkSigned;
 
 		static const typeLink s_numBitsOfChunk = 32;
 		static const typeLink s_borrowChunkValue = 1LL << Int::s_numBitsOfChunk;
@@ -63,19 +64,27 @@ class Int {
 		Int(const Int& v);
 		Int(Int&& v) noexcept;
 
-		Int(Int::typeChunk v) {
+		Int(unsigned int v) {
 			*this = v;
 		}
 
-		Int(Int::typeChunkSigned v) {
+		Int(int v) {
 			*this = v;
 		}
 
-		Int(Int::typeLinkSigned v) {
+		Int(unsigned long v) {
+			*this = static_cast<unsigned long long>(v);
+		}
+
+		Int(long v) {
+			*this = static_cast<long long>(v);
+		}
+
+		Int(long long v) {
 			*this = v;
 		}
 
-		Int(Int::typeLink v) {
+		Int(unsigned long long v) {
 			*this = v;
 		}
 
@@ -148,7 +157,7 @@ class Int {
 	public:
 		Int& operator = (const Int& v);
 		Int& operator = (Int&& v) noexcept;
-		Int& operator = (Int::typeChunk v) {
+		Int& operator = (unsigned int v) {
 			clear();
 			if (v != 0) {
 				_sign = 1;
@@ -157,7 +166,7 @@ class Int {
 			return *this;
 		}
 
-		Int& operator = (Int::typeChunkSigned v) {
+		Int& operator = (int v) {
 			clear();
 			if (v != 0) {
 				_sign = v > 0 ? 1 : -1;
@@ -165,8 +174,16 @@ class Int {
 			}
 			return *this;
 		}
+		
+		Int& operator = (unsigned long v) {
+			return *this = static_cast<unsigned long long>(v);
+		}
+		
+		Int& operator = (long v) {
+			return *this = static_cast<long long>(v);
+		}
 
-		Int& operator = (Int::typeLink v) {
+		Int& operator = (unsigned long long v) {
 			clear();
 			if (v != 0) {
 				_sign = 1;
@@ -180,7 +197,7 @@ class Int {
 			return *this;
 		}
 
-		Int& operator = (Int::typeLinkSigned v) {
+		Int& operator = (long long v) {
 			clear();
 			if (v != 0) {
 				_sign = v > 0 ? 1 : -1;
