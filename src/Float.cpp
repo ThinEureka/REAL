@@ -384,6 +384,7 @@ Float& Float::set(const std::string& str, int base, const int* pPrecision, bool 
 	int sign = 1;
 	Int& mantissa = _int;
 	mantissa.setZero();
+	_baseBitPos = 0;
 	int exponent = 0;
 	int pointPos = 0;
 	int exponentSign = 1;

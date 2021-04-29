@@ -985,6 +985,7 @@ void addFloatTest() {
 		std::string b = "4999999999999999999";
 		std::string s1 = a + "5";
 		Float x1 = Float(s1);
+		assert(!x1.isZero());
 		std::string x1_s = x1.toString();
 		std::cout << "x1:" << x1_s << std::endl;
 		assert(x1_s.find(a + b) == 0);
