@@ -1465,6 +1465,17 @@ void addMoveOperationTest(){
 		});
 
 }
+
+void addReturnOptimizationTest(){
+	testCases.push_back([&] {
+		Int a = Int("84738482365762375627567657627567");
+		Int b = Int("84738482365762375627567657627567");
+		std::cout << "<<<<<<<<<<<<<int return optimization  test begin>>>>>>>>>>>>>>>>>>>>" << std::endl;
+		Int c = a + b;
+		std::cout << "<<<<<<<<<<<<<int return optimization  test end>>>>>>>>>>>>>>>>>>>>" << std::endl;
+		});
+}
+
 int main()
 {
 	//general test cases for Int class
@@ -1485,6 +1496,8 @@ int main()
 	addFloatTest();
 
 	addMoveOperationTest();
+	
+	addReturnOptimizationTest();
 
 	bool reverseOrder = true;
 
