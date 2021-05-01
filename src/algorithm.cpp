@@ -34,7 +34,7 @@ Int& real::gcd(const Int& m, const Int& n, Int& gcd,
 			return gcd;
 		}
 
-		c1 = gcd;
-		gcd = c3;
+		c1.swap(gcd);
+		gcd.swap(c3);
 	}
 }

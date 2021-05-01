@@ -1488,7 +1488,7 @@ void addReturnOptimizationTest(){
 int main()
 {
 	//general test cases for Int class
-	addIntTest();
+	//addIntTest();
 
 	//general test cases for Frac class
 	addFracTest();

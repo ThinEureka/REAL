@@ -59,18 +59,22 @@ Frac& real::add(const Frac& v1, const Frac& v2, Frac& sum) {
 
 	sum.clear();
 
-	multiply(v1._n, v2._d, sum._c1);
+	multiply(v1._n, v2._d, sum.f1()._n);
 	if (v1._sign < 0) {
-		sum._c1.negate();
+		sum.f1()._n.negate();
 	}
-	multiply(v1._d, v2._n, sum._c2);
+	multiply(v1._d, v2._n, sum.f2()._n);
 	if (v2._sign < 0) {
-		sum._c2.negate();
+		sum.f2()._n.negate();
 	}
-	add(sum._c1, sum._c2, sum._n);
+	add(sum.f1()._n, sum.f2()._n, sum._n);
 	multiply(v1._d, v2._d, sum._d);
 	sum._sign = 1;
 	sum.normalize();
+
+	sum.f1().setZero();
+	sum.f2().setZero();
+
 	return sum;
 }
 
@@ -87,18 +91,20 @@ Frac& real::subtract(const Frac& v1, const Frac& v2, Frac& sub) {
 	}
 
 	sub.clear();
-	multiply(v1._n, v2._d, sub._c1);
+	multiply(v1._n, v2._d, sub.f1()._n);
 	if (v1._sign < 0) {
-		sub._c1.negate();
+		sub.f1()._n.negate();
 	}
-	multiply(v1._d, v2._n, sub._c2);
+	multiply(v1._d, v2._n, sub.f2()._n);
 	if (v2._sign > 0) {
-		sub._c2.negate();
+		sub.f2()._n.negate();
 	}
-	add(sub._c1, sub._c2, sub._n);
+	add(sub.f1()._n, sub.f2()._n, sub._n);
 	multiply(v1._d, v2._d, sub._d);
 	sub._sign = 1;
 	sub.normalize();
+	sub.f1().setZero();
+	sub.f2().setZero();
 	return sub;
 }
 
@@ -144,12 +150,22 @@ void Frac::normalize() {
 		_d.negate();
 	}
 
+	Int& _c1 = f1()._n;
+	Int& _c2 = f1()._d;
+	Int& _c3 = f2()._n;
+	Int& _c4 = f2()._d;
+
 	real::gcd(_n, _d, _c1, _c2, _c3, _c4);
 	if (_c1 != Int::one) {
 		divide(_n, _c1, _c2, _c3);
-		_n = _c2;
+		_n.swap(_c2);
 
 		divide(_d, _c1, _c2, _c3);
-		_d = _c2;
+		_d.swap(_c2);
 	}
+
+	_c1.setZero();
+	_c2.setZero();
+	_c3.setZero();
+	_c4.setZero();
 }

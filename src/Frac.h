@@ -23,7 +23,10 @@ class Frac {
 	public:
 		Frac() {}
 		Frac (const Frac& v): _sign(v._sign), _n(v._n), _d(v._d) {}
-		Frac (Frac&& v) noexcept : _sign(v._sign), _n(v._n), _d(v._d){}
+		Frac (Frac&& v) noexcept : _sign(v._sign), _n(v._n), _d(v._d), _f1(v._f1), _f2(v._f2){
+			v._f1 = nullptr;
+			v._f2 = nullptr;
+		}
 		//FRAC(const std::string& str, int base) { set(str, base); }
 		Frac(const std::string& str, int base = 10) { set(str, base); }
 		Frac(const Int& n, const Int& d) { set(n, d); }
@@ -73,9 +76,25 @@ class Frac {
 			return *this;
 		}
 
+
+		//the destructor is not virtual such that this class
+		//is not meant to be inherited
+		~Frac(){
+			cleanCache();
+		}
+
+
 	public:
 		Frac& operator = (const Frac& v) { _sign = v._sign; _n = v._n; _d = v._d; return *this; }
-		Frac& operator = (Frac&& v) noexcept { _sign = v._sign; _n = std::move(v._n), _d = std::move(v._d); return *this; }
+		Frac& operator = (Frac&& v) noexcept {
+		       	_sign = v._sign;
+		       	_n = std::move(v._n), _d = std::move(v._d);
+			_f1 = v._f1;
+			_f2 = v._f2;
+			v._f1 = nullptr;
+			v._f2 = nullptr;
+		       	return *this; 
+		}
 
 		Frac& operator = (const Int& n) {
 			_sign = 1;
@@ -221,13 +240,47 @@ class Frac {
 		const Int& d() const { return _d; }
 		const Int& n() const { return _n; }
 
+		void cleanCache() {
+			if (_f1) {
+				delete _f1;
+				_f1 = nullptr;
+			}
+
+			if (_f2) {
+				delete _f2;
+				_f2 = nullptr;
+			}
+		}
+
+		Frac& swap(Frac& v) {
+			_n.swap(v._n);
+			_d.swap(v._d);
+			std::swap(_sign, v._sign);
+			return *this;
+		}
+
 	private:
 		void normalize();
+
+		Frac& f1() {
+			if (!_f1) {
+				_f1 = new Frac();
+			}
+			return *_f1;
+		}
+		
+		Frac& f2() {
+			if (!_f2) {
+				_f2 = new Frac();
+			}
+			return *_f2;
+		}
 
 	private:
 		int _sign{};
 		Int _n;
 		Int _d;
+
 
 		// We do dirty works to reduce dynamic memory allocation.
 		// As long as we do not create or delete FRACS, by limiting ourselves
@@ -239,10 +292,9 @@ class Frac {
 		// complcated cache interfaces.
 		// Maybe we can find a better solution in the future.
 		// But for now, such a dirty compromise is made. 
-		Int _c1;
-		Int _c2;
-		Int _c3;
-		Int _c4;
+		//caches
+		Frac* _f1{ nullptr };
+		Frac* _f2{ nullptr };
 	};
 }
 #endif
