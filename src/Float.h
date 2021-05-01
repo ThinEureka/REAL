@@ -35,9 +35,15 @@ namespace real {
 		static int setDefaultPrecision(int precision) { return s_defaultPrecision = precision; }
 
 	public:
-		Float();
-		Float(const Float& v);
-		Float(Float&& v) noexcept;
+		Float() : _baseBitPos(0) {
+		}
+		Float(const Float& v) : _int(v._int), _baseBitPos(v._baseBitPos) {
+		}
+
+		Float(Float&& v) noexcept : _int(std::move(v._int)), _baseBitPos(v._baseBitPos), _f1(v._f1), _f2(v._f2) {
+			v._f1 = nullptr;
+			v._f2 = nullptr;
+		}
 
 		Float(const Int& v, int baseBitPos = 0) : _int(v), _baseBitPos(baseBitPos) {
 			normalize();

@@ -60,9 +60,15 @@ class Int {
 		}
 
 	public:
-		Int();
-		Int(const Int& v);
-		Int(Int&& v) noexcept;
+		Int(){}
+
+		Int(const Int& v) :_chunks(v._chunks), _sign(v._sign) {
+		}
+		
+		Int(Int&& v) noexcept :_chunks(std::move(v._chunks)), _sign(v._sign), _n1(v._n1), _n2(v._n2) {
+			v._n1 = nullptr;
+			v._n2 = nullptr;
+		}
 
 		Int(unsigned int v) {
 			*this = v;

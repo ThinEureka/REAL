@@ -23,17 +23,6 @@ const Int Int::s_smallInts[101] = {
 const Int& Int::zero = Int::s_smallInts[0];
 const Int& Int::one = Int::s_smallInts[1];
 
-Int::Int(){
-}
-
-Int::Int(const Int& v) :_chunks(v._chunks), _sign(v._sign) {
-}
-
-Int::Int(Int&& v) noexcept :_chunks(std::move(v._chunks)), _sign(v._sign), _n1(v._n1), _n2(v._n2) {
-	v._n1 = nullptr;
-	v._n2 = nullptr;
-}
-
 Int& Int::operator = (const Int& v) {
 	if (this == &v) {
 		return *this;

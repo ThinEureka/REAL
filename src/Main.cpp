@@ -870,7 +870,7 @@ void calculatePiWithInt() {
 }
 
 void calculate_e_withInt() {
-	for (int k = 200000; k <= 10000000; k += 100000) {
+	for (int k = 100; k <= 1000; k += 100) {
 		const clock_t begin_time = clock();
 		int n = 1;
 		Int fac_n = Int::one;
@@ -922,6 +922,67 @@ void calculate_e_withInt() {
 		if (strE[0] == '0') {
 			strE[0] = '2';
 		}
+		std::cout << "e(" << k <<"):" << strE  <<std::endl;
+
+		std::cout << "Using time(" << k << "):" << float(clock() - begin_time) / CLOCKS_PER_SEC << std::endl;
+	}
+}
+
+void calculate_e_withFloat() {
+	for (int k = 100; k <= 1000; k += 100) {
+		const clock_t begin_time = clock();
+		int n = 1;
+		Float fac_n = Float::one;
+		Float fac_n_minus_one = Float::one;
+		Float* fac = &fac_n;
+		Float ten_p = Float::one;
+		Float c;
+		const Float ten = 10;
+		std::cout << "k:" << k << std::endl;
+		std::cout << "calculating 10 to power k + 2..." << std::endl;
+		for (int i = 0; i < k + 2; ++i) {
+			ten_p *= ten;
+		}
+
+		std::cout << "calculating n ..." << std::endl;
+		while (fac_n < ten_p) {
+			++n;
+			fac_n_minus_one.swap(fac_n);
+			multiply(fac_n_minus_one, n, fac_n);
+			if (fac_n >= ten_p) {
+				multiply(fac_n_minus_one, n - 1, c);
+				if (c >= ten_p) {
+					fac = &fac_n_minus_one;
+					n--;
+				}
+				break;
+			}
+		}
+		std::cout << "n:" << n << std::endl;
+
+		std::cout << "calculating e ..." << std::endl;
+		Float u = Float::one;
+		Float s;
+		for (int i = n; i >= 2; --i) {
+			s += u;
+			if (i > 2) {
+				u *= i;
+			}
+		}
+
+		std::cout << "converting e to float..." << std::endl;
+		Float e;
+		int precision = -ten_p.leadBit()-1;
+		divide(s, *fac, e, &precision, false);
+
+		std::cout << "converting e to decimal..." << std::endl;
+		std::string strE;
+		int digit = k;
+		strE = e.toString(&k);
+		if (strE[0] == '0') {
+			strE[0] = '2';
+		}
+
 		std::cout << "e(" << k <<"):" << strE  <<std::endl;
 
 		std::cout << "Using time(" << k << "):" << float(clock() - begin_time) / CLOCKS_PER_SEC << std::endl;
@@ -1485,10 +1546,17 @@ void addReturnOptimizationTest(){
 		});
 }
 
+void addFloatTest_calculate_e(){
+	testCases.push_back([&] {
+			calculate_e_withFloat();
+		});
+}
+
+
 int main()
 {
 	//general test cases for Int class
-	//addIntTest();
+	addIntTest();
 
 	//general test cases for Frac class
 	addFracTest();
@@ -1497,10 +1565,10 @@ int main()
 	addPiTestWithInt();
 
 	//the test case that calulates pi with Frac operation
-	//addPiTestWithFrac();
+	addPiTestWithFrac();
 
 	//the test case that calculates e with Int operation
-	//addIntTest_calculate_e();
+	addIntTest_calculate_e();
 
 	addFloatTest();
 
@@ -1508,7 +1576,9 @@ int main()
 	
 	addReturnOptimizationTest();
 
-	bool reverseOrder = true;
+	addFloatTest_calculate_e();
+
+	bool reverseOrder = false;
 
 	if (reverseOrder) {
 		for (auto it = testCases.rbegin(); it != testCases.rend(); ++it) {
