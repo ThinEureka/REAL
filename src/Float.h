@@ -13,13 +13,13 @@ namespace real {
 	bool operator == (const Float& v1, const Float& v2);
 	bool operator != (const Float& v1, const Float& v2);
 
-	const Float operator >> (const Float& v1, int pos);
-	const Float operator << (const Float& v1, int pos);
+	Float operator >> (const Float& v1, int pos);
+	Float operator << (const Float& v1, int pos);
 
-	const Float operator +(const Float& v1, const Float& v2);
-	const Float operator -(const Float& v1, const Float& v2);
-	const Float operator *(const Float& v1, const Float& v2);
-	const Float operator /(const Float& v1, const Float& v2);
+	Float operator +(const Float& v1, const Float& v2);
+	Float operator -(const Float& v1, const Float& v2);
+	Float operator *(const Float& v1, const Float& v2);
+	Float operator /(const Float& v1, const Float& v2);
 
 	Float& add(const Float& v1, const Float& v2, Float& sum);
 	Float& subtract(const Float& v1, const Float& v2, Float& sub);
@@ -63,19 +63,19 @@ namespace real {
 			cleanCache();
 		}
 
-		const Float floor(int bitPos = 0, bool* isModified = nullptr) const {
+		Float floor(int bitPos = 0, bool* isModified = nullptr) const {
 			Float f = *this;
 			f.setFloor(bitPos = 0, isModified);
 			return f;
 		}
 
-		const Float ceil(int bitPos = 0, bool* isModified = nullptr) const { 
+		Float ceil(int bitPos = 0, bool* isModified = nullptr) const { 
 			Float f = *this;
 			f.setCeil(bitPos, isModified);
 			return f;
 		}
 
-		const Float intValue(bool * isModified = nullptr) const {
+		Float intValue(bool * isModified = nullptr) const {
 			Float f = *this;
 			f.setInt(isModified);
 			return f;
@@ -90,7 +90,7 @@ namespace real {
 		Float& truncate(int bitPos, bool* isModified = nullptr);
 		Float& extend(int bitPos, bool* isModified = nullptr);
 
-		const Int toInt() const {
+		Int toInt() const {
 			Int n;
 			if (_baseBitPos <= 0) {
 				n.setZero();
@@ -103,7 +103,7 @@ namespace real {
 		}
 
 		//currently we only support one notation
-		const std::string toString(const int* pDigit = nullptr, int base = 10, Int* cacheP = nullptr, Int* cacheQ = nullptr, Int* cacheR = nullptr, Int* cacheS = nullptr) const;
+		std::string toString(const int* pDigit = nullptr, int base = 10, Int* cacheP = nullptr, Int* cacheQ = nullptr, Int* cacheR = nullptr, Int* cacheS = nullptr) const;
 		Float& set(const std::string& str, int base = 10, const int* pPrecision = nullptr, bool isRelativePrecision = true);
 
 		Float& set(const Int& n, int baseBitPos) {
@@ -254,35 +254,35 @@ namespace real {
 			return compare(v1, v2) >= 0;
 		}
 
-		friend const Float operator >> (const Float& v1, int pos) {
+		friend Float operator >> (const Float& v1, int pos) {
 			Float v = v1;
 			v >>= pos;
 			return v;
 		}
 
-		friend const Float operator << (const Float& v1, int pos) {
+		friend Float operator << (const Float& v1, int pos) {
 			Float v = v1;
 			v <<= pos;
 			return v;
 		}
 
-		friend const Float operator +(const Float& v1, const Float& v2) {
+		friend Float operator +(const Float& v1, const Float& v2) {
 			Float sum;
 			add(v1, v2, sum);
 			return sum;
 		}
 
-		friend const Float operator -(const Float& v1, const Float& v2) {
+		friend Float operator -(const Float& v1, const Float& v2) {
 			Float sub;
 			subtract(v1, v2, sub);
 			return sub;
 		}
-		friend const Float operator *(const Float& v1, const Float& v2) {
+		friend Float operator *(const Float& v1, const Float& v2) {
 			Float product;
 			multiply(v1, v2, product);
 			return product;
 		}
-		friend const Float operator /(const Float& v1, const Float& v2) {
+		friend Float operator /(const Float& v1, const Float& v2) {
 			Float q;
 			divide(v1, v2, q, nullptr);
 			return q;

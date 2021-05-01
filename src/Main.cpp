@@ -1474,6 +1474,15 @@ void addReturnOptimizationTest(){
 		Int c = a + b;
 		std::cout << "<<<<<<<<<<<<<int return optimization  test end>>>>>>>>>>>>>>>>>>>>" << std::endl;
 		});
+	
+	testCases.push_back([&] {
+		Float a = Float("84738482365762375627567657627567");
+		Float b = Float("84738482365762375627567657627567");
+		std::cout << "<<<<<<<<<<<<<Float return optimization  test begin>>>>>>>>>>>>>>>>>>>>" << std::endl;
+		Float c;
+		c = a + b;
+		std::cout << "<<<<<<<<<<<<<Float return optimization  test end>>>>>>>>>>>>>>>>>>>>" << std::endl;
+		});
 }
 
 int main()

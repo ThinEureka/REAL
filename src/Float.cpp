@@ -295,7 +295,7 @@ Float& Float::calculateInverse(Float& q, const int* pPrecision, bool isRelativeP
 	}
 }
 
-const std::string Float::toString(const int* pDigit, int base, Int * cacheP, Int * cacheQ, Int* cacheR, Int* cacheS) const{
+std::string Float::toString(const int* pDigit, int base, Int * cacheP, Int * cacheQ, Int* cacheR, Int* cacheS) const{
 	std::string str;
 
 	if (isZero()) {
