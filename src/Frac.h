@@ -167,9 +167,10 @@ class Frac {
 		Frac& inverse() { std::swap(_n, _d); return *this; }
 
 	public:
-		const Frac operator - () const {
+		Frac operator - () const {
 			Frac v = *this;
-			return v.negate();
+			v.negate();
+			return v;
 		}
 
 		friend bool operator == (const Frac& v1, const Frac& v2) {
@@ -215,20 +216,24 @@ class Frac {
 		}
 		
 		Frac& operator += (const Frac& v1) {
-			Frac sum; 
-			return *this = add(*this, v1, sum);
+			add(*this, v1, f1());
+			this->swap(f1());
+			return *this;
 		}
 		Frac& operator -= (const Frac& v1) {
-			Frac sub;
-			return *this = subtract(*this, v1, sub);
+			subtract(*this, v1, f1());
+			this->swap(f1());
+			return *this;
 		}
 		Frac& operator *= (const Frac& v1) {
-			Frac product;
-			return *this = multiply(*this, v1, product);
+			multiply(*this, v1, f1());
+			this->swap(f1());
+			return *this;
 		}
 		Frac& operator /= (const Frac& v1) {
-			Frac q;
-			return *this = divide(*this, v1, q);
+			divide(*this, v1, f1());
+			this->swap(f1());
+			return *this;
 		}
 
 		friend Frac& add(const Frac& v1, const Frac& v2, Frac& sum);
