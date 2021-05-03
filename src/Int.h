@@ -118,7 +118,8 @@ class Int {
 		long long toLongLong(bool& isOverFlow) const { return toLinkSigned(isOverFlow); }
 		unsigned long long toUlonglong(bool& isOverFlow) const { return toLink(isOverFlow); }
 
-		std::string toString(int base = 10, Int* cacheR = nullptr, Int* cacheN = nullptr, Int* cacheQ = nullptr ) const;
+		std::string toString(int base = 10, std::string* pStr = nullptr, std::vector<int>* pAnybase = nullptr) const;
+		void toAnybase(std::vector<int>& anybase, int base = 10) const;
 		Int& set(const std::string& str, int base = 10);
 
 		Int& set (int sign, const std::vector<typeChunk>& chunks){

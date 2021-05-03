@@ -929,7 +929,7 @@ void calculate_e_withInt() {
 }
 
 void calculate_e_withFloat() {
-	for (int k = 100; k <= 1000; k += 100) {
+	for (int k = 10; k <= 100; k += 10) {
 		const clock_t begin_time = clock();
 		int n = 1;
 		Float fac_n = Float::one;
@@ -976,6 +976,9 @@ void calculate_e_withFloat() {
 		divide(s, *fac, e, &precision, false);
 
 		std::cout << "converting e to decimal..." << std::endl;
+		std::cout << "Using time(" << k << "):" << float(clock() - begin_time) / CLOCKS_PER_SEC << std::endl;
+
+		/*
 		std::string strE;
 		int digit = k;
 		strE = e.toString(&k);
@@ -986,6 +989,7 @@ void calculate_e_withFloat() {
 		std::cout << "e(" << k <<"):" << strE  <<std::endl;
 
 		std::cout << "Using time(" << k << "):" << float(clock() - begin_time) / CLOCKS_PER_SEC << std::endl;
+		*/
 	}
 }
 
@@ -1578,7 +1582,7 @@ int main()
 
 	addFloatTest_calculate_e();
 
-	bool reverseOrder = false;
+	bool reverseOrder = true;
 
 	if (reverseOrder) {
 		for (auto it = testCases.rbegin(); it != testCases.rend(); ++it) {

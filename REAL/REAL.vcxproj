@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\algorithm.cpp" />
+    <ClCompile Include="..\src\AnyBase.cpp" />
     <ClCompile Include="..\src\Float.cpp" />
     <ClCompile Include="..\src\Frac.cpp" />
     <ClCompile Include="..\src\Int.cpp" />
@@ -147,6 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\algorithm.h" />
+    <ClInclude Include="..\src\AnyBase.h" />
     <ClInclude Include="..\src\Float.h" />
     <ClInclude Include="..\src\Frac.h" />
     <ClInclude Include="..\src\Int.h" />

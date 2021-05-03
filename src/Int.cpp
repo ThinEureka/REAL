@@ -1,4 +1,5 @@
 #include "Int.h"
+#include "AnyBase.h"
 #include <assert.h> 
 
 using namespace real;
@@ -143,69 +144,45 @@ Int::typeLinkSigned Int::toLinkSigned(bool& isOverFlow) const {
 	return result;
 }
 
-std::string Int::toString(int base, Int* cacheR, Int* cacheN, Int* cacheQ) const {
-	assert(base >= 2 && base <= 35);
-	if (_sign == 0) {
-		return "0";
+std::string Int::toString(int base, std::string* pStr, std::vector<int>* pAnybase) const {
+	std::string dummyStr;
+	std::string& str = pStr ? *pStr : dummyStr;
+	if (isZero()){
+		str = "0";
+		return str;
 	}
 
-	std::string str;
-	if (_sign < 0) {
+	str.clear();
+	std::vector<int>& anybase = pAnybase ? *pAnybase : *(new std::vector<int>);
+	toAnybase(anybase, base);
+
+	if (isNegative()){
 		str += '-';
 	}
 
-	if (_chunks.size() == 0) {
-		str += '0';
-		return str;
+	for (auto it = anybase.rbegin(); it != anybase.rend(); ++it){
+		str += Int::chunkToDigit(static_cast<Int::typeChunk>(*it), base);
 	}
 
-	if (_chunks.size() == 1 && _chunks[0] < static_cast<Int::typeChunk>(base)) {
-		//TODO:
-		//optimize when size == 1
-		str += chunkToDigit(_chunks[0], base);
-		return str;
-	}
-
-	Int& r = cacheR ? *cacheR : *(new Int);
-	Int& n = cacheR ? *cacheN : *(new Int(*this));
-	Int& q = cacheR ? *cacheQ : *(new Int());
-	const Int& d = s_smallInts[base];
-
-	while (chunksCompare(n._chunks, d._chunks) >= 0) {
-		n = divide(n, d, q, r);
-		if (r._chunks.size() == 0) {
-			str += '0';
-		}
-		else {
-			str += chunkToDigit(r._chunks[0], base);
-		}
-	}
-
-	if (n._chunks.size() > 0) {
-		str += chunkToDigit(n._chunks[0], base);
-	}
-
-	size_t i = 0;
-	do{
-		size_t targetIndex = i;
-		if (_sign < 0) {
-			targetIndex = i + 1;
-		}
-		size_t swapIndex = str.size() - 1 - i;
-		if (targetIndex < swapIndex) {
-			std::swap(str[targetIndex], str[swapIndex]);
-			++i;
-		}
-		else {
-			break;
-		}
-	} while (true);
-
-	if (!cacheN) delete& n;
-	if (!cacheR) delete& r;
-	if (!cacheQ) delete& q;
+	if (!pAnybase) delete &anybase;
 
 	return str;
+}
+
+void Int::toAnybase(std::vector<int>& anybase, int base) const{
+	anybase.clear();
+	if (isZero()){
+		anybase.push_back(0);
+		return;
+	}
+
+	for (int i = leadBit(); i >= 0; --i){
+		anybaseDouble(anybase, base);
+		int bit = this->bit(i);
+		if (bit){
+			anybaseAddOne(anybase, base);
+		}
+	}
 }
 
 Int& Int::set(const std::string& str, int base) {
