@@ -285,67 +285,73 @@ Float& Float::calculateInverse(Float& q, const int* pPrecision, bool isRelativeP
 	}
 }
 
-std::string Float::toString(const int* pDigit, int base, Int * cacheP, Int * cacheQ, Int* cacheR, Int* cacheS) const{
-	std::string str;
-
+std::string Float::toString(const int* pDigit, int base, std::string* pStr, std::vector<int>* pAnybase, Float* cacheP) const{
+	std::string dummyStr;
+	std::string& str = pStr ? *pStr : dummyStr;
+	str.clear();
 	if (isZero()) {
 		str += '0';
 		return str;
 	}
 
-	Int& p = cacheP ? *cacheP : *(new Int);
-	Int& q = cacheQ ? *cacheQ : *(new Int);
-	Int& r = cacheR ? *cacheR : *(new Int);
-	Int& s = cacheS ? *cacheS : *(new Int);
-	p = _int;
-	q.setOne();
+	Float& p = cacheP ? *cacheP : *(new Float);
+	if (_baseBitPos >= 0){
+		this->toInt(p.f1(), p._int);
+		p._int.toString(base, &str, pAnybase);
+		p.setZero();
+		if (!cacheP) delete &p;
+		return str;
+	}
 
-	if (isNegative()) {
-		p.negate();
+	//here we're sure the integer case has been precoessed
+	std::vector<int>& anybase = pAnybase ? *pAnybase : *(new std::vector<int>);
+	anybase.clear();
+
+	if (isNegative()){
 		str += '-';
 	}
 
-	if (_baseBitPos > 0) {
-		p <<= _baseBitPos;
+	this->toInt(p.f1(), p._int);
+	p._int.toAnybase(anybase, base);
+
+	for (auto it = anybase.rbegin(); it != anybase.rend(); ++it){
+		str += Int::chunkToDigit(static_cast<Int::typeChunk>(*it), base);
 	}
-	else if (_baseBitPos < 0) {
-		q <<= -_baseBitPos;
-	}
+
+	str += '.';
+	subtract(*this, p.f1(), p.f2());
+	p.swap(p.f2());
 
 	int digit = pDigit ? *pDigit : -s_defaultPrecision;
-	if (p >= q) {
-		divide(p, q, r, s);
-		str += r.toString(base);
-		if (s.isZero()) {
-			if (cacheP) delete &p;
-			if (cacheQ) delete &q;
-			if (cacheR) delete &r;
-			if (cacheS) delete &s;
-			return str;
-		}
-		else {
-			std::swap(p, s);
-			str += '.';
-		}
-	}
-	else {
-		str += "0.";
+	int shiftTimes = 0;
+
+	// *= only use f1()
+	p.f2() = base;
+	const Float& fBase = p.f2(); 
+
+	while (shiftTimes < digit && p.tailBit() < 0){
+		p *= fBase;
+		shiftTimes++;
 	}
 
-	while (digit-- > 0 && p < q) {
-		p *= Int::s_smallInts[base];
-		divide(p, q, r, s);
-		str += Int::chunkToDigit(r.chunk(0), base);
-		if (s.isZero()) {
-			break;
-		}
-		std::swap(p, s);
+	p.toInt(p.f1(), p.f2()._int);
+	p.f2()._int.toAnybase(anybase, base);
+
+	int paddingZero = shiftTimes - static_cast<int>(anybase.size()); 
+
+	for (int i = 0; i < paddingZero; ++i){
+		str += '0';
 	}
 
-	if (cacheP) delete& p;
-	if (cacheQ) delete& q;
-	if (cacheR) delete& r;
-	if (cacheS) delete& s;
+	for (auto it = anybase.rbegin(); it != anybase.rend(); ++it){
+		str += Int::chunkToDigit(static_cast<Int::typeChunk>(*it), base);
+	}
+
+	p.setZero();
+	p.f2().setZero();
+
+	if (!cacheP) delete &p;
+	if (!pAnybase) delete &anybase;
 
 	return str;
 }

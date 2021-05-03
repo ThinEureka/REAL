@@ -97,19 +97,29 @@ namespace real {
 		Float& extend(int bitPos, bool* isModified = nullptr);
 
 		Int toInt() const {
+			Float f;
 			Int n;
-			if (_baseBitPos <= 0) {
-				n.setZero();
-				return n;
-			}
-
-			n = _int;
-			n <<= _baseBitPos;
+			toInt(f, n);
 			return n;
 		}
 
+		Int toInt() {
+			Int n;
+			toInt(f1(), n);
+			return n;
+		}
+
+		void toInt(Float& f, Int& n) const {
+			f = *this;
+			f.truncate(0);
+			n = f._int;
+			if (f._baseBitPos > 0){
+				n <<= f._baseBitPos;
+			}
+		}	
+
 		//currently we only support one notation
-		std::string toString(const int* pDigit = nullptr, int base = 10, Int* cacheP = nullptr, Int* cacheQ = nullptr, Int* cacheR = nullptr, Int* cacheS = nullptr) const;
+		std::string toString(const int* pDigit = nullptr, int base = 10, std::string* pStr = nullptr, std::vector<int>* pAnybase = nullptr, Float* cacheP = nullptr) const;
 		Float& set(const std::string& str, int base = 10, const int* pPrecision = nullptr, bool isRelativePrecision = true);
 
 		Float& set(const Int& n, int baseBitPos) {

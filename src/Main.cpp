@@ -975,10 +975,9 @@ void calculate_e_withFloat() {
 		int precision = -ten_p.leadBit()-1;
 		divide(s, *fac, e, &precision, false);
 
+		std::cout << "Pure calculation Using time(" << k << "):" << float(clock() - begin_time) / CLOCKS_PER_SEC << std::endl;
+		
 		std::cout << "converting e to decimal..." << std::endl;
-		std::cout << "Using time(" << k << "):" << float(clock() - begin_time) / CLOCKS_PER_SEC << std::endl;
-
-		/*
 		std::string strE;
 		int digit = k;
 		strE = e.toString(&k);
@@ -989,7 +988,6 @@ void calculate_e_withFloat() {
 		std::cout << "e(" << k <<"):" << strE  <<std::endl;
 
 		std::cout << "Using time(" << k << "):" << float(clock() - begin_time) / CLOCKS_PER_SEC << std::endl;
-		*/
 	}
 }
 
@@ -1598,7 +1596,13 @@ int main()
 			std::cout << "###################################################" << std::endl << std::endl;
 		}
 	}
+
+	char g = '\0';
+	cout << "All test is done, enter x to continue!" << std::endl;
+	do {
+		std::cin >> g;
+	}while (g != 'x');
+
 	return 0;
-	
 
 }
