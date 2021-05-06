@@ -164,8 +164,6 @@ void Frac::normalize() {
 		_d.swap(_c2);
 	}
 
-	_c1.setZero();
-	_c2.setZero();
-	_c3.setZero();
-	_c4.setZero();
+	f1().setZero();
+	f2().setZero();
 }
