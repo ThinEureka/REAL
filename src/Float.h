@@ -55,6 +55,10 @@ namespace real {
 
 		Float(int v, int baseBitPos = 0) : _int(v), _baseBitPos(baseBitPos) { normalize(); }
 
+		Float(long v, int baseBitPos = 0) : _int(v), _baseBitPos(baseBitPos) { normalize(); }
+
+		Float(unsigned long v, int baseBitPos = 0) : _int(v), _baseBitPos(baseBitPos) { normalize(); }
+
 		Float(long long v, int baseBitPos = 0) : _int(v), _baseBitPos(baseBitPos) { normalize(); }
 
 		Float(unsigned int v, int baseBitPos = 0) : _int(v), _baseBitPos(baseBitPos) { normalize(); }

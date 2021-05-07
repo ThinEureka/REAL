@@ -194,7 +194,7 @@ class Int {
 			clear();
 			if (v != 0) {
 				_sign = 1;
-				Int::typeChunk lowChunk = static_cast<Int::typeChunk>(1);
+				Int::typeChunk lowChunk = static_cast<Int::typeChunk>(v);
 				_chunks.push_back(lowChunk);
 				Int::typeChunk highChunk = v >> Int::s_numBitsOfChunk;
 				if (highChunk > 0) {
