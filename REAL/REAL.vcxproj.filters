@@ -33,6 +33,9 @@
     <ClCompile Include="..\src\AnyBase.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\ElementaryFunction.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Int.h">
@@ -48,6 +51,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\src\AnyBase.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ElementaryFunction.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

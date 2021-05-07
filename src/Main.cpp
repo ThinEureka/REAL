@@ -1,7 +1,8 @@
 #include "Int.h"
 #include "Frac.h"
 #include "Float.h"
-#include "algorithm"
+#include "algorithm.h"
+#include "ElementaryFunction.h"
 #include <iostream>
 #include <functional>
 #include <vector>
@@ -1554,6 +1555,14 @@ void addFloatTest_calculate_e(){
 		});
 }
 
+void addElementaryFunctionTest(){
+	testCases.push_back([&] {
+			Float x = 1;
+			Float e_x = e(x);
+			std::cout << e_x.toString() << std::endl;
+		});
+}
+
 
 int main()
 {
@@ -1579,6 +1588,8 @@ int main()
 	addReturnOptimizationTest();
 
 	addFloatTest_calculate_e();
+
+	addElementaryFunctionTest();
 
 	bool reverseOrder = true;
 
