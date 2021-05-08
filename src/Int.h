@@ -177,7 +177,7 @@ class Int {
 			clear();
 			if (v != 0) {
 				_sign = v > 0 ? 1 : -1;
-				_chunks.push_back(v);
+				_chunks.push_back(std::abs(v));
 			}
 			return *this;
 		}
