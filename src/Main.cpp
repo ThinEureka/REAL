@@ -1559,7 +1559,15 @@ void addElementaryFunctionTest(){
 	testCases.push_back([&] {
 			Float x = 1;
 			Float e_x = e(x);
-			std::cout << e_x.toString() << std::endl;
+			std::cout << "e(x):" << e_x.toString() << std::endl;
+			std::cout << "simple e(x) test" << std::endl;
+		});
+
+	testCases.push_back([&] {
+			Float x = Float("3.141592654");
+			Float sin_x = sin(x);
+			std::cout << "sin(x):" << sin_x.toString() << std::endl;
+			std::cout << "simple sin(x) test" << std::endl;
 		});
 }
 

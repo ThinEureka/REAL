@@ -8,6 +8,7 @@
 namespace real{
 	//simple interface 
 	Float e(const Float& x, const int* precision = nullptr);
+	Float sin(const Float& x, const int* precision = nullptr);
 }
 
 #endif
