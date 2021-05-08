@@ -14,7 +14,6 @@ Float real::e(const Float& x, const int* precision){
 }
 
 Float& e_series(const Float& x, Float& result, const int* precision){
-	int realPrecision = precision ? *precision : Float::defaultPrecision();
 	if (x.isZero()){
 		result = Float::one;
 		return result;
@@ -27,6 +26,26 @@ Float& e_series(const Float& x, Float& result, const int* precision){
 	fac.push_back(new Float(1));
 
 	size_t i = 0;
+
+	int realPrecision = precision ? *precision : Float::defaultPrecision();
+	if (x.isPositive()){
+		//we should limit the range of x,  
+		const Float three = 3;
+		Float y = Float::one;
+		Float k = Float::one;
+		while (k < x){
+			y *= three;
+			k += Float::one;
+		}
+		realPrecision -= (y.leadBit() + 1);
+	}
+	else {
+		//we should limit the range of x,  
+		Int y = x.toInt();
+		y.negate();
+		bool isOverFlow = false;
+		realPrecision += static_cast<int>(y.toChunk(isOverFlow));
+	}
 
 	while(true) {
 		++i;
