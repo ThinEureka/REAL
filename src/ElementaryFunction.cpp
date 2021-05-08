@@ -3,7 +3,15 @@
 
 using namespace real;
 
-Float& real::e_series(const Float& x, Float& result, const int* precision){
+static Float& e_series(const Float& x, Float& result, const int* precision);
+
+Float real::e(const Float& x, const int* precision){
+	Float result;
+	e_series(x, result, precision);
+	return result;
+}
+
+Float& e_series(const Float& x, Float& result, const int* precision){
 	int realPrecision = precision ? *precision : Float::defaultPrecision();
 	if (x.isZero()){
 		result = Float::one;
