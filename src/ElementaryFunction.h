@@ -6,10 +6,10 @@
 #include "Float.h"
 
 namespace real{
-	//simple interface 
 	Float e(const Float& x, const int* precision = nullptr);
 	Float sin(const Float& x, const int* precision = nullptr);
 	Float cos(const Float& x, const int* precision = nullptr);
+	Float sqrt(const Float& x, const int* precision = nullptr);
 }
 
 #endif

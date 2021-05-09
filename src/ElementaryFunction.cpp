@@ -1,5 +1,6 @@
 #include "ElementaryFunction.h"
 #include <vector>
+#include "assert.h"
 
 using namespace real;
 
@@ -225,4 +226,45 @@ Float& cos_series(const Float& x, Float& result, const int* precision){
 
 	return result;
 }
+
+Float real::sqrt(const Float& x, const int* precision){
+	Float result;
+	assert(!x.isNegative());
+	if (x.isZero()){
+		result.setZero();
+		return result;
+	}
+
+	Float& xn = result;
+	int realPrecision = precision ? *precision : Float::defaultPrecision();
+	const int P = x.leadBit();
+	xn.set(Int::one, P/2 + 1);
+
+	assert(xn >= x);
+	Float s;
+	Float d;
+	while(true){
+		//s = xn^2
+		multiply(xn, xn, s);
+		subtract(s, x, d);
+
+		const int Q = d.leadBit();
+		const int T = xn.leadBit();
+		if (Q + 1 < realPrecision + P/2 + 1){
+			break;
+		}
+		else{
+			int lowerBound = 2*Q - T - 2;
+			int truncatePrecision = lowerBound - 1;
+			s += x;
+
+			d = xn;
+			d <<= 1;
+			divide(s, d, xn, &truncatePrecision, false);
+		}
+	}
+
+	return result;
+}
+
 

@@ -1584,6 +1584,13 @@ void addElementaryFunctionTest(){
 			std::cout << "simple cos(x) test" << std::endl;
 		});
 
+	testCases.push_back([&] {
+			Float x = 2;
+			Float sqrt_x = sqrt(x);
+			std::cout << "sqrt(2):" << sqrt_x.toString() << std::endl;
+			std::cout << "simple sqrt(x) test" << std::endl;
+		});
+
 }
 
 
