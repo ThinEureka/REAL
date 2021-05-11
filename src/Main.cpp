@@ -7,6 +7,8 @@
 #include <functional>
 #include <vector>
 #include <cmath>
+#include <random>
+#include "time.h"
 
 using namespace real;
 using namespace std;
@@ -1589,6 +1591,57 @@ void addElementaryFunctionTest(){
 			Float sqrt_x = sqrt(x);
 			std::cout << "sqrt(2):" << sqrt_x.toString() << std::endl;
 			std::cout << "simple sqrt(x) test" << std::endl;
+		});
+
+	testCases.push_back([&] {
+			Float x = 2;
+			Float sqrt_x = sqrt(x);
+			std::cout << "sqrt(2):" << sqrt_x.toString() << std::endl;
+			std::cout << "simple sqrt(x) test" << std::endl;
+		});
+
+
+	testCases.push_back([&] {
+			std::random_device rd;
+			std::uniform_int_distribution<int> dice(0,9);
+			for (int i = 0; i < 10; ++i) {
+				std::string str;
+
+				for (int j = 0; j < 2; ++j){
+					str += static_cast<char>(0x30 + dice(rd));
+				}
+				str += '.';
+				for (int k = 0; k < 20; ++k){
+					str += static_cast<char>(0x30 + dice(rd));
+				}
+				if (dice(rd) >= 5){
+					str = '-' + str;
+				}
+
+				std::cout << "str:" << str << std::endl;
+
+				Float x = Float(str);
+				std::cout << "x:" << x.toString() << std::endl;
+
+				const int precision = -256;
+				Float sin_x = sin(x, &precision);
+				std::cout << "sin(x):" << sin_x.toString() << std::endl;
+
+				Float cos_x = cos(x, &precision);
+				std::cout << "cos(x):" << cos_x.toString() << std::endl;
+
+				Float s_sum = sin_x * sin_x + cos_x * cos_x;
+				std::cout << "s_sum:" << s_sum.toString() << std::endl;
+
+				Float d = s_sum - 1;
+				std::cout << "d:" << d.toString() << std::endl;
+
+				Float p(1, precision+1);
+				std::cout << "p:" << p.toString() << std::endl;
+				assert(absCompare(d, p) < 0);
+
+				std::cout << "random test for sin(x),  cos(x) test 1 passed" << std::endl;
+			}
 		});
 
 }
