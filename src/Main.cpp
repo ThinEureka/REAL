@@ -1640,10 +1640,49 @@ void addElementaryFunctionTest(){
 				std::cout << "p:" << p.toString() << std::endl;
 				assert(absCompare(d, p) < 0);
 
-				std::cout << "random test for sin(x),  cos(x) test 1 passed" << std::endl;
+				if (i < 9) {
+					std::cout << "----------------------------------------------------------------------------------" << std::endl;
+				}
 			}
-		});
 
+			std::cout << "random test for sin(x),  cos(x) test 1 passed" << std::endl;
+		});
+	
+	testCases.push_back([&] {
+			const Float pi ("3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214");
+			const Float two_pi = pi << 1;
+			int N = 24;
+			Float step;
+			const int precision = -257;
+		       	divide(two_pi, N, step, &precision, false);
+			Float x;
+			for (int i = 0; i <= N; ++i) {
+				std::cout << "x:" << x.toString() << std::endl;
+
+				Float sin_x = sin(x, &precision);
+				std::cout << "sin(" << i * 360 / N << "deg):" << sin_x.toString() << std::endl;
+
+				Float cos_x = cos(x, &precision);
+				std::cout << "cos(" << i * 360 / N << "deg):" << cos_x.toString() << std::endl;
+
+				Float s_sum = sin_x * sin_x + cos_x * cos_x;
+				std::cout << "s_sum:" << s_sum.toString() << std::endl;
+
+				Float d = s_sum - 1;
+				std::cout << "d:" << d.toString() << std::endl;
+
+				Float p(1, precision+1);
+				std::cout << "p:" << p.toString() << std::endl;
+				assert(absCompare(d, p) < 0);
+
+				x += step;
+
+				if (i < N){
+					std::cout << "----------------------------------------------------------------------------------" << std::endl;
+				}
+			}
+			std::cout << "random test for sin(x),  cos(x) test 2 passed" << std::endl;
+		});
 }
 
 
