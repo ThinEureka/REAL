@@ -9,6 +9,9 @@
 #include <cmath>
 #include <random>
 #include "time.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "getopt.h"
 
 using namespace real;
 using namespace std;
@@ -1685,9 +1688,7 @@ void addElementaryFunctionTest(){
 		});
 }
 
-
-int main()
-{
+static void addTestCases(){
 	//general test cases for Int class
 	addIntTest();
 
@@ -1712,29 +1713,97 @@ int main()
 	addFloatTest_calculate_e();
 
 	addElementaryFunctionTest();
+}
+enum class action {
+	next,
+	all,
+	exit,
+};
 
-	bool reverseOrder = true;
-
-	if (reverseOrder) {
-		for (auto it = testCases.rbegin(); it != testCases.rend(); ++it) {
-			std::cout << "***************************************************" << std::endl;
-			(*it)();
-			std::cout << "###################################################" << std::endl << std::endl;
-		}
-	}
-	else {
-		for (auto it = testCases.begin(); it != testCases.end(); ++it) {
-			std::cout << std::endl << "***************************************************" << std::endl;
-			(*it)();
-			std::cout << "###################################################" << std::endl << std::endl;
-		}
-	}
-
-	char g = '\0';
-	cout << "All test is done, enter x to continue!" << std::endl;
+static action nextAction() {
 	do {
-		std::cin >> g;
-	}while (g != 'x');
+		std::cout << "Please enter n for next test, a for all tests, x for exit" << std::endl;
+		char m;
+		std::cin >> m;
+		if (m == 'n'){
+			return action::next;
+		}
+		else if (m == 'a'){
+			return action::all;
+		}
+		else if (m == 'x') {
+			return action::exit;
+		}
+
+	}while(true);
+}
+
+static void runTest(bool reverseOrder, bool oneByOne) {
+	int beginIndex = 0;
+	int endIndex = testCases.size();
+	int step = 1;
+
+	if (reverseOrder){
+		beginIndex = testCases.size() - 1;
+		endIndex = -1;
+		step = -1;
+	}
+
+	for (int i = beginIndex; i != endIndex; i += step){
+		std::cout << "***************************************************" << std::endl;
+		testCases[i]();
+		std::cout << "###################################################" << std::endl << std::endl;
+
+		if (oneByOne){
+			auto act = nextAction();
+			switch(act){
+				case action::next:
+					break;
+
+				case action::all:
+					oneByOne = false;
+					break;
+
+				case action::exit:
+					return;
+					break;
+			}
+		}
+	}
+
+}
+	
+static void usage(const char *argv0)
+{
+	fprintf(stderr, "Usage: %s [-r][-o] n", argv0);
+	exit(EXIT_FAILURE);
+}
+
+int main(int argc, char* argv[])
+{
+	int number = 0;
+	int opt;
+
+	bool reverseOrder = false;
+	bool oneByOne = false;
+
+	while ((opt = getopt(argc, argv, "ro")) != -1)
+	{
+		switch (opt)
+		{
+			case 'r':
+				reverseOrder = true;
+				break;
+			case 'o':
+				oneByOne = true;
+				break;
+			default:
+				usage(argv[0]);
+		}
+	}
+
+	addTestCases();
+	runTest(reverseOrder, oneByOne);
 
 	return 0;
 

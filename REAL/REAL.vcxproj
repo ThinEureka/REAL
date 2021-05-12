@@ -144,6 +144,7 @@
     <ClCompile Include="..\src\ElementaryFunction.cpp" />
     <ClCompile Include="..\src\Float.cpp" />
     <ClCompile Include="..\src\Frac.cpp" />
+    <ClCompile Include="..\src\getopt.c" />
     <ClCompile Include="..\src\Int.cpp" />
     <ClCompile Include="..\src\Main.cpp" />
   </ItemGroup>
@@ -153,6 +154,7 @@
     <ClInclude Include="..\src\ElementaryFunction.h" />
     <ClInclude Include="..\src\Float.h" />
     <ClInclude Include="..\src\Frac.h" />
+    <ClInclude Include="..\src\getopt.h" />
     <ClInclude Include="..\src\Int.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
