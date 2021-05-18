@@ -1563,14 +1563,14 @@ void addFloatTest_calculate_e(){
 void addElementaryFunctionTest(){
 	testCases.push_back([&] {
 			Float x = 1;
-			Float e_x = e(x);
+			Float e_x = exp(x);
 			std::cout << "e(1):" << e_x.toString() << std::endl;
 			std::cout << "simple e(x) test" << std::endl;
 		});
 
 	testCases.push_back([&] {
 			Float x = -1;
-			Float e_x = e(x);
+			Float e_x = exp(x);
 			std::cout << "e(-1):" << e_x.toString() << std::endl;
 			std::cout << "simple e(x) test" << std::endl;
 		});
@@ -1724,13 +1724,13 @@ void addElementaryFunctionTest(){
 				std::cout << "x:" << x.toString() << std::endl;
 
 				int precision = -256;
-				Float y1 = e(x1, &precision);
+				Float y1 = exp(x1, &precision);
 				std::cout << "y1:" << y1.toString() << std::endl;
 
-				Float y2 = e(x2, &precision);
+				Float y2 = exp(x2, &precision);
 				std::cout << "y2:" << y2.toString() << std::endl;
 
-				Float y = e(x, &precision);
+				Float y = exp(x, &precision);
 				std::cout << "y:" << y.toString() << std::endl;
 
 				Float y1y2 = y1 * y2;

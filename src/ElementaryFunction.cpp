@@ -4,17 +4,17 @@
 
 using namespace real;
 
-static Float& e_series(const Float& x, Float& result, const int* precision);
+static Float& exp_series(const Float& x, Float& result, const int* precision);
 static Float& sin_series(const Float& x, Float& result, const int* precision);
 static Float& cos_series(const Float& x, Float& result, const int* precision);
 
-Float real::e(const Float& x, const int* precision){
+Float real::exp(const Float& x, const int* precision){
 	Float result;
-	e_series(x, result, precision);
+	exp_series(x, result, precision);
 	return result;
 }
 
-Float& e_series(const Float& x, Float& result, const int* precision){
+Float& exp_series(const Float& x, Float& result, const int* precision){
 	if (x.isZero()){
 		result = Float::one;
 		return result;
