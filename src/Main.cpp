@@ -1565,14 +1565,14 @@ void addElementaryFunctionTest(){
 			Float x = 1;
 			Float e_x = exp(x);
 			std::cout << "e(1):" << e_x.toString() << std::endl;
-			std::cout << "simple e(x) test" << std::endl;
+			std::cout << "simple exp(x) test" << std::endl;
 		});
 
 	testCases.push_back([&] {
 			Float x = -1;
 			Float e_x = exp(x);
 			std::cout << "e(-1):" << e_x.toString() << std::endl;
-			std::cout << "simple e(x) test" << std::endl;
+			std::cout << "simple exp(x) test" << std::endl;
 		});
 	
 	testCases.push_back([&] {
@@ -1746,7 +1746,7 @@ void addElementaryFunctionTest(){
 				std::cout << "----------------------------------" << std::endl;
 			}
 
-			std::cout << "random test for e(x) passed" << std::endl;
+			std::cout << "random test for exp(x) passed" << std::endl;
 	});
 }
 
