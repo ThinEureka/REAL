@@ -33,7 +33,7 @@ Float& e_series(const Float& x, Float& result, const int* precision){
 		//we should limit the range of x,  
 		const Float three = 3;
 		Float y = Float::one;
-		Float k = Float::one;
+		Float k = Float::zero;
 		while (k < x){
 			y *= three;
 			k += Float::one;

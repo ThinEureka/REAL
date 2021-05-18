@@ -65,7 +65,7 @@ namespace real {
 
 		Float(unsigned long long v, int baseBitPos = 0) : _int(v), _baseBitPos(baseBitPos) { normalize(); }
 
-		explicit Float(const std::string& str, int base = 10) { set(str, base); }
+		explicit Float(const std::string& str, int base = 10, const int* precision = nullptr, bool isRelativePrecision = true) { set(str, base, precision, isRelativePrecision); }
 
 		//the destructor is not virtual such that this class
 		//is not meant to be inherited

@@ -1686,6 +1686,68 @@ void addElementaryFunctionTest(){
 			}
 			std::cout << "random test for sin(x),  cos(x) test 2 passed" << std::endl;
 		});
+
+	testCases.push_back([&] {
+			std::random_device rd;
+			std::uniform_int_distribution<int> dice(0,9);
+			for (int i = 0; i < 10; ++i) {
+				std::string str;
+
+				for (int j = 0; j < 2; ++j){
+					str += static_cast<char>(0x30 + dice(rd));
+				}
+				str += '.';
+				for (int k = 0; k < 20; ++k){
+					str += static_cast<char>(0x30 + dice(rd));
+				}
+
+				std::cout << "str1:" << str << std::endl;
+
+				Float x1 = Float(str, 10);
+				std::cout << "x1:" << x1.toString() << std::endl;
+
+				str.clear();
+				for (int j = 0; j < 2; ++j){
+					str += static_cast<char>(0x30 + dice(rd));
+				}
+				str += '.';
+				for (int k = 0; k < 20; ++k){
+					str += static_cast<char>(0x30 + dice(rd));
+				}
+
+
+				std::cout << "str2:" << str << std::endl;
+				Float x2 = Float(str, 10);
+				std::cout << "x2:" << x2.toString() << std::endl;
+
+				Float x = x1 + x2;
+				std::cout << "x:" << x.toString() << std::endl;
+
+				int precision = -256;
+				Float y1 = e(x1, &precision);
+				std::cout << "y1:" << y1.toString() << std::endl;
+
+				Float y2 = e(x2, &precision);
+				std::cout << "y2:" << y2.toString() << std::endl;
+
+				Float y = e(x, &precision);
+				std::cout << "y:" << y.toString() << std::endl;
+
+				Float y1y2 = y1 * y2;
+				std::cout << "y1y2:" << y1y2.toString() << std::endl;
+
+				Float d = y - y1y2;
+				std::cout << "d:" << d.toString() << std::endl;
+
+				Float p(1, precision + 1 + 145);
+				std::cout << "p:" << p.toString() << std::endl;
+				assert(absCompare(d, p) < 0);
+
+				std::cout << "----------------------------------" << std::endl;
+			}
+
+			std::cout << "random test for e(x) passed" << std::endl;
+	});
 }
 
 static void addTestCases(){
